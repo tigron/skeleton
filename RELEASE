@@ -1,0 +1,5 @@
+This tool contains the following external projects:
+- lib/external/twig/ (version 1.0.0 RC1)
+- app/admin/media/javascript/jquery.js (1.5)
+- app/admin/media/css/reset.css (Blueprint reset.css 1.0 29/10/2010)
+- app/admin/media/image/icon/ (famfamfam.com Silk icons)
