@@ -75,9 +75,11 @@ class Config {
 	private function read() {
 		$this->config_data = array(
 			/**
-			 * Debug mode
+			 * Error handling settings
 			 */
 			'debug' => true,
+			'errors_from' => 'errors@example.com',
+			'errors_to' => 'errors@example.com',
 
 			/**
 			 * Database
