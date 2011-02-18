@@ -25,6 +25,13 @@ function error_handler ($errno, $errstr, $errfile = '', $errline = '', $errconte
 	$msg = '';
 	$die = false;
 
+	/**
+	 * Backwards compatibility for PHP5.2
+	 */
+	if (!defined('E_DEPRECATED')) {
+		define('E_DEPRECATED', 8192);
+	}
+
 	$date = date("Y-m-d H:i:s (T)");
 	$errortype = array (
 				E_ERROR				=> 'Error',
