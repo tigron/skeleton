@@ -26,22 +26,21 @@ function error_handler ($errno, $errstr, $errfile = '', $errline = '', $errconte
 		define('E_DEPRECATED', 8192);
 	}
 
-	$date = date("Y-m-d H:i:s (T)");
-	$errortype = array (
-				E_ERROR				=> 'Error',
-				E_WARNING			=> 'Warning',
-				E_PARSE				=> 'Parsing Error',
-				E_NOTICE			=> 'Notice',
-				E_CORE_ERROR		=> 'Core Error',
-				E_CORE_WARNING		=> 'Core Warning',
-				E_COMPILE_ERROR		=> 'Compile Error',
-				E_COMPILE_WARNING	=> 'Compile Warning',
-				E_USER_ERROR		=> 'User Error',
-				E_USER_WARNING		=> 'User Warning',
-				E_USER_NOTICE		=> 'User Notice',
-				E_STRICT			=> 'Runtime Notice',
-				E_DEPRECATED		=> 'Deprecated'
-			);
+	$date = date('Y-m-d H:i:s (T)');
+	$errortype = array (E_ERROR             => 'Error',
+	                    E_WARNING           => 'Warning',
+	                    E_PARSE             => 'Parsing Error',
+	                    E_NOTICE            => 'Notice',
+	                    E_CORE_ERROR        => 'Core Error',
+	                    E_CORE_WARNING      => 'Core Warning',
+	                    E_COMPILE_ERROR     => 'Compile Error',
+	                    E_COMPILE_WARNING   => 'Compile Warning',
+	                    E_USER_ERROR        => 'User Error',
+	                    E_USER_WARNING      => 'User Warning',
+	                    E_USER_NOTICE       => 'User Notice',
+	                    E_STRICT            => 'Runtime Notice',
+	                    E_DEPRECATED        => 'Deprecated'
+	             );
 
 	switch ($errno) {
 		case E_ERROR:
@@ -75,16 +74,15 @@ function error_handler ($errno, $errstr, $errfile = '', $errline = '', $errconte
 
 	$subject = $errortype[$errno].' on '.$host;
 
-	$message = "Date: ".$date."\n"
-			."Host: ".$host."\n"
-			."Error: ".$errno."\n"
-			."Error Type: ".$errortype[$errno]."\n"
-			."Error Message: ".$errstr."\n"
-			."Script: ".$errfile."\n"
-			."Line: ".$errline."\n"
-			."\n"
-			."Vartrace:\n"
-			.$vars;
+	$message = 'Date: ' . $date . "\n"
+	         . 'Host: ' . $host . "\n"
+	         . 'Error: ' . $errno . "\n"
+	         . 'Error Type: ' . $errortype[$errno] . "\n"
+	         . 'Error Message: ' . $errstr . "\n"
+	         . 'Script: ' . $errfile . "\n"
+	         . 'Line: ' . $errline . "\n\n"
+	         . 'Vartrace: ' . "\n"
+	         . $vars;
 
 	report($subject, $message, $die);
 }
@@ -101,7 +99,7 @@ function exception($exception) {
 		$host = 'commandline';
 	}
 
-	$subject = 'System Exception on '.$host;
+	$subject = 'System Exception on '. $host;
 
 	report($subject, $exception, true);
 }
@@ -130,13 +128,12 @@ function report($subject, $message, $fatal = false) {
 
 	$html .= '<h2>Backtrace</h2> <pre>' . $backtrace . '</pre>';
 
-	$vartrace = array (
-					'_GET'      => isset($_GET) ? $_GET : null,
-					'_POST'     => isset($_POST) ? $_POST : null,
-					'_COOKIE'   => isset($_COOKIE) ? $_COOKIE : null,
-					'_SESSION'  => isset($_SESSION) ? $_SESSION : null,
-					'_SERVER'   => isset($_SERVER) ? $_SERVER : null
-				);
+	$vartrace = array('_GET'      => isset($_GET) ? $_GET : null,
+	                  '_POST'     => isset($_POST) ? $_POST : null,
+	                  '_COOKIE'   => isset($_COOKIE) ? $_COOKIE : null,
+	                  '_SESSION'  => isset($_SESSION) ? $_SESSION : null,
+	                  '_SERVER'   => isset($_SERVER) ? $_SERVER : null
+	            );
 
 	$html .= '<h2>Vartrace</h2> <pre> ' . print_r($vartrace, true) . '</pre>';
 
@@ -146,9 +143,9 @@ function report($subject, $message, $fatal = false) {
 
 	$config = Config::get();
 	
-	$headers = "From: controlpanel@tigron.be \r\n";
-	$headers.= "Content-Type: text/html; charset=ISO-8859-1 MIME-Version: 1.0 ";
-	mail("dump@tigron.net", $subject, $html, $headers);
+	$headers = 'From: ' . $config->errors_from . "\r\n";
+	$headers.= 'Content-Type: text/html; charset=ISO-8859-1 MIME-Version: 1.0';
+	mail($config->errors_to, $subject, $html, $headers);
 
 	if ($config->debug) {
 		echo $html;
@@ -168,7 +165,7 @@ function show_clean_error() {
 		$module = new $classname();
 		$module->accept_request();
 	} else {
-		echo "An unexpected error occured. Please try again later.<br />";
+		echo 'An unexpected error occured. Please try again later.<br />';
 	}
 }
 
