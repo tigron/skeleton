@@ -16,12 +16,6 @@ function error_handler ($errno, $errstr, $errfile = '', $errline = '', $errconte
 		return;
 	}
 
-	static $exec_id = 0;
-
-	if ($exec_id == 0) {
-		$exec_id = rand();
-	}
-
 	$msg = '';
 	$die = false;
 
@@ -63,7 +57,7 @@ function error_handler ($errno, $errstr, $errfile = '', $errline = '', $errconte
 			var_dump($errcontext);
 			break;
 		case E_NOTICE:
-			// Don't report strict errors for PEAR
+			// Don't report notices errors for PEAR
 			if (preg_match('/^\/usr\/share\/php\/(.*)$/', $errfile, $matches))
 				return;
 	}
@@ -73,7 +67,12 @@ function error_handler ($errno, $errstr, $errfile = '', $errline = '', $errconte
 		$vars = ob_get_contents();
 	ob_end_clean();
 
-	$host = $_SERVER['SERVER_NAME'];
+	if (isset($_SERVER['SERVER_NAME'])) {
+		$host = $_SERVER['SERVER_NAME'];
+	} else {
+		$host = 'commandline';
+	}
+
 	$subject = $errortype[$errno].' on '.$host;
 
 	$message = "Date: ".$date."\n"
@@ -145,22 +144,16 @@ function report($subject, $message, $fatal = false) {
 	'   </body>' .
 	'</html>';
 
+	$config = Config::get();
+	
 	$headers = "From: controlpanel@tigron.be \r\n";
 	$headers.= "Content-Type: text/html; charset=ISO-8859-1 MIME-Version: 1.0 ";
 	mail("dump@tigron.net", $subject, $html, $headers);
 
-	try {
-		$config = Config::get();
-
-		if ($config->debug) {
-			echo $html;
-		} elseif ($fatal) {
-			show_clean_error();
-		}
-	} catch (Exception $e) {
-		if ($fatal) {
-			show_clean_error();
-		}
+	if ($config->debug) {
+		echo $html;
+	} elseif ($fatal) {
+		show_clean_error();
 	}
 
 	if ($fatal) {
@@ -180,11 +173,6 @@ function show_clean_error() {
 }
 
 function pear_error_handler ($error) {
-	if (strstr($error->userinfo, 'nativecode=2006 ** MySQL server has gone away') || strstr($error->userinfo, 'Lost connection to MySQL server during query')) {
-		// MySQL disconnected, reconnect!
-		Database::Reconnect();
-		return;
-	}
 	trigger_error($error->getMessage(), $error->level);
 }
 
