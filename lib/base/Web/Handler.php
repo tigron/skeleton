@@ -64,6 +64,7 @@ class Web_Handler {
 		$applications = $config->applications;
 		if (!isset($applications[$_SERVER['SERVER_NAME']])) {
 			echo '404';
+			return;
 		}
 
 		$application = $applications[$_SERVER['SERVER_NAME']];
