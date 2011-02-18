@@ -1,0 +1,198 @@
+<?php
+/**
+ * Error handler
+ *
+ * Handles errors, mails them to whoever.
+ *
+ * @package %%PACKAGE%%
+ * @author Christophe Gosiau <christophe@tigron.be>
+ * @author Gerry Demaret <gerry@tigron.be>
+ * @version $Id$
+ */
+
+function error_handler ($errno, $errstr, $errfile = '', $errline = '', $errcontext = array()) {
+	// Suppress warnings already supressed by @<function>();
+	if (error_reporting() == 0) {
+		return;
+	}
+
+	static $exec_id = 0;
+
+	if ($exec_id == 0) {
+		$exec_id = rand();
+	}
+
+	$msg = '';
+	$die = false;
+
+	$date = date("Y-m-d H:i:s (T)");
+	$errortype = array (
+				E_ERROR				=> 'Error',
+				E_WARNING			=> 'Warning',
+				E_PARSE				=> 'Parsing Error',
+				E_NOTICE			=> 'Notice',
+				E_CORE_ERROR		=> 'Core Error',
+				E_CORE_WARNING		=> 'Core Warning',
+				E_COMPILE_ERROR		=> 'Compile Error',
+				E_COMPILE_WARNING	=> 'Compile Warning',
+				E_USER_ERROR		=> 'User Error',
+				E_USER_WARNING		=> 'User Warning',
+				E_USER_NOTICE		=> 'User Notice',
+				E_STRICT			=> 'Runtime Notice',
+				E_DEPRECATED		=> 'Deprecated'
+			);
+
+	switch ($errno) {
+		case E_ERROR:
+		case E_CORE_ERROR:
+		case E_USER_ERROR:
+			$die = true;
+			break;
+		case E_STRICT:
+			// Don't report strict errors for PEAR
+			if (preg_match('/^\/usr\/share\/php\/(.*)$/', $errfile, $matches))
+				return;
+		case E_PARSE:
+			var_dump($errcontext);
+			break;
+		case E_NOTICE:
+			// Don't report strict errors for PEAR
+			if (preg_match('/^\/usr\/share\/php\/(.*)$/', $errfile, $matches))
+				return;
+	}
+
+	ob_start();
+		print_r($errcontext);
+		$vars = ob_get_contents();
+	ob_end_clean();
+
+	$host = $_SERVER['SERVER_NAME'];
+	$subject = $errortype[$errno].' on '.$host;
+
+	$message = "Date: ".$date."\n"
+			."Host: ".$host."\n"
+			."Error: ".$errno."\n"
+			."Error Type: ".$errortype[$errno]."\n"
+			."Error Message: ".$errstr."\n"
+			."Script: ".$errfile."\n"
+			."Line: ".$errline."\n"
+			."\n"
+			."Vartrace:\n"
+			.$vars;
+
+	report($subject, $message, $die);
+}
+
+function exception($exception) {
+	ob_start();
+		print_r($exception);
+		$exception = ob_get_contents();
+	ob_end_clean();
+
+	if (isset($_SERVER['SERVER_NAME'])) {
+		$host = $_SERVER['SERVER_NAME'];
+	} else {
+		$host = 'commandline';
+	}
+
+	$subject = 'System Exception on '.$host;
+
+	report($subject, $exception, true);
+}
+
+function report($subject, $message, $fatal = false) {
+	ob_start();
+		debug_print_backtrace();
+		$backtrace = ob_get_contents();
+	ob_end_clean();
+
+	$html =
+	'<html>' .
+	'   <head>' .
+	'       <title>' . $subject . '</title>' .
+	'       <style type="text/css">' .
+	'           body { font-family: sans-serif; background: #eee; } ' .
+	'           pre { border: 1px solid #1b2582; background: #ccc; padding: 5px; }' .
+	'           h1 { width: 100%; background: #183452; font-weight: bold; color: #fff; padding: 2px; font-size: 16px;} ' .
+	'           h2 { font-size: 15px; } ' .
+	'       </style>' .
+	'   </head>' .
+	'   <body>' .
+	'   <h1>' . $subject . '</h1>';
+
+	$html .= '<h2>Message</h2> <pre>' . $message . '</pre>';
+
+	$html .= '<h2>Backtrace</h2> <pre>' . $backtrace . '</pre>';
+
+	$vartrace = array (
+					'_GET'      => isset($_GET) ? $_GET : null,
+					'_POST'     => isset($_POST) ? $_POST : null,
+					'_COOKIE'   => isset($_COOKIE) ? $_COOKIE : null,
+					'_SESSION'  => isset($_SESSION) ? $_SESSION : null,
+					'_SERVER'   => isset($_SERVER) ? $_SERVER : null
+				);
+
+	$html .= '<h2>Vartrace</h2> <pre> ' . print_r($vartrace, true) . '</pre>';
+
+	$html .=
+	'   </body>' .
+	'</html>';
+
+	$headers = "From: controlpanel@tigron.be \r\n";
+	$headers.= "Content-Type: text/html; charset=ISO-8859-1 MIME-Version: 1.0 ";
+	mail("dump@tigron.net", $subject, $html, $headers);
+
+	try {
+		$config = Config::get();
+
+		if ($config->debug) {
+			echo $html;
+		} elseif ($fatal) {
+			show_clean_error();
+		}
+	} catch (Exception $e) {
+		if ($fatal) {
+			show_clean_error();
+		}
+	}
+
+	if ($fatal) {
+		exit(1);
+	}
+}
+
+function show_clean_error() {
+	if (file_exists(strtolower(MODULE_PATH . '/error.php'))) {
+		require_once(MODULE_PATH . '/error.php');
+		$classname = 'Module_Error';
+		$module = new $classname();
+		$module->accept_request();
+	} else {
+		echo "An unexpected error occured. Please try again later.<br />";
+	}
+}
+
+function pear_error_handler ($error) {
+	if (strstr($error->userinfo, 'nativecode=2006 ** MySQL server has gone away') || strstr($error->userinfo, 'Lost connection to MySQL server during query')) {
+		// MySQL disconnected, reconnect!
+		Database::Reconnect();
+		return;
+	}
+	trigger_error($error->getMessage(), $error->level);
+}
+
+set_error_handler('error_handler');
+set_exception_handler('exception');
+
+$config = Config::get();
+if ($config->debug) {
+	ini_set('display_errors', 1);
+	ini_set('display_startup_errors', 1);
+	ini_set('error_reporting', E_ALL | E_STRICT);
+} else {
+	ini_set('display_errors', 0);
+	ini_set('display_startup_errors', 0);
+	ini_set('error_reporting', E_ALL & ~E_DEPRECATED);
+}
+
+?>
