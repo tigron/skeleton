@@ -46,14 +46,6 @@ class Web_Template {
 	public $language = null;
 
 	/**
-	 * Print Surroundings (header & footer)?
-	 *
-	 * @var bool $print_surroundings
-	 * @access private
-	 */
-	private $print_surroundings = true;
-
-	/**
 	 * Constructor
 	 */
 	public function __construct() {
@@ -127,19 +119,14 @@ class Web_Template {
 	public function display($template) {
 		$translation = Translation::set_language($this->language);
 
-		if ($this->print_surroundings) {
-			$twig_template = $this->twig->loadTemplate('header.tpl');
-			echo $twig_template->render($this->parameters);
+		$twig_template = $this->twig->loadTemplate('header.tpl');
+		echo $twig_template->render($this->parameters);
 
-			$twig_template = $this->twig->loadTemplate($template);
-			echo $twig_template->render($this->parameters);
+		$twig_template = $this->twig->loadTemplate($template);
+		echo $twig_template->render($this->parameters);
 
-			$twig_template = $this->twig->loadTemplate('footer.tpl');
-			echo $twig_template->render($this->parameters);
-		} else {
-			$twig_template = $this->twig->loadTemplate($template);
-			echo $twig_template->render($this->parameters);
-		}
+		$twig_template = $this->twig->loadTemplate('footer.tpl');
+		echo $twig_template->render($this->parameters);
 	}
 }
 ?>
