@@ -107,6 +107,21 @@ class %%classname%% {
 	}
 
 	/**
+	 * Isset
+	 *
+	 * @access public
+	 * @param string $key
+	 * @return bool $isset
+	 */
+	public function __isset($key) {
+		if (isset($this->details[$key])) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	/**
 	 * Load array
 	 *
 	 * @access public
