@@ -88,6 +88,11 @@ function error_handler ($errno, $errstr, $errfile = '', $errline = '', $errconte
 }
 
 function exception($exception) {
+	if (get_class($exception) == 'Twig_Error_Syntax') {
+		twig_exception($exception);
+		return;
+	} 
+
 	ob_start();
 		print_r($exception);
 		$exception = ob_get_contents();
@@ -102,6 +107,29 @@ function exception($exception) {
 	$subject = 'System Exception on '. $host;
 
 	report($subject, $exception, true);
+}
+
+function twig_exception($exception) {
+	$file = file(APP_PATH . '/template/' . $exception->getFileName());
+	$line = $exception->getlinenumber();
+
+	echo '<h1>Twig syntax error</h1>' . "\n";
+	echo '<div style="width: 950px; margin: 15px; border: 1px solid black;">';
+
+	echo 'Syntax error in ' . $exception->getFileName() . ' on line ' . $exception->getLineNumber() . "<br /> <br />\n";
+
+	for ($i = 1; $i<=10; $i++) {
+		if (($line-5+$i) == $line) {
+			echo '<div style="background: #eee;">' . "\n";
+		}
+
+		echo '<b>' . ($line-5+$i) . '</b> ' . htmlspecialchars($file[$line-6+$i]) . "<br />\n";
+
+		if (($line-5+$i) == $line) {
+			echo '</div>';
+		}
+	}
+	echo '</div>';
 }
 
 function report($subject, $message, $fatal = false) {
