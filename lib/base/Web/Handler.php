@@ -150,29 +150,32 @@ class Web_Handler {
 				$route = '/' . $route;
 				if (array_key_exists($route, $config->routes)) {
 					$_GET['system']['route'] = $route;
-					$variables = array_slice($request_parts, $key+1);
 
-					$variable_match = null;
-					foreach ($config->routes[$route]['variables'] as $variable_possibility) {
-						if (count($variables) == substr_count($variable_possibility, '$')) {
-							$variable_match = $variable_possibility;
-							$_GET['system']['variables'] = $variable_match;
-							break;
+					// Check if the route matches without variables
+					if ($route != '/' . implode($request_parts, '/')) {
+						$variables = array_slice($request_parts, $key+1);
+
+						$variable_match = null;
+						foreach ($config->routes[$route]['variables'] as $variable_possibility) {
+							if (count($variables) == substr_count($variable_possibility, '$')) {
+								$variable_match = $variable_possibility;
+								$_GET['system']['variables'] = $variable_match;
+								break;
+							}
+						}
+
+						if ($variable_match === null) {
+							throw new Exception('Route matches but no variable match found');
+						}
+
+						// Replace all the variables passed through the URI by the ones defined in the pattern
+						$variable_parts = explode('/', $variable_match);
+						foreach($variable_parts as $key => $variable_part) {
+							$_GET[str_replace('$', '', $variable_part)] = $variables[$key];
 						}
 					}
 
-					if ($variable_match === null) {
-						throw new Exception('Route matches but no variable match found');
-					}
-
-					// Replace all the variables passed through the URI by the ones defined in the pattern
-					$variable_parts = explode('/', $variable_match);
-					foreach($variable_parts as $key => $variable_part) {
-						$_GET[str_replace('$', '', $variable_part)] = $variables[$key];
-					}
-
 					$request_parts = explode('/', $config->routes[$route]['target']);
-
 					break;
 				}
 			}
