@@ -110,34 +110,43 @@ function exception($exception) {
 }
 
 function twig_exception($exception) {
+	// Since we know that the error occurred in a template, it is safe
+	// to assume the Templates are working and callable
+	$template = Web_Template::get();
+
 	$file = file(APP_PATH . '/template/' . $exception->getFileName());
-	$line = $exception->getlinenumber();
+	$line = (int)preg_replace('@.* at line @', '', $exception->getMessage());
 
-	echo '<h1>Twig syntax error</h1>' . "\n";
-	echo '<div style="width: 950px; margin: 15px; border: 1px solid black;">';
-
-	echo 'Syntax error in ' . $exception->getFileName() . ' on line ' . $exception->getLineNumber() . "<br /> <br />\n";
+	$message = '<b>Error: ' . $exception->getMessage() . "</b>\n\n";
 
 	for ($i = 1; $i<=10; $i++) {
-		if (($line-5+$i) == $line) {
-			echo '<div style="background: #eee;">' . "\n";
+		$display_line = $line-5+$i;
+
+		if ($display_line <= 0 || $display_line > count($file)) {
+			continue;
 		}
 
-		echo '<b>' . ($line-5+$i) . '</b> ' . htmlspecialchars($file[$line-6+$i]) . "<br />\n";
-
-		if (($line-5+$i) == $line) {
-			echo '</div>';
+		if ($display_line == $line) {
+			$message .= '<span style="background: #eee;">';
 		}
+
+		$message .= trim('<b>' . ($display_line) . '</b> ' . htmlspecialchars($file[$line-6+$i]));
+
+		if (($display_line) == $line) {
+			$message .= '</span>';
+		}
+
+		$message .=  "\n";
 	}
-	echo '</div>';
+
+		$message .=  "\n";
+	$message .= '<b>Variables</b> ' . "\n\n";
+	$message .= print_r($template->get_assigned(), true);
+
+	report('Twig syntax error', $message, false, false);
 }
 
-function report($subject, $message, $fatal = false) {
-	ob_start();
-		debug_print_backtrace();
-		$backtrace = ob_get_contents();
-	ob_end_clean();
-
+function report($subject, $message, $fatal = false, $backtrace = true) {
 	$html =
 	'<html>' .
 	'   <head>' .
@@ -154,7 +163,15 @@ function report($subject, $message, $fatal = false) {
 
 	$html .= '<h2>Message</h2> <pre>' . $message . '</pre>';
 
-	$html .= '<h2>Backtrace</h2> <pre>' . $backtrace . '</pre>';
+
+	if ($backtrace == true) {
+		ob_start();
+			debug_print_backtrace();
+			$backtrace = ob_get_contents();
+		ob_end_clean();
+	
+		$html .= '<h2>Backtrace</h2> <pre>' . $backtrace . '</pre>';
+	}
 
 	$vartrace = array('_GET'      => isset($_GET) ? $_GET : null,
 	                  '_POST'     => isset($_POST) ? $_POST : null,
