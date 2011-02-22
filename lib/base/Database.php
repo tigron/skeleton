@@ -152,8 +152,8 @@ class DatabaseProxy {
 		require_once 'MDB2.php';
 
 		$config = Config::Get();
-		$this->database = MDB2::Factory($config->$config_db);
-		if (MDB2::isError($this->database)) {
+		$this->database = @MDB2::Factory($config->$config_db);
+		if (@MDB2::isError($this->database)) {
 			throw new Exception('Database connection failed');
 		}
 
@@ -228,7 +228,7 @@ class DatabaseProxy {
 		}
 		$arguments[1] = Util::filter_table_data($arguments[0], $arguments[1], $this);
 		$return = $this->database->extended->autoExecute($arguments[0], $arguments[1], $arguments[2], $arguments[3], NULL);
-		if (MDB2::isError($this->database)) {
+		if (@MDB2::isError($this->database)) {
 			throw new Exception('Database error');
 		}
 		return $return;
