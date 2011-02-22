@@ -214,10 +214,14 @@ class Util {
 		$variables = $routes[$correct_route]['variables'];
 		$correct_variable_string = null;
 
-		foreach ($variables as $variable_string) {
-			if (substr_count($variable_string, '$') == count($params)) {
-				$correct_variable_string = $variable_string;
-				break;
+		if (count($params) == 0) {
+			$correct_variable_string = '';
+		} else {
+			foreach ($variables as $variable_string) {
+				if (substr_count($variable_string, '$') == count($params)) {
+					$correct_variable_string = $variable_string;
+					break;
+				}
 			}
 		}
 
@@ -231,7 +235,7 @@ class Util {
 
 		foreach ($correct_variables as $key => $correct_variable) {
 			$correct_variable = str_replace('$', '', $correct_variable);
-			if (!isset($params[$correct_variable])) {
+			if (!isset($params[$correct_variable]) AND $correct_variable != '') {
 				$variables_matches = false;
 				break;
 			}
@@ -246,7 +250,9 @@ class Util {
 		$querystring = $correct_route;
 
 		foreach ($correct_variables as $correct_variable) {
-			$querystring .= '/' . $params[$correct_variable];
+			if ($correct_variable != '') {
+				$querystring .= '/' . $params[$correct_variable];
+			}
 		}
 
 		$language = Language::Get();
