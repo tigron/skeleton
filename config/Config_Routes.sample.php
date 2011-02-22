@@ -19,22 +19,22 @@ class Config_Routes {
 
 		/**
 		 * This is a demo route
-		 *
-			'test/routing/engine' => array(
-				'target' => 'index',
-				'variables' => array(
-					'$action/$object_id',
-					'$action/$object_id/$condition',
-				)
-			)
 		*/
-
 		'/user' => array(
 			'target' => 'user',
 			'variables' => array(
-				'$action'
+				'$action',
+				'$action/$id',
 			)
-		)
+		),
+
+		'/test/routing/engine' => array(
+			'target' => 'index',
+			'variables' => array(
+				'$action',
+				'$action/$id',
+			)
+		),
 	);
 }
 ?>
