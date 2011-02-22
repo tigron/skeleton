@@ -24,7 +24,7 @@ class Module_Index extends Web_Module {
 	 * @access public
 	 * @var string $template
 	 */
-	public $template = 'index.tpl';
+	public $template = 'index.twig';
 
 	/**
 	 * Display method
