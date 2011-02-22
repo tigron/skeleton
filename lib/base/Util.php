@@ -250,7 +250,7 @@ class Util {
 		}
 
 		$language = Language::Get();
-		return str_replace($data[3], $language->name_short . '/' . $querystring, $data[0]);
+		return str_replace($data[3], $language->name_short . $querystring, $data[0]);
 	}
 }
 ?>
