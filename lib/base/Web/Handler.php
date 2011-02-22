@@ -130,7 +130,6 @@ class Web_Handler {
 
 		$template = Web_Template::Get();
 		$template->assign('language', $_SESSION['language']);
-		$template->assign('language_name_short', $_SESSION['language']->name_short);
 
 		/**
 		 * Look for the Module, try to match routes
