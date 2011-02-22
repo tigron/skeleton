@@ -84,6 +84,15 @@ class Web_Template {
 	}
 
 	/**
+	 * Get assigned parameters
+	 *
+	 * @return array $parameters
+	 */
+	public function get_assigned() {
+		return $this->parameters;
+	}
+
+	/**
 	 * Assign variables to the template
 	 *
 	 * @param string $key
@@ -102,13 +111,13 @@ class Web_Template {
 	public function display($template) {
 		Translation::set_language(Language::Get());
 
-		$twig_template = $this->twig->loadTemplate('header.tpl');
+		$twig_template = $this->twig->loadTemplate('header.twig');
 		echo Util::reverse_rewrite($twig_template->render($this->parameters));
 
 		$twig_template = $this->twig->loadTemplate($template);
 		echo Util::reverse_rewrite($twig_template->render($this->parameters));
 
-		$twig_template = $this->twig->loadTemplate('footer.tpl');
+		$twig_template = $this->twig->loadTemplate('footer.twig');
 		echo Util::reverse_rewrite($twig_template->render($this->parameters));
 	}
 }
