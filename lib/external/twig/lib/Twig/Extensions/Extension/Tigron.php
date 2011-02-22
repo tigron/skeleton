@@ -17,7 +17,7 @@ class Twig_Extensions_Extension_Tigron extends Twig_Extension
     public function getFilters()
     {
         return array(
-            'print_r' => new Twig_Filter_Function('twig_print_r'),
+            'print_r' => new Twig_Filter_Function('twig_print_r', array('is_safe' => array('html'))),
         );
     }
 
@@ -34,5 +34,5 @@ class Twig_Extensions_Extension_Tigron extends Twig_Extension
 
 function twig_print_r($value)
 {
-	return print_r($value, true);
+	return '<pre>' . print_r($value, true) . '</pre>';
 }
