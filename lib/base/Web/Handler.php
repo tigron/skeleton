@@ -147,6 +147,7 @@ class Web_Handler {
 				}
 
 				// Check if the request is defined by a route
+				$route = '/' . $route;
 				if (array_key_exists($route, $config->routes)) {
 					$_GET['system']['route'] = $route;
 					$variables = array_slice($request_parts, $key+1);
