@@ -22,7 +22,7 @@ class Module_404 extends Web_Module {
 	 * Template to use
 	 *
 	 * @access public
-	 * @var string $tpl
+	 * @var string $template
 	 */
 	public $template = null;
 
