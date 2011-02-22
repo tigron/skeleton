@@ -55,6 +55,10 @@ class Translation {
 	 * @return string $string
 	 */
 	public function translate_string($string) {
+		$config = Config::Get();
+		if ($this->language->name_short == $config->base_language) {
+			return $string;
+		}
 		if (!isset($this->strings[$string]) OR $this->strings[$string] == '') {
 			return '[NT]' . $string;
 		}
@@ -84,7 +88,7 @@ class Translation {
 		if (!isset(self::$translation)) {
 			throw new Exception('Language not set');
 		}
-		
+
 		return self::$translation;
 	}
 

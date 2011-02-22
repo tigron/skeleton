@@ -85,8 +85,6 @@ class Web_Handler {
 		 */
 		require_once LIB_PATH . '/base/Web/Template.php';
 
-		$template = Web_Template::Get();
-
 		/**
 		 * Set language
 		 */
@@ -128,8 +126,11 @@ class Web_Handler {
 			} catch (Exception $e) { }
 		}
 
-		$template->set_language($_SESSION['language']);
+		Language::set($_SESSION['language']);
+
+		$template = Web_Template::Get();
 		$template->assign('language', $_SESSION['language']);
+		$template->assign('language_name_short', $_SESSION['language']->name_short);
 
 		/**
 		 * Look for the Module, try to match routes
@@ -169,7 +170,7 @@ class Web_Handler {
 					foreach($variable_parts as $key => $variable_part) {
 						$_GET[str_replace('$', '', $variable_part)] = $variables[$key];
 					}
-					
+
 					$request_parts = explode('/', $config->routes[$route]['target']);
 
 					break;

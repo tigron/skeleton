@@ -38,14 +38,6 @@ class Web_Template {
 	private $parameters = array();
 
 	/**
-	 * Language object
-	 *
-	 * @var Language $language
-	 * @access public
-	 */
-	public $language = null;
-
-	/**
 	 * Constructor
 	 */
 	public function __construct() {
@@ -65,6 +57,7 @@ class Web_Template {
 			)
 		);
 
+		$this->twig->addExtension(new Twig_Extensions_Extension_Tigron());
 		$this->twig->addExtension(
 			new Twig_Extensions_Extension_I18n(
 				array(
@@ -73,6 +66,7 @@ class Web_Template {
 				)
 			)
 		);
+
 	}
 
 	/**
@@ -87,17 +81,6 @@ class Web_Template {
 		}
 
 		return self::$template;
-	}
-
-	/**
-	 * Set the language
-	 *
-	 * @param Language $language
-	 * @access public
-	 */
-	public function set_language(Language $language) {
-		$template = Web_Template::Get();
-		$this->language = $language;
 	}
 
 	/**
@@ -117,16 +100,16 @@ class Web_Template {
 	 * @access public
 	 */
 	public function display($template) {
-		$translation = Translation::set_language($this->language);
+		Translation::set_language(Language::Get());
 
 		$twig_template = $this->twig->loadTemplate('header.tpl');
-		echo $twig_template->render($this->parameters);
+		echo Util::reverse_rewrite($twig_template->render($this->parameters));
 
 		$twig_template = $this->twig->loadTemplate($template);
-		echo $twig_template->render($this->parameters);
+		echo Util::reverse_rewrite($twig_template->render($this->parameters));
 
 		$twig_template = $this->twig->loadTemplate('footer.tpl');
-		echo $twig_template->render($this->parameters);
+		echo Util::reverse_rewrite($twig_template->render($this->parameters));
 	}
 }
 ?>

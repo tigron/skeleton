@@ -148,6 +148,13 @@ class Util {
 		file_put_contents($filename, $output);
 	}
 
+	/**
+	 * Merge 2 po files
+	 *
+	 * @access public
+	 * @param array $strings1
+	 * @param array $strings2
+	 */
 	public static function po_merge($base, $extra) {
 		$base_strings = self::load_po($base);
 		$extra_strings = self::load_po($extra);
@@ -159,6 +166,91 @@ class Util {
 		}
 
 		Util::save_po($base, $extra_strings);
+	}
+
+	/**
+	 * Reverse rewrite
+	 *
+	 * @access public
+	 * @param string $html
+	 * @return string $html_with_reverse_rewrite
+	 */
+	public static function reverse_rewrite($html) {
+		$html = preg_replace_callback('@\<([^>]*) (href|src|action)="/([^"]*).*"@i', 'self::reverse_rewrite_callback', $html);
+		return $html;
+	}
+
+	/**
+	 * Reverse rewrite callback for regexp
+	 *
+	 * @access private
+	 * @param array $data
+	 * @return string $string
+	 */
+	private static function reverse_rewrite_callback($data) {
+		$url = parse_url($data[3]);
+
+		$params = array();
+		if (isset($url['query'])) {
+			parse_str($url['query'], $params);
+		}
+
+		$config = Config::Get();
+		$routes = $config->routes;
+		$correct_route = null;
+
+		foreach ($routes as $route => $properties) {
+			if ($properties['target'] == $url['path']) {
+				$correct_route = $route;
+				break;
+			}
+		}
+
+		if ($correct_route === null) {
+			return $data[0];
+		}
+
+		// We have a possible correct route
+		$variables = $routes[$correct_route]['variables'];
+		$correct_variable_string = null;
+
+		foreach ($variables as $variable_string) {
+			if (substr_count($variable_string, '$') == count($params)) {
+				$correct_variable_string = $variable_string;
+				break;
+			}
+		}
+
+		if ($correct_variable_string === null) {
+			return $data[0];
+		}
+
+		// See if all variables match
+		$correct_variables = explode('/', $correct_variable_string);
+		$variables_matches = true;
+
+		foreach ($correct_variables as $key => $correct_variable) {
+			$correct_variable = str_replace('$', '', $correct_variable);
+			if (!isset($params[$correct_variable])) {
+				$variables_matches = false;
+				break;
+			}
+			$correct_variables[$key] = $correct_variable;
+		}
+
+		if (!$variables_matches) {
+			return $data[0];
+		}
+
+		// Now build the new querystring
+		$querystring = $correct_route;
+
+		foreach ($correct_variables as $correct_variable) {
+			$querystring .= '/' . $params[$correct_variable];
+		}
+
+		$language = Language::Get();
+		return str_replace($data[3], $language->name_short . '/' . $querystring, $data[0]);
 	}
 }
 ?>

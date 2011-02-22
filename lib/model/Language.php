@@ -22,6 +22,14 @@ class Language {
 	protected $details = array();
 
 	/**
+	 * Language
+	 *
+	 * @var Language $language
+	 * @access private
+	 */
+	private static $language = null;
+
+	/**
 	 * Constructor
 	 *
 	 * @access public
@@ -70,6 +78,10 @@ class Language {
 		}
 
 		$this->get_details();
+	}
+
+	public function show_text() {
+		return 'aze';
 	}
 
 	/**
@@ -140,6 +152,26 @@ class Language {
 		}
 
 		return self::get_by_id($id);
+	}
+
+	/**
+	 * Set the current language
+	 *
+	 * @access public
+	 * @param Language $language
+	 */
+	public static function set(Language $language) {
+		self::$language = $language;
+	}
+
+	/**
+	 * Get the currect language
+	 *
+	 * @access public
+	 * @return Language $language
+	 */
+	public static function get() {
+		return self::$language;
 	}
 }
 ?>
