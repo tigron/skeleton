@@ -50,6 +50,16 @@ class Twig_Error extends Exception
     }
 
     /**
+     * Gets the line number where the error occurred.
+     *
+     * @return string The line number
+     */
+    public function getLineNumber()
+    {
+        return $this->lineno;
+    }
+
+    /**
      * Sets the filename where the error occurred.
      *
      * @param string $filename The filename
