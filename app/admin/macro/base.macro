@@ -1,0 +1,41 @@
+
+{% macro input(name, value, type, size) %}
+	<input type="{{ type|default('text') }}" name="{{ name }}" value="{{ value|e }}" size="{{ size|default(20) }}" />
+{% endmacro %}
+
+{% macro action_confirm() %}
+	{% set env['blaat'] = "ljlkj" %}
+
+	{{ env|print_r }}
+
+	<script>
+		$(function(module, ) {
+			$( "#dialog-confirm" ).dialog({
+				resizable: false,
+				autoOpen: false,
+				height:140,
+				modal: true,
+				buttons: {
+					'Too late :(': function() {
+						$( this ).dialog( "close" );
+					},
+					Cancel: function() {
+						$( this ).dialog( "close" );
+					}
+				}
+			});
+		});
+	</script>
+
+	<div id="dialog-confirm" title="Please confirm!">
+		<p>
+			<span class="ui-icon ui-icon-circle-check" style="float:left; margin:0 7px 50px 0;"></span>
+			Are you sure you want to open this message?
+		</p>
+	</div>
+
+	<a href="javascript:void()" onclick="javascript: $('#dialog-confirm').dialog('open')">Open</a>
+{% endmacro %}
+
+
+
