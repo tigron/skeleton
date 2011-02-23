@@ -110,16 +110,17 @@ function exception($exception) {
 }
 
 function twig_exception($exception) {
-	// Since we know that the error occurred in a template, it is safe
-	// to assume the Templates are working and callable
-	$template = Web_Template::get();
+	if (substr($exception->getFileName(), -5) == 'macro') {
+		$file = file(APP_PATH . '/macro/' . $exception->getFileName());
+	} else {
+		$file = file(APP_PATH . '/template/' . $exception->getFileName());
+	}
 
-	$file = file(APP_PATH . '/template/' . $exception->getFileName());
 	$line = (int)preg_replace('@.* at line @', '', $exception->getMessage());
 
 	$message = '<b>Error: ' . $exception->getMessage() . "</b>\n\n";
 
-	for ($i = 1; $i<=10; $i++) {
+	for ($i = 1; $i<=9; $i++) {
 		$display_line = $line-5+$i;
 
 		if ($display_line <= 0 || $display_line > count($file)) {
@@ -139,9 +140,16 @@ function twig_exception($exception) {
 		$message .=  "\n";
 	}
 
-		$message .=  "\n";
-	$message .= '<b>Variables</b> ' . "\n\n";
-	$message .= print_r($template->get_assigned(), true);
+	$message .=  "\n";
+
+	// Since we know that the error occurred in a template, it is not safe
+	// to assume the Templates are working and callable. Use try/catch.
+	try {
+		$template = Web_Template::get();
+
+		$message .= '<b>Variables</b> ' . "\n\n";
+		$message .= print_r($template->get_assigned(), true);
+	} catch (Exception $e) {}
 
 	report('Twig syntax error', $message, false, false);
 }
