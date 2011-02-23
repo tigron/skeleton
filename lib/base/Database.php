@@ -143,6 +143,7 @@ class DatabaseProxy {
 	 * Connect to the database
 	 *
 	 * @access public
+	 * @param string $config_db
 	 * @throws Exception Throws an Exception when the Database is unavailable
 	 */
 	public function connect($config_db) {
