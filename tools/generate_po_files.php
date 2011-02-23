@@ -59,7 +59,7 @@ foreach ($applications as $application) {
 		foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($directory), RecursiveIteratorIterator::LEAVES_ONLY) as $file) {
 			$file = str_replace($directory.'/', '', $file);
 
-			if ($file == '.' OR $file == '..') {
+			if (strpos('.', $file) == 0) {
 				continue;
 			}
 
