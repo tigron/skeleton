@@ -182,7 +182,7 @@ class Web_Handler {
 							$_GET[str_replace('$', '', $variable_part)] = $variables[$key];
 						}
 
-						array_merge($_REQUEST, $_GET);
+						$_REQUEST = array_merge($_REQUEST, $_GET);
 					} elseif (!in_array('', $routes[$route]['variables'])) {
 						break;
 					}
