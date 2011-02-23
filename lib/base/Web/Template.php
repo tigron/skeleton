@@ -38,6 +38,14 @@ class Web_Template {
 	private $parameters = array();
 
 	/**
+	 * Environment variables
+	 *
+	 * @var array $environment
+	 * @access private
+	 */
+	private $environment = array();
+
+	/**
 	 * Constructor
 	 */
 	public function __construct() {
@@ -67,6 +75,7 @@ class Web_Template {
 			)
 		);
 
+		$this->twig->addGlobal('base', $this->twig->loadTemplate('base.macro'));
 	}
 
 	/**
@@ -93,6 +102,16 @@ class Web_Template {
 	}
 
 	/**
+	 * Add a global variable to the template
+	 *
+	 * @param string $name
+	 * @param mixed $value
+	 */
+	public function add_env($name, $value) {
+		$this->environment[$name] =  $value;
+	}
+
+	/**
 	 * Assign variables to the template
 	 *
 	 * @param string $key
@@ -110,6 +129,20 @@ class Web_Template {
 	 */
 	public function display($template) {
 		Translation::set_language(Language::Get());
+
+		$variables = array_merge(
+			array(
+				'post' => $_POST,
+				'get' => $_GET,
+				'cookie' => $_COOKIE,
+				'server' => $_SERVER,
+				'session' => $_SESSION,
+				'now' => time()
+			),
+			$this->environment
+		);
+
+		$this->twig->addGlobal('env', $variables);
 
 		$twig_template = $this->twig->loadTemplate('header.twig');
 		echo Util::reverse_rewrite($twig_template->render($this->parameters));

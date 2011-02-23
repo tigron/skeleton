@@ -20,20 +20,30 @@ class Config_Routes {
 		/**
 		 * This is a demo route
 		*/
-		'/user' => array(
-			'target' => 'user',
-			'variables' => array(
-				'$action',
-				'$action/$id',
-			)
-		),
+		'admin' => array(
+			'index' => array(
+				'routes' => array(
+					'en' => '/test/routing/engine',
+					'nl' => '/probeer/verwijs/motor',
+				),
+				'variables' => array(
+					'',
+					'$action',
+					'$action/$id',
+				),
+			),
 
-		'/test/routing/engine' => array(
-			'target' => 'index',
-			'variables' => array(
-				'$action',
-				'$action/$id',
-			)
+			'customer' => array(
+				'routes' => array(
+					'nl' => 'klant',
+					'en' => 'customer',
+				),
+				'variables' => array(
+					'',
+					'$action',
+					'$action/$id',
+				)
+			),
 		),
 	);
 }

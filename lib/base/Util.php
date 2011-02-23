@@ -188,6 +188,9 @@ class Util {
 	 * @return string $string
 	 */
 	private static function reverse_rewrite_callback($data) {
+		$language = Language::Get();
+		$config = Config::Get();
+
 		$url = parse_url($data[3]);
 
 		$params = array();
@@ -195,26 +198,24 @@ class Util {
 			parse_str($url['query'], $params);
 		}
 
-		$config = Config::Get();
-		$routes = $config->routes;
-		$correct_route = null;
-
-		foreach ($routes as $route => $properties) {
-			if ($properties['target'] == $url['path']) {
-				$correct_route = $route;
-				break;
-			}
+		if (isset($config->routes[APP_NAME])) {
+			$routes = $config->routes[APP_NAME];
+		} else {
+			return $data[0];
 		}
 
-		if ($correct_route === null) {
+		$correct_route = null;
+		if (isset($routes[$url['path']]['routes'][$language->name_short])) {
+			$correct_route = $routes[$url['path']];
+		} else {
 			return $data[0];
 		}
 
 		// We have a possible correct route
-		$variables = $routes[$correct_route]['variables'];
+		$variables = $correct_route['variables'];
 		$correct_variable_string = null;
 
-		if (count($params) == 0) {
+		if (count($params) == 0 AND in_array('', $correct_route['variables'])) {
 			$correct_variable_string = '';
 		} else {
 			foreach ($variables as $variable_string) {
@@ -247,7 +248,7 @@ class Util {
 		}
 
 		// Now build the new querystring
-		$querystring = $correct_route;
+		$querystring = $correct_route['routes'][$language->name_short];
 
 		foreach ($correct_variables as $correct_variable) {
 			if ($correct_variable != '') {
@@ -255,7 +256,6 @@ class Util {
 			}
 		}
 
-		$language = Language::Get();
 		return str_replace($data[3], $language->name_short . $querystring, $data[0]);
 	}
 }

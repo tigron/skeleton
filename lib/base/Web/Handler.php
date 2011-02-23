@@ -137,29 +137,37 @@ class Web_Handler {
 		if (count($request_parts) == 0) {
 			// If no module was requested, default to 'index'
 			$request_parts[] = 'index';
-		} else {
+		} elseif (isset($config->routes[APP_NAME])) {
 			// Check if there is a route defined for the request
+			$language = Language::get();
+
+			$routes = array();
+			foreach ($config->routes[APP_NAME] as $module => $route) {
+				if (isset($route['routes'][$language->name_short])) {
+					$routes[$route['routes'][$language->name_short]] = array(
+						'target' => $module,
+						'variables' => $route['variables'],
+					);
+				}
+			}
+
 			$route = '';
 			foreach($request_parts as $key => $request_part) {
 				$route .= '/' . $request_part;
-				if (strpos($route, '/') == 0) {
-					$route = substr($route, 1);
-				}
 
 				// Check if the request is defined by a route
-				$route = '/' . $route;
-				if (array_key_exists($route, $config->routes)) {
-					$_GET['system']['route'] = $route;
+				if (array_key_exists($route, $routes)) {
+					$template->add_env('route', $route);
 
-					// Check if the route matches without variables
+					// Check if the route matches without variables and if it's allowed to do so
 					if ($route != '/' . implode($request_parts, '/')) {
 						$variables = array_slice($request_parts, $key+1);
 
 						$variable_match = null;
-						foreach ($config->routes[$route]['variables'] as $variable_possibility) {
+						foreach ($routes[$route]['variables'] as $variable_possibility) {
 							if (count($variables) == substr_count($variable_possibility, '$')) {
 								$variable_match = $variable_possibility;
-								$_GET['system']['variables'] = $variable_match;
+								$template->add_env('variables', $variable_match);
 								break;
 							}
 						}
@@ -173,9 +181,13 @@ class Web_Handler {
 						foreach($variable_parts as $key => $variable_part) {
 							$_GET[str_replace('$', '', $variable_part)] = $variables[$key];
 						}
+
+						array_merge($_REQUEST, $_GET);
+					} elseif (!in_array('', $routes[$route]['variables'])) {
+						break;
 					}
 
-					$request_parts = explode('/', $config->routes[$route]['target']);
+					$request_parts = explode('/', $routes[$route]['target']);
 					break;
 				}
 			}
