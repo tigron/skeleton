@@ -30,9 +30,9 @@ abstract class Web_Module {
 
 		$template = Web_Template::Get();
 
-		if (isset($_POST['action']) AND is_callable(array($this, 'display_'.$_POST['action']))) {
-			$template->assign('action', $_POST['action']);
-			call_user_func_array(array($this, 'display_'.$_POST['action']), array());
+		if (isset($_REQUEST['action']) AND is_callable(array($this, 'display_'.$_REQUEST['action']))) {
+			$template->assign('action', $_REQUEST['action']);
+			call_user_func_array(array($this, 'display_'.$_REQUEST['action']), array());
 		} else {
 			$this->display();
 		}
