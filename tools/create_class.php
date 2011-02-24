@@ -31,6 +31,10 @@ foreach ($parts as $key => $part) {
 }
 
 $empty_class = str_replace('%%classname%%', implode('_', $parts), $empty_class);
+$directory = dirname(LIB_PATH . '/model/' . implode('/', $parts));
+if (!file_exists($directory)) {
+	mkdir($directory, 0755, true);
+}
 $filename = LIB_PATH . '/model/' . implode('/', $parts) . '.php';
 file_put_contents($filename, $empty_class);
 echo 'Generating ' . $filename . "\n";
