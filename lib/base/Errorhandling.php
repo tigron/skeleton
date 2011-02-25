@@ -89,9 +89,12 @@ function error_handler ($errno, $errstr, $errfile = '', $errline = '', $errconte
 
 function exception($exception) {
 	if (get_class($exception) == 'Twig_Error_Syntax') {
+		twig_exception_syntax($exception);
+		return;
+	} elseif (get_class($exception) == 'Twig_Error_Loader' OR get_class($exception) == 'Twig_Error_Runtime') {
 		twig_exception($exception);
 		return;
-	} 
+	}
 
 	ob_start();
 		print_r($exception);
@@ -110,6 +113,10 @@ function exception($exception) {
 }
 
 function twig_exception($exception) {
+	report('Twig error', '<b>' . $exception->getMessage() . '</b> in ' . $exception->getFile(), false, false);
+}
+
+function twig_exception_syntax($exception) {
 	if (substr($exception->getFileName(), -5) == 'macro') {
 		$file = file(APP_PATH . '/macro/' . $exception->getFileName());
 	} else {
