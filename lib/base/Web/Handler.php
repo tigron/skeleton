@@ -148,6 +148,11 @@ class Web_Handler {
 						'target' => $module,
 						'variables' => $route['variables'],
 					);
+				} elseif (isset($route['routes']['default'])) {
+					$routes[$route['routes']['default']] = array(
+						'target' => $module,
+						'variables' => $route['variables'],
+					);
 				}
 			}
 

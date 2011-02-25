@@ -207,6 +207,8 @@ class Util {
 		$correct_route = null;
 		if (isset($routes[$url['path']]['routes'][$language->name_short])) {
 			$correct_route = $routes[$url['path']];
+		} elseif (isset($routes[$url['path']]['routes']['default'])) {
+			$correct_route = $routes[$url['path']];
 		} else {
 			return $data[0];
 		}
@@ -248,7 +250,11 @@ class Util {
 		}
 
 		// Now build the new querystring
-		$querystring = $correct_route['routes'][$language->name_short];
+		if (isset($correct_route['routes'][$language->name_short])) {
+			$querystring = $correct_route['routes'][$language->name_short];
+		} else {
+			$querystring = $correct_route['routes']['default'];
+		}
 
 		foreach ($correct_variables as $correct_variable) {
 			if ($correct_variable != '') {
