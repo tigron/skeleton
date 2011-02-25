@@ -46,6 +46,14 @@ class Web_Template {
 	private $environment = array();
 
 	/**
+	 * Unique ID within the template
+	 *
+	 * @var int $unique_id
+	 * @access private
+	 */ 
+	private $unique_id = 1;
+
+	/**
 	 * Constructor
 	 */
 	public function __construct() {
@@ -102,6 +110,15 @@ class Web_Template {
 	}
 
 	/**
+	 * Get a unique ID within the template
+	 *
+	 * @return int $unique
+	 */
+	public function get_unique() {
+		return $this->unique_id++;
+	}
+
+	/**
 	 * Add a global variable to the template
 	 *
 	 * @param string $name
@@ -137,6 +154,7 @@ class Web_Template {
 				'cookie' => $_COOKIE,
 				'server' => $_SERVER,
 				'session' => $_SESSION,
+				'template' => $this,
 				'now' => time()
 			),
 			$this->environment
