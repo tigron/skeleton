@@ -56,6 +56,11 @@ table, th, td {
 	vertical-align: middle; 
 }
 
+/* forms are display block?! */
+form {
+	display: inline;
+}
+
 /* Remove possible quote marks (") from <q>, <blockquote>. */
 blockquote:before, blockquote:after, q:before, q:after { content: ''; }
 blockquote, q { quotes: "" ""; }

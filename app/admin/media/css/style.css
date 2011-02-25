@@ -7,3 +7,8 @@ body {
 	margin-top: 0px;
 	padding-top: 0px;
 }
+
+.content {
+	margin-left: 1em;
+	margin-top: 1em;
+}
