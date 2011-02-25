@@ -1,41 +1,118 @@
+{##
+ # Content:
+ #
+ # {% macro link(link, icon, target, parameters) %}
+ # {% macro modal(link, icon, snippet, title, parameters) %}
+ # {% macro confirm(link, icon, target, message, parameters) %}
+ #}
 
-{% macro input(name, value, type, size) %}
-	<input type="{{ type|default('text') }}" name="{{ name }}" value="{{ value|e }}" size="{{ size|default(20) }}" />
+
+{##
+ # Link macro
+ #}
+{% macro link(link, icon, target, parameters) %}
+	{% set id = env.template.get_unique %}
+
+	{% if icon != '' %}
+		{% set icon = '<img src="' ~ icon ~ '" title="' ~ icon ~ '" alt="' ~ icon ~ '" />' %}
+	{% endif %}
+
+	<a href="{{ target|raw }}" onclick="javascript:$('#form-{{ id }}').submit(); return false;">
+		{{ icon|raw }} {{ link|raw }}
+	</a>
+
+	<form id="form-{{ id }}" action="{{ target|raw }}" method="post">
+		{% for parameter, value in parameters %}
+			<input type="hidden" name="{{ parameter }}" value="{{ value }}" />
+		{% endfor %}
+	</form>
 {% endmacro %}
 
-{% macro action_confirm() %}
-	{% set env['blaat'] = "ljlkj" %}
 
-	{{ env|print_r }}
+{##
+ # Modal window macro
+ #}
 
-	<script>
-		$(function(module, ) {
-			$( "#dialog-confirm" ).dialog({
+{% macro modal(link, icon, snippet, title, parameters) %}
+	{% set id = env.template.get_unique %}
+
+	{# Set default values for required parameters #}
+	{% set parameters = {
+		'buttons': false,
+	}|merge(parameters|default({})) %}
+
+	<script type="text/javascript">
+		$(function() {
+			$( "#dialog-{{ id }}" ).dialog({
 				resizable: false,
 				autoOpen: false,
-				height:140,
+				minWidth: 600,
 				modal: true,
-				buttons: {
-					'Too late :(': function() {
-						$( this ).dialog( "close" );
-					},
-					Cancel: function() {
-						$( this ).dialog( "close" );
+				{% if parameters.buttons != false %}
+					buttons: {
+						{{ 'Close'|trans }}: function() {
+							$( this ).dialog( "close" );
+						}
 					}
-				}
+				{% endif %}
 			});
 		});
 	</script>
 
-	<div id="dialog-confirm" title="Please confirm!">
-		<p>
-			<span class="ui-icon ui-icon-circle-check" style="float:left; margin:0 7px 50px 0;"></span>
-			Are you sure you want to open this message?
-		</p>
+	<div id="dialog-{{ id }}" title="{{ title }}">
+		{% include 'snippet/' ~ snippet ~ '.twig' with parameters %}
 	</div>
 
-	<a href="javascript:void()" onclick="javascript: $('#dialog-confirm').dialog('open')">Open</a>
+	{% if icon != '' %}
+		{% set icon = '<img src="' ~ icon ~ '" title="' ~ icon ~ '" alt="' ~ icon ~ '" />' %}
+	{% endif %}
+
+	<a href="#" onclick="javascript: $('#dialog-{{ id }}').dialog('open'); return false;">{{ icon|raw }} {{ link|raw }}</a>
 {% endmacro %}
 
 
+{## 
+ # Confirm macro
+ #}
 
+{% macro confirm(link, icon, target, message, parameters) %}
+	{% set id = env.template.get_unique() %}
+
+	<script type="text/javascript">
+		$(function() {
+			$( "#dialog-{{ id }}" ).dialog({
+				resizable: false,
+				autoOpen: false,
+				minWidth: 600,
+				modal: true,
+				title: '{{ 'Confirm'|trans }}',
+				buttons: {
+					{{ 'Confirm'|trans }}: function() {
+						$('#form-{{ id }}').submit();
+					},
+					{{ 'Cancel'|trans }}: function() {
+						$( this ).dialog( "close" );
+					},
+				},
+			});
+		});
+	</script>
+
+	<div id="dialog-{{ id }}">
+		{{ message }}
+	</div>
+
+	<form id="form-{{ id }}" action="{{ target|raw }}" method="post">
+		{% for parameter, value in parameters %}
+			<input type="hidden" name="{{ parameter }}" value="{{ value }}" />
+		{% endfor %}
+	</form>
+
+	{% if icon != '' %}
+		{% set icon = '<img src="' ~ icon ~ '" title="' ~ icon ~ '" alt="' ~ icon ~ '" />' %}
+	{% endif %}
+
+	<a href="{{ target|raw }}" onclick="javascript: $('#dialog-{{ id }}').dialog('open'); return false;">
+		{{ icon|raw }} {{ link|raw }}
+	</a>
+{% endmacro %}
