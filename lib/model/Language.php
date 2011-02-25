@@ -43,6 +43,45 @@ class Language {
 	}
 
 	/**
+	 * Set a key
+	 *
+	 * @access public
+	 * @param string $key
+	 * @param mixed $value
+	 */
+	public function __set($key, $value) {
+		$this->details[$key] = $value;
+	}
+
+	/**
+	 * Get a key
+	 *
+	 * @access public
+	 * @return mixed $value
+	 */
+	public function __get($key) {
+		if (isset($this->details[$key])) {
+			return $this->details[$key];
+		} else {
+			throw new Exception('Unknown key requested: '. $key);
+		}
+	}
+
+	/**
+	 * Isset function
+	 *
+	 * @access public
+	 * @return bool $isset
+	 */
+	public function __isset($key) {
+		if (isset($this->details[$key])) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	/**
 	 * Get the details
 	 *
 	 * @access private
@@ -78,35 +117,6 @@ class Language {
 		}
 
 		$this->get_details();
-	}
-
-	public function show_text() {
-		return 'aze';
-	}
-
-	/**
-	 * Set a key
-	 *
-	 * @access public
-	 * @param string $key
-	 * @param mixed $value
-	 */
-	public function __set($key, $value) {
-		$this->details[$key] = $value;
-	}
-
-	/**
-	 * Get a key
-	 *
-	 * @access public
-	 * @return mixed $value
-	 */
-	public function __get($key) {
-		if (isset($this->details[$key])) {
-			return $this->details[$key];
-		} else {
-			throw new Exception('Unknown key requested: '. $key);
-		}
 	}
 
 	/**
