@@ -9,6 +9,7 @@
  */
 
 abstract class Web_Module {
+
 	/**
 	 * Login required ?
 	 * Default = yes
@@ -24,11 +25,15 @@ abstract class Web_Module {
 	 * @access public
 	 */
 	public function accept_request() {
-		if ($this->login_required AND !isset($_SESSION['user'])) {
-			Web_Session::Redirect('/');
+		$application = APP_NAME;
+		if (is_callable(array($this, 'pre_' . $application))) {
+			call_user_func_array(array($this, 'pre_' . $application), array());
 		}
 
 		$template = Web_Template::Get();
+		$module = get_class($this);
+		$module = str_replace('module_', '', strtolower($module));
+		$template->assign('module', $module);
 
 		if (isset($_REQUEST['action']) AND is_callable(array($this, 'display_'.$_REQUEST['action']))) {
 			$template->assign('action', $_REQUEST['action']);
@@ -38,7 +43,6 @@ abstract class Web_Module {
 		}
 
 		if ($this->template != null) {
-			$template = Web_Template::Get();
 			$template->display($this->template);
 		}
 	}
