@@ -1,11 +1,37 @@
-<h1>It works!</h1>
+<div class="content">
+	<h1>It works!</h1>
 
-Welcome to your application :-)
+	Welcome to your application :-)
 
-<p>
-	<a href="/index?action=edit&id=5">test</a><br>
-	<a href="/index?action=list">test</a><br>
-	<a href="/customer">test no variables</a>
-</p>
+	<h2>Env</h2>
+	{{ env.post|print_r }}
 
-{{ base.action_confirm() }}
+	<h2>Routing</h2>
+	<div>
+		<a href="/index?action=edit&id=5">Test match all variables</a><br />
+		<a href="/index?action=list">Test match one variable</a><br />
+		<a href="/index">Test match no variables</a>
+	</div>
+
+	<h2>Macros</h2>
+	{##
+	 # Content:
+	 #
+	 # {% macro link(link, icon, target, parameters) %}
+	 # {% macro modal(link, icon, snippet, title, parameters) %}
+	 # {% macro confirm(link, icon, target, message, parameters) %}
+	 #}
+
+	{% set parameters = {
+		'parameter1': 'value 1',
+		'parameter2': 'value 2',
+	} %}
+
+	<ul>
+		<li>Link: {{ base.link('link', '/icon/add.png', '/index?action=link&id=1', parameters) }}</li>
+		<li>Modal: {{ base.modal('link', '/icon/add.png', 'demo', 'Show snippet!', parameters) }}</li>
+		<li>
+			Confirm: {{ base.confirm('link', '/icon/add.png', '/index?action=confirm&id=2', 'Are you sure you want to confirm?', parameters) }}
+		</li>
+	</ul>
+</div>

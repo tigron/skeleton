@@ -8,6 +8,8 @@
  * @version $Id$
  */
 
+require_once ROOT_PATH . '/config/Config_Routes.php';
+
 class Config {
 	/**
 	 * Config array
@@ -112,15 +114,7 @@ class Config {
 			/**
 			 * Routes
 			 */
-			'routes' => array(
-				'test/routing/engine' => array(
-					'target' => 'index',
-					'variables' => array(
-						'$action/$object_id',
-						'$action/$object_id/$condition',
-					)
-				)
-			),
+			'routes' => Config_Routes::$routes,
 		);
 	}
 }

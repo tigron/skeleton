@@ -176,7 +176,7 @@ class Util {
 	 * @return string $html_with_reverse_rewrite
 	 */
 	public static function reverse_rewrite($html) {
-		$html = preg_replace_callback('@\<([^>]*) (href|src|action)="/([^"]*).?"@iU', 'Util::reverse_rewrite_callback', $html);
+		$html = preg_replace_callback('@\<([^>]*) (href|src|action)="/([^"]*)?"@iU', 'Util::reverse_rewrite_callback', $html);
 		return $html;
 	}
 

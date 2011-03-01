@@ -20,12 +20,16 @@ class Config_Routes {
 		/**
 		 * This is a demo route
 		*/
+		// Application
 		'admin' => array(
+			// Module
 			'index' => array(
+				// Routes with language as key, use default as key for default
 				'routes' => array(
+					'default' => '/default/route/to/index',
 					'en' => '/test/routing/engine',
-					'nl' => '/probeer/verwijs/motor',
 				),
+				// Variables that match the route, if no variables should match as well, use ''				
 				'variables' => array(
 					'',
 					'$action',
@@ -33,15 +37,14 @@ class Config_Routes {
 				),
 			),
 
-			'customer' => array(
+			'demo' => array(
 				'routes' => array(
-					'nl' => 'klant',
-					'en' => 'customer',
+					'default' => '/default/route/to/demo',
+					'nl' => '/standaard/route/naar/demo'
 				),
 				'variables' => array(
 					'',
 					'$action',
-					'$action/$id',
 				)
 			),
 		),
