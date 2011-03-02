@@ -68,7 +68,7 @@ class Web_Template {
 		$this->twig = new Twig_Environment(
 			$loader,
 			array(
-				'cache' => TMP_PATH . '/cache/' . APP_NAME,
+				'cache' => TMP_PATH . '/twig/' . APP_NAME,
 				'auto_reload' => true,
 			)
 		);
