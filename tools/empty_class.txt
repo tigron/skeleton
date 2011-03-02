@@ -49,7 +49,7 @@ class %%classname%% {
 		$db = Database::Get();
 		$details = $db->getRow('SELECT * FROM %%table_name%% WHERE id=?', array($this->id));
 		if ($details === null) {
-			throw new Controller_Exception('Could not fetch %%table_name%% data: no %%table_name%% found with id ' . $this->id);
+			throw new Exception('Could not fetch %%table_name%% data: no %%table_name%% found with id ' . $this->id);
 		}
 
 		$this->details = $details;
