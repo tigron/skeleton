@@ -32,6 +32,11 @@ class Web_Handler {
 		Web_Session::start();
 
 		/**
+		 * Hide PHP powered by
+		 */
+		header('X-Powered-By: Me');
+
+		/**
 		 * Determine the request type
 		 */
 		$query_string = explode('?', $_SERVER['REQUEST_URI']);
