@@ -16,9 +16,18 @@ class Web_Media {
 	 * @access private
 	 */
 	private static $filetypes = array(
-		'image' => array('gif', 'jpg', 'jpeg', 'png'),
-		'css' => array('css'),
-		'javascript' => array('js'),
+		'image' => array(
+			'gif',
+			'jpg',
+			'jpeg',
+			'png'
+		),
+		'css' => array(
+			'css'
+		),
+		'javascript' => array(
+			'js'
+		),
 	);
 
 	/**
@@ -45,37 +54,52 @@ class Web_Media {
 		$extension = substr($extension, 1);
 		$request_string = implode('/', $request);
 
-		// Detect if it is a request for multiple files		
+		// Detect if it is a request for multiple files
 		if (strpos($request_string, '&/') !== false) {
 			$files = explode('&/', $request_string);
+
 			$mtime = 0;
-			$content = '';
-
 			foreach ($files as $file) {
-				$file = self::fetch($file, $extension);
+				$mtime = self::fetch('mtime', $file, $extension);
 
-				if ($file === false) {
+				if ($mtime === false) {
 					self::fail();
 				}
-				
+
 				if ($file['mtime'] > $mtime) {
 					$mtime = $file['mtime'];
 				}
+			}
 
-				$content .= $file['content'] . "\n";
+			if (isset($_SERVER['HTTP_IF_MODIFIED_SINCE'])) {
+				if ($_SERVER['HTTP_IF_MODIFIED_SINCE'] == gmdate('D, d M Y H:i:s', $mtime).' GMT') {
+					// Cached version
+					self::output($extension, '', $mtime);
+				}
+			}
+
+			$content = '';
+			foreach ($files as $file) {
+				$content .= self::fetch('content', $file, $extension) . "\n";
 			}
 
 			$content = $content;
 			$filename = 'compacted.' . $extension;
 		} else {
-			$file = self::fetch($request_string, $extension);
+			$mtime = self::fetch('mtime', $request_string, $extension);
 
-			if ($file === false) {
+			if ($mtime === false) {
 				self::fail();
 			}
 
-			$content = $file['content'];
-			$mtime = $file['mtime'];
+			if (isset($_SERVER['HTTP_IF_MODIFIED_SINCE'])) {
+				if ($_SERVER['HTTP_IF_MODIFIED_SINCE'] == gmdate('D, d M Y H:i:s', $mtime).' GMT') {
+					// Cached version
+					self::output($extension, '', $mtime);
+				}
+			}
+
+			$content = self::fetch('content', $request_string, $extension);
 		}
 
 		self::output($extension, $content, $mtime);
@@ -99,17 +123,21 @@ class Web_Media {
 	 * @param string $path
 	 * @param string $extension
 	 */
-	private static function fetch($path, $extension) {
+	private static function fetch($type, $path, $extension) {
 		foreach (self::$filetypes as $filetype => $extensions) {
 			if (in_array($extension, $extensions)) {
 				if (file_exists(MEDIA_PATH . '/' . $filetype . '/' . $path)) {
-					$mtime = filemtime(MEDIA_PATH . '/' . $filetype . '/' . $path);
-					$content = file_get_contents(MEDIA_PATH . '/' . $filetype . '/' . $path);
-					return array('mtime' => $mtime, 'content' => $content);
+					if ($type == 'mtime') {
+						return filemtime(MEDIA_PATH . '/' . $filetype . '/' . $path);
+					} else {
+						return file_get_contents(MEDIA_PATH . '/' . $filetype . '/' . $path);
+					}
 				} else if ((file_exists(MEDIA_PATH . '/tools/' . $path))) {
-					$mtime = filemtime(MEDIA_PATH . '/tools/' . $path);
-					$content = file_get_contents(MEDIA_PATH . '/tools/' . $path);
-					return array('mtime' => $mtime, 'content' => $content);
+					if ($type == 'mtime') {
+						return filemtime(MEDIA_PATH . '/tools/' . $path);
+					} else {
+						return file_get_contents(MEDIA_PATH . '/tools/' . $path);
+					}
 				} else {
 					return false;
 				}
@@ -141,27 +169,27 @@ class Web_Media {
 	private static function get_mime_type($extension) {
 		$mime_type = '';
 		switch ($extension) {
-			case 'htm'		:
-			case 'html'		:	$mime_type = 'text/html';
-								break;
+			case 'htm' :
+			case 'html': $mime_type = 'text/html';
+			              break;
 
-			case 'css'		:	$mime_type = 'text/css';
-								break;
+			case 'css' : $mime_type = 'text/css';
+			              break;
 
-			case 'js'		:	$mime_type = 'text/javascript';
-								break;
+			case 'js'  : $mime_type = 'text/javascript';
+			             break;
 
-			case 'png'		:	$mime_type = 'image/png';
-								break;
+			case 'png' : $mime_type = 'image/png';
+			             break;
 
-			case 'gif'		:	$mime_type = 'image/gif';
-								break;
+			case 'gif' : $mime_type = 'image/gif';
+			             break;
 
-			case 'jpg'		:
-			case 'jpeg'		:	$mime_type = 'image/jpeg';
-								break;
+			case 'jpg' :
+			case 'jpeg': $mime_type = 'image/jpeg';
+			             break;
 
-			default			:	$mime_type = 'text/plain';
+			default    : $mime_type = 'text/plain';
 		}
 
 		return $mime_type;
