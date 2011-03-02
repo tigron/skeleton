@@ -50,7 +50,7 @@ class Web_Template {
 	 *
 	 * @var int $unique_id
 	 * @access private
-	 */ 
+	 */
 	private $unique_id = 1;
 
 	/**
@@ -163,13 +163,13 @@ class Web_Template {
 		$this->twig->addGlobal('env', $variables);
 
 		$twig_template = $this->twig->loadTemplate('header.twig');
-		echo Util::reverse_rewrite($twig_template->render($this->parameters));
+		echo Util::reverse_rewrite_html($twig_template->render($this->parameters));
 
 		$twig_template = $this->twig->loadTemplate($template);
-		echo Util::reverse_rewrite($twig_template->render($this->parameters));
+		echo Util::reverse_rewrite_html($twig_template->render($this->parameters));
 
 		$twig_template = $this->twig->loadTemplate('footer.twig');
-		echo Util::reverse_rewrite($twig_template->render($this->parameters));
+		echo Util::reverse_rewrite_html($twig_template->render($this->parameters));
 	}
 }
 ?>

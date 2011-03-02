@@ -175,8 +175,8 @@ class Util {
 	 * @param string $html
 	 * @return string $html_with_reverse_rewrite
 	 */
-	public static function reverse_rewrite($html) {
-		$html = preg_replace_callback('@\<([^>]*) (href|src|action)="/([^"]*)?"@iU', 'Util::reverse_rewrite_callback', $html);
+	public static function reverse_rewrite_html($html) {
+		$html = preg_replace_callback('@\<([^>]*) (href|src|action)="/([^"]*)?"@iU', 'Util::reverse_rewrite_html_callback', $html);
 		return $html;
 	}
 
@@ -187,11 +187,26 @@ class Util {
 	 * @param array $data
 	 * @return string $string
 	 */
-	private static function reverse_rewrite_callback($data) {
-		$language = Language::Get();
-		$config = Config::Get();
+	private static function reverse_rewrite_html_callback($data) {
+		try {
+			$new_link = self::reverse_rewrite_link($data[3]);
+		} catch (Exception $e) {
+			return $data[0];
+		}
+		return str_replace($data[3], $new_link, $data[0]);
+	}
 
-		$url = parse_url($data[3]);
+	/**
+	 * Do a reverse rewrite of a link
+	 *
+	 * @access public
+	 * @param string $url
+	 * @return string $reverse_rewrite
+	 */
+	public static function reverse_rewrite_link($url) {
+		$config = Config::Get();
+		$language = Language::Get();
+		$url = parse_url($url);
 
 		$params = array();
 		if (isset($url['query'])) {
@@ -201,7 +216,7 @@ class Util {
 		if (isset($config->routes[APP_NAME])) {
 			$routes = $config->routes[APP_NAME];
 		} else {
-			return $data[0];
+			throw new Exception('No routes found for current application');
 		}
 
 		$correct_route = null;
@@ -210,7 +225,7 @@ class Util {
 		} elseif (isset($routes[$url['path']]['routes']['default'])) {
 			$correct_route = $routes[$url['path']];
 		} else {
-			return $data[0];
+			throw new Exception('No available route found');
 		}
 
 		// We have a possible correct route
@@ -229,7 +244,7 @@ class Util {
 		}
 
 		if ($correct_variable_string === null) {
-			return $data[0];
+			throw new Exception('Route found but variables incorrect');
 		}
 
 		// See if all variables match
@@ -246,7 +261,7 @@ class Util {
 		}
 
 		if (!$variables_matches) {
-			return $data[0];
+			throw new Exception('Route found but variables incorrect');
 		}
 
 		// Now build the new querystring
@@ -261,8 +276,7 @@ class Util {
 				$querystring .= '/' . $params[$correct_variable];
 			}
 		}
-
-		return str_replace($data[3], $language->name_short . $querystring, $data[0]);
+		return $language->name_short . $querystring;
 	}
 }
 ?>
