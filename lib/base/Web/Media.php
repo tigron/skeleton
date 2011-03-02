@@ -33,7 +33,7 @@ class Web_Media {
 		}
 
 		// Find the filename and extension
-		$filename = array_pop($request);
+		$filename = $request[count($request)-1];
 		$extension = substr($filename, strrpos($filename, '.'));
 
 		// If the request does not contain an extension, it's not to be handled by media
@@ -43,25 +43,77 @@ class Web_Media {
 
 		// Remove the . from the extension
 		$extension = substr($extension, 1);
+		$request_string = implode('/', $request);
 
-		$path = implode('/', $request) . '/' . $filename;
+		// Detect if it is a request for multiple files		
+		if (strpos($request_string, '&/') !== false) {
+			$files = explode('&/', $request_string);
+			$mtime = 0;
+			$content = '';
 
-		foreach (self::$filetypes as $filetype	=>	$extensions) {
-			if (in_array($extension, $extensions)) {
-				if (file_exists(MEDIA_PATH . '/' . $filetype . '/' . $path)) {
-					self::output(MEDIA_PATH . '/' . $filetype . '/' . $path, $extension);
-				} else if ((file_exists(MEDIA_PATH . '/tools/' . $path))) {
-					self::output(MEDIA_PATH . '/tools/' . $path, $extension);
-				} else {
-					header("HTTP/1.1 404 Not Found", true);
-					echo '404 File Not Found';
-					exit();
+			foreach ($files as $file) {
+				$file = self::fetch($file, $extension);
+
+				if ($file === false) {
+					self::fail();
 				}
+				
+				if ($file['mtime'] > $mtime) {
+					$mtime = $file['mtime'];
+				}
+
+				$content .= $file['content'] . "\n";
 			}
+
+			$content = $content;
+			$filename = 'compacted.' . $extension;
+		} else {
+			$file = self::fetch($request_string, $extension);
+
+			if ($file === false) {
+				self::fail();
+			}
+
+			$content = $file['content'];
+			$mtime = $file['mtime'];
 		}
 
-		if ((file_exists(MEDIA_PATH . '/tools/' . $path))) {
-			self::output(MEDIA_PATH . '/tools/' . $path, $extension);
+		self::output($extension, $content, $mtime);
+	}
+
+	/**
+	 * Fail
+	 *
+	 * @access private
+	 */
+	private static function fail() {
+		header("HTTP/1.1 404 Not Found", true);
+		echo '404 File Not Found (media)';
+		exit();
+	}
+
+	/**
+	 * Fetch the contents and mtime of a file
+	 *
+	 * @access private
+	 * @param string $path
+	 * @param string $extension
+	 */
+	private static function fetch($path, $extension) {
+		foreach (self::$filetypes as $filetype => $extensions) {
+			if (in_array($extension, $extensions)) {
+				if (file_exists(MEDIA_PATH . '/' . $filetype . '/' . $path)) {
+					$mtime = filemtime(MEDIA_PATH . '/' . $filetype . '/' . $path);
+					$content = file_get_contents(MEDIA_PATH . '/' . $filetype . '/' . $path);
+					return array('mtime' => $mtime, 'content' => $content);
+				} else if ((file_exists(MEDIA_PATH . '/tools/' . $path))) {
+					$mtime = filemtime(MEDIA_PATH . '/tools/' . $path);
+					$content = file_get_contents(MEDIA_PATH . '/tools/' . $path);
+					return array('mtime' => $mtime, 'content' => $content);
+				} else {
+					return false;
+				}
+			}
 		}
 	}
 
@@ -72,10 +124,10 @@ class Web_Media {
 	 * @param string $extension
 	 * @access private
 	 */
-	private static function output($path, $extension) {
-		self::cache($path);
+	private static function output($extension, $content, $mtime) {
+		self::cache($mtime);
 		header('Content-Type: ' . self::get_mime_type($extension));
-		readfile($path);
+		echo $content;
 		exit();
 	}
 
@@ -121,12 +173,8 @@ class Web_Media {
 	 * @param string filename requested
 	 * @access private
 	 */
-	private static function cache($path = null, $modified = null) {
-		if ($path == null) {
-			$gmt_mtime = gmdate('D, d M Y H:i:s', strtotime($modified)).' GMT';
-		} else {
-			$gmt_mtime = gmdate('D, d M Y H:i:s', filemtime($path)).' GMT';
-		}
+	private static function cache($mtime) {
+		$gmt_mtime = gmdate('D, d M Y H:i:s', $mtime).' GMT';
 
 		header('Cache-Control: public');
 		header('Pragma: public');
