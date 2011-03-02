@@ -3,25 +3,20 @@
 
 	Welcome to your application :-)
 
+
 	<h2>Env</h2>
 	{{ env.post|print_r }}
 
 	<h2>Routing</h2>
-	<div>
+	<p>
 		<a href="/index?action=edit&id=5">Test match all variables</a><br />
 		<a href="/index?action=list">Test match one variable</a><br />
 		<a href="/index">Test match no variables</a>
-	</div>
+		<a href="/index?action=demo_redirect">Redirect</a>
+	</p>
+
 
 	<h2>Macros</h2>
-	{##
-	 # Content:
-	 #
-	 # {% macro link(link, icon, target, parameters) %}
-	 # {% macro modal(link, icon, snippet, title, parameters) %}
-	 # {% macro confirm(link, icon, target, message, parameters) %}
-	 #}
-
 	{% set parameters = {
 		'parameter1': 'value 1',
 		'parameter2': 'value 2',
@@ -30,8 +25,34 @@
 	<ul>
 		<li>Link: {{ base.link('link', '/icon/add.png', '/index?action=link&id=1', parameters) }}</li>
 		<li>Modal: {{ base.modal('link', '/icon/add.png', 'demo', 'Show snippet!', parameters) }}</li>
-		<li>
-			Confirm: {{ base.confirm('link', '/icon/add.png', '/index?action=confirm&id=2', 'Are you sure you want to confirm?', parameters) }}
-		</li>
+		<li>Confirm: {{ base.confirm('link', '/icon/add.png', '/index?action=confirm&id=2', 'Are you sure you want to confirm?', parameters) }}</li>
 	</ul>
+
+
+	<h2>Javascript</h2>
+	<h3>WYSIWYG editor</h3>
+	<p>
+		<!--
+			See https://github.com/akzhan/jwysiwyg/wiki
+		-->
+		<textarea class="wysiwyg" rows="5" cols="80"></textarea>
+	</p>
+
+	<h3>Lightbox</h3>
+	<p>	
+		<!--
+			See: http://colorpowered.com/colorbox/
+		-->
+		<a href="/1.jpg" class="lightbox" rel="gallery_1" title="Test picture one"><img src="/1_thumb.jpg"></a>
+		<a href="/2.jpg" class="lightbox" rel="gallery_1" title="Demo of text"><img src="/2_thumb.jpg"></a>
+		<a href="/3.jpg" class="lightbox" rel="gallery_1" title="This is the content of the title attribute"><img src="/3_thumb.jpg"></a>
+		<a href="/4.jpg" class="lightbox" rel="gallery_1" title="Demo title attribute"><img src="/4_thumb.jpg"></a>
+
+		<br />
+
+		<a href="/1.jpg" class="lightbox" rel="myothergallery" title="Test picture one REL 2"><img src="/1_thumb.jpg"></a>
+		<a href="/2.jpg" class="lightbox" rel="myothergallery" title="Demo of text REL 2"><img src="/2_thumb.jpg"></a>
+		<a href="/3.jpg" class="lightbox" rel="myothergallery" title="This is the content of the title attribute REL 2"><img src="/3_thumb.jpg"></a>
+		<a href="/4.jpg" class="lightbox" rel="myothergallery" title="Demo title attribute REL 2"><img src="/4_thumb.jpg"></a>
+	</p>
 </div>

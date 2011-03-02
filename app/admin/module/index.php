@@ -33,5 +33,14 @@ class Module_Index extends Web_Module {
 	 */
 	public function display() {
 	}
+
+	/**
+	 * Demo action with redirect
+	 *
+	 * @access public
+	 */
+	public function display_demo_redirect() {
+		Web_Session::redirect('/index?action=i_have_been_redirected');
+	}
 }
 ?>

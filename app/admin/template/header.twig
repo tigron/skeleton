@@ -2,17 +2,39 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="{{ env.session.language.name_short }}" lang="{{ env.session.language.name_short }}">
 <head>
 	<title>Application</title>
+
+	<meta name="description" content="Application" />
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
 	<link rel="stylesheet" href="/style.css" type="text/css" media="handheld, all" />
 	<link rel="stylesheet" href="/jquery.ui.css" type="text/css" media="handheld, all" />
 	<link rel="stylesheet" href="/jquery.ui.timepicker.css" type="text/css" media="handheld, all" />
 	<link rel="stylesheet" href="/jquery.wysiwyg.css" type="text/css" media="handheld, all" />
+	<link rel="stylesheet" href="/jquery.colorbox.css" type="text/css" media="handheld, all" />
 
 	<script type="text/javascript" src="/jquery.js"></script>
 	<script type="text/javascript" src="/jquery.ui.js"></script>
 	<script type="text/javascript" src="/jquery.ui.timepicker.js"></script>
 	<script type="text/javascript" src="/jquery.wysiwyg.js"></script>
+	<script type="text/javascript" src="/jquery.colorbox.js"></script>
 
-	<meta name="description" content="Application" />
+	<script type="text/javascript">
+		$(document).ready(function(){
+			$('.wysiwyg').wysiwyg();
+
+			var lightboxes = new Array();
+			$("a.lightbox").each(function() {
+				lightboxes.push($(this).attr('rel'));
+			});
+
+			lightboxes = $.unique(lightboxes);
+			for (var i = 0; i < lightboxes.length; i++) {
+				$("a[rel='"+lightboxes[i]+"']").colorbox({
+					maxWidth: '80%',
+					maxHeight: '80%'
+				});			
+			};
+		});
+	</script>
 </head>
 <body>
