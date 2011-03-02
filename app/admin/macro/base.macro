@@ -1,25 +1,31 @@
 {##
  # Content:
  #
- # {% macro link(link, icon, target, parameters) %}
- # {% macro modal(link, icon, snippet, title, parameters) %}
- # {% macro confirm(link, icon, target, message, parameters) %}
+ # {% macro link(link, type, icon, target, parameters) %}
+ # {% macro modal(link, type, icon, snippet, title, parameters) %}
+ # {% macro confirm(link, type, icon, target, message, parameters) %}
  #}
 
 
 {##
  # Link macro
  #}
-{% macro link(link, icon, target, parameters) %}
+{% macro link(link, type, icon, target, parameters) %}
 	{% set id = env.template.get_unique %}
 
 	{% if icon != '' %}
 		{% set icon = '<img src="' ~ icon ~ '" title="' ~ icon ~ '" alt="' ~ icon ~ '" />' %}
 	{% endif %}
 
-	<a href="{{ target|raw }}" onclick="javascript:$('#form-{{ id }}').submit(); return false;">
-		{{ icon|raw }} {{ link|raw }}
-	</a>
+	{% if type == 'link' %}
+		<a href="{{ target|raw }}" onclick="javascript:$('#form-{{ id }}').submit(); return false;">
+			{{ icon|raw }} {{ link|raw }}
+		</a>
+	{% elseif type == 'button' %}
+		<button onclick="javascript:$('#form-{{ id }}').submit(); return false;">
+			{{ icon|raw }} {{ link|raw }}
+		</button>
+	{% endif %}
 
 	<form id="form-{{ id }}" action="{{ target|raw }}" method="post">
 		{% for parameter, value in parameters %}
@@ -33,7 +39,7 @@
  # Modal window macro
  #}
 
-{% macro modal(link, icon, snippet, title, parameters) %}
+{% macro modal(link, type, icon, snippet, title, parameters) %}
 	{% set id = env.template.get_unique %}
 
 	{# Set default values for required parameters #}
@@ -67,7 +73,16 @@
 		{% set icon = '<img src="' ~ icon ~ '" title="' ~ icon ~ '" alt="' ~ icon ~ '" />' %}
 	{% endif %}
 
-	<a href="#" onclick="javascript: $('#dialog-{{ id }}').dialog('open'); return false;">{{ icon|raw }} {{ link|raw }}</a>
+	{% if type == 'link' %}
+		<a href="#" onclick="javascript: $('#dialog-{{ id }}').dialog('open'); return false;">
+			{{ icon|raw }} {{ link|raw }}
+		</a>
+	{% elseif type == 'button' %}
+		<button onclick="javascript:$('#dialog-{{ id }}').dialog('open'); return false;">
+			{{ icon|raw }} {{ link|raw }}
+		</button>
+	{% endif %}
+
 {% endmacro %}
 
 
@@ -75,7 +90,7 @@
  # Confirm macro
  #}
 
-{% macro confirm(link, icon, target, message, parameters) %}
+{% macro confirm(link, type, icon, target, message, parameters) %}
 	{% set id = env.template.get_unique() %}
 
 	<script type="text/javascript">
@@ -112,7 +127,13 @@
 		{% set icon = '<img src="' ~ icon ~ '" title="' ~ icon ~ '" alt="' ~ icon ~ '" />' %}
 	{% endif %}
 
-	<a href="{{ target|raw }}" onclick="javascript: $('#dialog-{{ id }}').dialog('open'); return false;">
-		{{ icon|raw }} {{ link|raw }}
-	</a>
+	{% if type == 'link' %}
+		<a href="{{ target|raw }}" onclick="javascript: $('#dialog-{{ id }}').dialog('open'); return false;">
+			{{ icon|raw }} {{ link|raw }}
+		</a>
+	{% elseif type == 'button' %}
+		<button onclick="javascript: $('#dialog-{{ id }}').dialog('open'); return false;">
+			{{ icon|raw }} {{ link|raw }}
+		</button>
+	{% endif %}
 {% endmacro %}
