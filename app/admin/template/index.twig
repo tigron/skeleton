@@ -5,14 +5,17 @@
 
 
 	<h2>Env</h2>
+	<h3>env.post</h3>
 	{{ env.post|print_r }}
+	<h3>env.get</h3>
+	{{ env.get|print_r }}
 
 	<h2>Routing</h2>
 	<p>
 		<a href="/index?action=edit&id=5">Test match all variables</a><br />
 		<a href="/index?action=list">Test match one variable</a><br />
-		<a href="/index">Test match no variables</a>
-		<a href="/index?action=demo_redirect">Redirect</a>
+		<a href="/index">Test match no variables</a><br />
+		<a href="/index?action=demo_redirect">Test redirect with rewrite</a>
 	</p>
 
 
@@ -23,9 +26,9 @@
 	} %}
 
 	<ul>
-		<li>Link: {{ base.link('link', '/icon/add.png', '/index?action=link&id=1', parameters) }}</li>
-		<li>Modal: {{ base.modal('link', '/icon/add.png', 'demo', 'Show snippet!', parameters) }}</li>
-		<li>Confirm: {{ base.confirm('link', '/icon/add.png', '/index?action=confirm&id=2', 'Are you sure you want to confirm?', parameters) }}</li>
+		<li>Link: {{ base.link('click me', 'button', '/icon/add.png', '/index?action=link&id=1', parameters) }}</li>
+		<li>Modal: {{ base.modal('click me', 'button', '/icon/add.png', 'demo', 'Show snippet!', parameters) }}</li>
+		<li>Confirm: {{ base.confirm('click me', 'button', '/icon/add.png', '/index?action=confirm&id=2', 'Are you sure you want to confirm?', parameters) }}</li>
 	</ul>
 
 
@@ -52,7 +55,7 @@
 
 		<a href="/1.jpg" class="lightbox" rel="myothergallery" title="Test picture one REL 2"><img src="/1_thumb.jpg"></a>
 		<a href="/2.jpg" class="lightbox" rel="myothergallery" title="Demo of text REL 2"><img src="/2_thumb.jpg"></a>
-		<a href="/3.jpg" class="lightbox" rel="myothergallery" title="This is the content of the title attribute REL 2"><img src="/3_thumb.jpg"></a>
-		<a href="/4.jpg" class="lightbox" rel="myothergallery" title="Demo title attribute REL 2"><img src="/4_thumb.jpg"></a>
+		<a href="/3.jpg" class="lightbox" title="This is the content of the title attribute REL 2"><img src="/3_thumb.jpg"></a>
+		<a href="/4.jpg" class="lightbox" title="Demo title attribute REL 2"><img src="/4_thumb.jpg"></a>
 	</p>
 </div>

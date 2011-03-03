@@ -1,6 +1,6 @@
 -- MySQL dump 10.13  Distrib 5.1.49, for debian-linux-gnu (i486)
 --
--- Host: localhost    Database: reli
+-- Host: localhost
 -- ------------------------------------------------------
 -- Server version	5.1.49-3
 

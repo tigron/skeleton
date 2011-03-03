@@ -20,13 +20,14 @@ class Web_Media {
 			'gif',
 			'jpg',
 			'jpeg',
-			'png'
+			'png',
+			'ico',
 		),
 		'css' => array(
-			'css'
+			'css',
 		),
 		'javascript' => array(
-			'js'
+			'js',
 		),
 	);
 
@@ -171,10 +172,13 @@ class Web_Media {
 		switch ($extension) {
 			case 'htm' :
 			case 'html': $mime_type = 'text/html';
-			              break;
+			             break;
 
 			case 'css' : $mime_type = 'text/css';
-			              break;
+			             break;
+
+			case 'ico' : $mime_type = 'image/x-icon';
+			             break;
 
 			case 'js'  : $mime_type = 'text/javascript';
 			             break;
