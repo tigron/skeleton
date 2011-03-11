@@ -45,6 +45,7 @@ foreach ($applications as $application) {
 		)
 	);
 
+	$twig->addExtension(new Twig_Extensions_Extension_Tigron());
 	$twig->addExtension(
 		new Twig_Extensions_Extension_I18n(
 			array(
@@ -53,6 +54,8 @@ foreach ($applications as $application) {
 			)
 		)
 	);
+
+	$twig->addGlobal('base', $twig->loadTemplate('base.macro'));
 
 	// iterate over all the templates
 	foreach ($directories as $directory) {
