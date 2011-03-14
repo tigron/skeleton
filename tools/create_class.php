@@ -17,12 +17,12 @@ if (!isset($argv[1])){
 	die();
 }
 
-$table = $argv[1];
+$table = strtolower($argv[1]);
 
 $db = Database::Get();
 
 $fields = $db->listTableFields(strtolower($table));
-$empty_class = file_get_contents('empty_class.txt');
+$empty_class = file_get_contents(dirname(__FILE__) . '/empty_class.txt');
 $empty_class = str_replace('%%table_name%%', $table, $empty_class);
 
 $parts = explode('_', $table);
