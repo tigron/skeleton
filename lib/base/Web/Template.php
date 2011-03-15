@@ -54,6 +54,13 @@ class Web_Template {
 	private $unique_id = 1;
 
 	/**
+	 * Surrounding
+	 *
+	 * @var bool $surrounding
+	 */
+	public $surrounding = true;
+
+	/**
 	 * Constructor
 	 */
 	public function __construct() {
@@ -84,20 +91,6 @@ class Web_Template {
 		);
 
 		$this->twig->addGlobal('base', $this->twig->loadTemplate('base.macro'));
-	}
-
-	/**
-	 * Get function, returns Template object
-	 *
-	 * @return Twig
-	 * @access public
-	 */
-	public static function get() {
-		if (!isset(self::$template) OR self::$template == null) {
-			self::$template = new self();
-		}
-
-		return self::$template;
 	}
 
 	/**
@@ -162,14 +155,32 @@ class Web_Template {
 
 		$this->twig->addGlobal('env', $variables);
 
-		$twig_template = $this->twig->loadTemplate('header.twig');
-		echo Util::reverse_rewrite_html($twig_template->render($this->parameters));
+		if ($this->surrounding) {
+			$twig_template = $this->twig->loadTemplate('header.twig');
+			echo Util::reverse_rewrite_html($twig_template->render($this->parameters));
+		}
 
 		$twig_template = $this->twig->loadTemplate($template);
 		echo Util::reverse_rewrite_html($twig_template->render($this->parameters));
 
-		$twig_template = $this->twig->loadTemplate('footer.twig');
-		echo Util::reverse_rewrite_html($twig_template->render($this->parameters));
+		if ($this->surrounding) {
+			$twig_template = $this->twig->loadTemplate('footer.twig');
+			echo Util::reverse_rewrite_html($twig_template->render($this->parameters));
+		}
+	}
+
+	/**
+	 * Get function, returns Template object
+	 *
+	 * @return Twig
+	 * @access public
+	 */
+	public static function get() {
+		if (!isset(self::$template) OR self::$template == null) {
+			self::$template = new self();
+		}
+
+		return self::$template;
 	}
 }
 ?>
