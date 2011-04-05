@@ -102,9 +102,10 @@ class Web_Session {
 		if ($url[0] == '/') {
 			$url = substr($url, 1);
 		}
+
 		try {
-			$url = Util::reverse_rewrite_link($url);
-		} catch (Exception $e) {	}
+			$url = Util::rewrite_reverse_link($url);
+		} catch (Exception $e) { }
 
 		header('Location: /'.$url);
 		echo 'Redirecting to : '.$url;

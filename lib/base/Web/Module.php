@@ -8,6 +8,8 @@
  * @version $Id$
  */
 
+require_once LIB_PATH . '/base/Web/Session/Sticky.php';
+
 abstract class Web_Module {
 
 	/**
@@ -33,7 +35,11 @@ abstract class Web_Module {
 		$template = Web_Template::Get();
 		$module = get_class($this);
 		$module = str_replace('module_', '', strtolower($module));
-		$template->assign('module', $module);
+		$template->add_env('module', $module);
+
+		Web_Session_Sticky::clear($module);
+		$session = Web_Session_Sticky::Get();
+		$session->module = $module;
 
 		if (isset($_REQUEST['action']) AND is_callable(array($this, 'display_'.$_REQUEST['action']))) {
 			$template->assign('action', $_REQUEST['action']);
@@ -45,6 +51,13 @@ abstract class Web_Module {
 		if ($this->template != null) {
 			$template->display($this->template);
 		}
+	}
+
+	/**
+	 * Pre-admin function
+	 */
+	private function pre_admin() {
+		// Example pre_admin method
 	}
 
 	/**
