@@ -137,3 +137,82 @@
 		</button>
 	{% endif %}
 {% endmacro %}
+
+{## 
+ # Confirm macro with AJAX callback
+ #}
+
+{% macro confirm_ajax(link, type, icon, target, message, parameters, callback_function) %}
+	{% set id = env.template.get_unique() %}
+
+	<script type="text/javascript">
+		$(function() {
+			$( "#dialog-{{ id }}" ).dialog({
+				resizable: false,
+				autoOpen: false,
+				minWidth: 600,
+				modal: true,
+				title: '{{ 'Confirm'|trans }}',
+				buttons: {
+					'{{ 'Confirm'|trans }}': function() {
+						$.get('{{ target|raw }}', {
+						{% for parameter, value in parameters %}
+							{{ parameter }}: '{{ value }}'{% if loop.last == false %},{% endif %}
+						{% endfor %}
+						}
+						);
+						$( this ).dialog( "close" );
+						{% if callback_function != '' %}
+							{{ callback_function }};
+						{% endif %}
+					},
+					'{{ 'Cancel'|trans }}': function() {
+						$( this ).dialog( "close" );
+					},
+				},
+			});
+		});
+	</script>
+
+	<div id="dialog-{{ id }}">
+		{{ message }}
+	</div>
+
+	{% if icon != '' %}
+		{% set icon = '<img src="' ~ icon ~ '" title="' ~ icon ~ '" alt="' ~ icon ~ '" />' %}
+	{% endif %}
+
+	{% if type == 'link' %}
+		<a href="{{ target|raw }}" onclick="javascript: $('#dialog-{{ id }}').dialog('open'); return false;">
+			{{ icon|raw }} {{ link|raw }}
+		</a>
+	{% elseif type == 'button' %}
+		<button onclick="javascript: $('#dialog-{{ id }}').dialog('open'); return false;">
+			{{ icon|raw }} {{ link|raw }}
+		</button>
+	{% endif %}
+{% endmacro %}
+
+{##
+ # Errors
+ #}
+{% macro errors(errors) %}
+	<div class="error">
+		{% if errors|count == 1 %}
+			{% for field, error in errors %}
+				{{ 'The field %field% was not filled in correctly'|replace({'%field%': field})|trans }}
+			{% endfor %}
+		{% else %}
+			{{ 'The following fields were not filled in correctly'|trans }}:
+			{% for field, error in errors %}
+				{% if loop.last %}
+					{% trans "and" %}
+				{% else %}
+					{% if loop.first %}
+					{% else %}, 
+					{% endif %}
+				{% endif %} {{ field }}
+			{% endfor %}
+		{% endif %}
+	</div>
+{% endmacro %}
