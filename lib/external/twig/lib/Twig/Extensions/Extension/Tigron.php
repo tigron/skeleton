@@ -18,6 +18,9 @@ class Twig_Extensions_Extension_Tigron extends Twig_Extension
     {
         return array(
             'print_r' => new Twig_Filter_Function('twig_print_r_filter', array('is_safe' => array('html'))),
+            'nl2br' => new Twig_Filter_Function('twig_nl2br_filter', array('is_safe' => array('html'))),
+            'count' => new Twig_Filter_Function('twig_count_filter', array('is_safe' => array('html'))),
+            'serialize' => new Twig_Filter_Function('twig_serialize_filter', array('is_safe' => array('html'))),
         );
     }
 
@@ -34,5 +37,20 @@ class Twig_Extensions_Extension_Tigron extends Twig_Extension
 
 function twig_print_r_filter($value)
 {
-	return '<pre>' . print_r($value, true) . '</pre>';
+    return '<pre>' . print_r($value, true) . '</pre>';
+}
+
+function twig_nl2br_filter($value)
+{
+    return nl2br($value);
+}
+
+function twig_count_filter($value)
+{
+    return count($value);
+}
+
+function twig_serialize_filter($value)
+{
+    return serialize($value);
 }
