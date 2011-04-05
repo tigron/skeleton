@@ -171,6 +171,24 @@ class Country {
 	}
 
 	/**
+	 * Get by ISO2
+	 *
+	 * @access public
+	 * @param string $iso2
+	 * @return Country $country
+	 */
+	public static function get_by_iso2($iso2) {
+		$db = Database::Get();
+		$id = $db->getOne('SELECT id FROM country WHERE ISO2=?', array($iso2));
+
+		if ($id == null) {
+			throw new Exception('No such country');
+		} else {
+			return Country::get_by_id($id);
+		}
+	}
+
+	/**
 	 * Get grouped
 	 *
 	 * @access public
