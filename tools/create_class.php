@@ -17,6 +17,12 @@ if (!isset($argv[1])){
 	die();
 }
 
+if(isset($argv[2]) AND $argv[2] == 'force') {
+	$force = true;
+} else {
+	$force = false;
+}
+
 $table = strtolower($argv[1]);
 
 $db = Database::Get();
@@ -36,7 +42,12 @@ if (!file_exists($directory)) {
 	mkdir($directory, 0755, true);
 }
 $filename = LIB_PATH . '/model/' . implode('/', $parts) . '.php';
-file_put_contents($filename, $empty_class);
-echo 'Generating ' . $filename . "\n";
+
+if (file_exists($filename) AND !$force) {
+	echo 'File exists, use "create_class.php classname force" to force overwrite' . "\n";
+} else {
+	file_put_contents($filename, $empty_class);
+	echo 'Generating ' . $filename . "\n";
+}
 
 ?>
