@@ -40,7 +40,7 @@ foreach ($applications as $application) {
 	// force auto-reload to always have the latest version of the template
 	$twig = new Twig_Environment(
 		$loader, array(
-			'cache' => TMP_PATH . '/cache/' . $application,
+			'cache' => TMP_PATH . '/twig/' . $application,
 			'auto_reload' => true
 		)
 	);
@@ -62,7 +62,7 @@ foreach ($applications as $application) {
 		foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($directory), RecursiveIteratorIterator::LEAVES_ONLY) as $file) {
 			$file = str_replace($directory.'/', '', $file);
 
-			if (strpos($file, '.') == 0) {
+			if (strrpos($file, '.') ==  (strlen($file)-1)) {
 				continue;
 			}
 
@@ -123,15 +123,15 @@ foreach ($applications as $application) {
  * them.
  */
 function translate_application($application) {
-	$files = scandir(TMP_PATH . '/cache/' . $application);
+	$files = scandir(TMP_PATH . '/twig/' . $application);
 
 	foreach ($files as $file) {
 		if ($file[0] == '.') {
 			continue;
 		}
 
-		if (is_dir(TMP_PATH . '/cache/' . $application . '/' . $file)) {
-			translate_directory(TMP_PATH . '/cache/' . $application . '/' . $file, $application);
+		if (is_dir(TMP_PATH . '/twig/' . $application . '/' . $file)) {
+			translate_directory(TMP_PATH . '/twig/' . $application . '/' . $file, $application);
 			continue;
 		}
 	}
@@ -206,7 +206,7 @@ function translate_file($filename, $application) {
 			$strings[] = stripslashes(str_replace('\t', "\t", $string));
 		}
 
-		$current_strings = Util::load_po(PO_PATH . '/' . $language->name_short . '/' . $application . '.po');
+		$current_strings = Util::po_load(PO_PATH . '/' . $language->name_short . '/' . $application . '.po');
 		$untranslated = array();
 
 		foreach ($strings as $string) {
@@ -215,7 +215,7 @@ function translate_file($filename, $application) {
 
 		$strings = array_merge($current_strings, $untranslated);
 		asort($strings);
-		Util::save_po(PO_PATH . '/' . $language->name_short . '/' . $application . '.po', $strings);
+		Util::po_save(PO_PATH . '/' . $language->name_short . '/' . $application . '.po', $strings);
 	}
 }
 ?>

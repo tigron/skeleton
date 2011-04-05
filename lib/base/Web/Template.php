@@ -157,15 +157,15 @@ class Web_Template {
 
 		if ($this->surrounding) {
 			$twig_template = $this->twig->loadTemplate('header.twig');
-			echo Util::reverse_rewrite_html($twig_template->render($this->parameters));
+			echo Util::rewrite_reverse_html($twig_template->render($this->parameters));
 		}
 
 		$twig_template = $this->twig->loadTemplate($template);
-		echo Util::reverse_rewrite_html($twig_template->render($this->parameters));
+		echo Util::rewrite_reverse_html($twig_template->render($this->parameters));
 
 		if ($this->surrounding) {
 			$twig_template = $this->twig->loadTemplate('footer.twig');
-			echo Util::reverse_rewrite_html($twig_template->render($this->parameters));
+			echo Util::rewrite_reverse_html($twig_template->render($this->parameters));
 		}
 	}
 
