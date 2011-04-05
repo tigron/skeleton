@@ -132,7 +132,7 @@ class Translation {
 			}
 		}
 
-		$po_strings = Util::load_po(PO_PATH . '/' . $this->language->name_short . '/' . $application . '.po');
+		$po_strings = Util::po_load(PO_PATH . '/' . $this->language->name_short . '/' . $application . '.po');
 
 		if (!file_exists(TMP_PATH . '/languages/' . $this->language->name_short)) {
 			mkdir(TMP_PATH . '/languages/' . $this->language->name_short, 0755, true);
