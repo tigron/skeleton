@@ -17,7 +17,7 @@
  */
 class Twig_Environment
 {
-    const VERSION = '1.0.0-RC1';
+    const VERSION = '1.0.0-RC2';
 
     protected $charset;
     protected $loader;
@@ -267,6 +267,19 @@ class Twig_Environment
     public function getTemplateClassPrefix()
     {
         return $this->templateClassPrefix;
+    }
+
+    /**
+     * Renders a template.
+     *
+     * @param string $name    The template name
+     * @param array  $context An array of parameters to pass to the template
+     *
+     * @return string The rendered template
+     */
+    public function render($name, array $context = array())
+    {
+        return $this->loadTemplate($name)->render($context);
     }
 
     /**
@@ -739,8 +752,8 @@ class Twig_Environment
     /**
      * Registers a Function.
      *
-     * @param string                 $name    The function name
-     * @param Twig_FunctionInterface $visitor A Twig_FunctionInterface instance
+     * @param string                 $name     The function name
+     * @param Twig_FunctionInterface $function A Twig_FunctionInterface instance
      */
     public function addFunction($name, Twig_FunctionInterface $function)
     {

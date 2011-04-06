@@ -49,7 +49,7 @@ of languages. As Twig syntax is quite similar to Jinja and Django templates,
 IDEs that support these two Python templating systems should also support
 Twig.
 
-If you use Textmate, you can use the `Jinja`_ bundle or the `Django`_ one.
+If you use Textmate, you can use the `Twig`_ bundle.
 
 If you use Vim, you can use the `Jinja syntax plugin`_.
 
@@ -275,7 +275,8 @@ template. This limitation exists because a block tag works in "both"
 directions. That is, a block tag doesn't just provide a hole to fill - it also
 defines the content that fills the hole in the *parent*. If there were two
 similarly-named ``{% block %}`` tags in a template, that template's parent
-wouldn't know which one of the blocks' content to use.
+wouldn't know which one of the blocks' content to use.  Block names should
+consist of alphanumeric characters, and underscores. Dashes are not permitted.
 
 If you want to print a block multiple times you can however use the
 ``block`` function:
@@ -724,7 +725,7 @@ You can also chain filters:
       <strong>SOME TEXT</strong>
     {% endfilter %}
 
-It should returns ``&lt;strong&gt;some text&lt;/strong&gt;``.
+It should return ``&lt;strong&gt;some text&lt;/strong&gt;``.
 
 Assignments
 ~~~~~~~~~~~
@@ -744,7 +745,7 @@ the ``set`` tag and can have multiple targets:
 
     {% set foo, bar = 'foo', 'bar' %}
 
-The ``set`` tag can also be used to 'capture' chunks of HTML:
+The ``set`` tag can also be used to 'capture' chunks of text:
 
 .. code-block:: jinja
 
@@ -753,6 +754,11 @@ The ``set`` tag can also be used to 'capture' chunks of HTML:
         ...
       </div>
     {% endset %}
+
+.. caution::
+
+    If you enable automatic output escaping, Twig will only consider the
+    content to be safe when capturing chunks of text.
 
 Extends
 ~~~~~~~
@@ -1243,7 +1249,7 @@ the last filter applied to it.
 
 .. code-block:: jinja
 
-    {% autoescape true }
+    {% autoescape true %}
       {{ var|raw }} {# var won't be escaped #}
     {% endautoescape %}
 
@@ -1428,7 +1434,6 @@ Twig can be easily extended. If you are looking for new tags or filters, have
 a look at the Twig official extension repository:
 http://github.com/fabpot/Twig-extensions.
 
-.. _`Jinja`:               http://jinja.pocoo.org/2/documentation/integration
-.. _`Django`:              http://code.djangoproject.com/wiki/TextMate
+.. _`Twig`:                https://github.com/Anomareh/PHP-Twig.tmbundle
 .. _`Jinja syntax plugin`: http://jinja.pocoo.org/2/documentation/integration
 .. _`DateTime`:            http://www.php.net/manual/en/datetime.construct.php
