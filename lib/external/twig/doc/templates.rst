@@ -49,9 +49,13 @@ of languages. As Twig syntax is quite similar to Jinja and Django templates,
 IDEs that support these two Python templating systems should also support
 Twig.
 
-If you use Textmate, you can use the `Twig`_ bundle.
+If you use *Textmate*, you can install the `Twig`_ bundle.
 
-If you use Vim, you can use the `Jinja syntax plugin`_.
+If you use *Vim*, you can install the `Jinja syntax plugin`_.
+
+If you use *Netbeans*, you can install the `Twig syntax plugin`_.
+
+*PhpStorm* 2.1 and up has native Twig support.
 
 Variables
 ---------
@@ -144,6 +148,9 @@ add information for other template designers or yourself:
 Whitespace Control
 ------------------
 
+.. versionadded:: 1.1
+    Tag level whitespace control was added in Twig 1.1.
+
 The first newline after a template tag is removed automatically (like in PHP.)
 Whitespace is not further modified by the template engine, so each whitespace
 (spaces, tabs, newlines etc.) is returned unchanged.
@@ -159,6 +166,32 @@ Use the ``spaceless`` tag to remove whitespace between HTML tags:
     {% endspaceless %}
 
     {# output will be <div><strong>foo</strong></div> #}
+
+In addition to the spaceless tag you can also control whitespace on a per tag 
+level.  By using the whitespace control modifier on your tags you can trim
+leading and or trailing whitespace from any tag type:
+
+.. code-block:: jinja
+
+    {% set value = 'no spaces' %}
+    {#- No leading/trailing whitespace -#}
+    {%- if true -%}
+        {{- value -}}
+    {%- endif -%}
+
+    {# output 'no spaces' #}
+
+The above sample shows the default whitespace control modifier, and how you can
+use it to remove whitespace around tags.  Trimming space will consume all whitespace
+for that side of the tag.  It is possible to use whitespace trimming on one side
+of a tag:
+
+.. code-block:: jinja
+
+    {% set value = 'no spaces' %}
+    <li>    {{- value }}    </li>
+
+    {# outputs '<li>no spaces    </li>' #}
 
 Escaping
 --------
@@ -512,14 +545,10 @@ The ``..`` operator can take any expression at both sides:
       * {{ letter }}
     {% endfor %}
 
-If you need a step different from 1, you can use the ``range`` function
-instead:
+.. tip:
 
-.. code-block:: jinja
-
-    {% for i in range(0, 10, 2) %}
-      * {{ i }}
-    {% endfor %}
+    If you need a step different from 1, you can use the ``range`` function
+    instead.
 
 Inside of a ``for`` loop block you can access some special variables:
 
@@ -1104,6 +1133,12 @@ word "now":
 
     {{ "now"|date("m/d/Y") }}
 
+To escape words and characters in the date format use ``\\`` in front of each character:
+
+.. code-block:: jinja
+
+    {{ post.published_at|date("F jS \\a\\t g:ia") }}
+
 ``format``
 ~~~~~~~~~~
 
@@ -1434,6 +1469,109 @@ Twig can be easily extended. If you are looking for new tags or filters, have
 a look at the Twig official extension repository:
 http://github.com/fabpot/Twig-extensions.
 
+Horizontal Reuse
+----------------
+
+.. versionadded:: 1.1
+    Horizontal reuse was added in Twig 1.1.
+
+.. note::
+
+    Horizontal reuse is an advanced Twig feature that is hardly ever needed in
+    regular templates. It is mainly used by projects that need to make
+    template blocks reusable without using inheritance.
+
+Template inheritance is one of the most powerful Twig's feature but it is
+limited to single inheritance; a template can only extend one other template.
+This limitation makes template inheritance simple to understand and easy to
+debug:
+
+.. code-block:: jinja
+
+    {% extends "base.html" %}
+
+    {% block title %}{% endblock %}
+    {% block content %}{% endblock %}
+
+Horizontal reuse is a way to achieve the same goal as multiple inheritance,
+but without the associated complexity:
+
+.. code-block:: jinja
+
+    {% extends "base.html" %}
+
+    {% use "blocks.html" %}
+
+    {% block title %}{% endblock %}
+    {% block content %}{% endblock %}
+
+The ``use`` statement tells Twig to import the blocks defined in
+```blocks.html`` into the current template (it's like macros, but for blocks):
+
+.. code-block:: jinja
+
+    # blocks.html
+    {% block sidebar %}{% endblock %}
+
+In this example, the ``use`` statement imports the ``sidebar`` block into the
+main template. The code is mostly equivalent to the following one (the
+imported blocks are not outputted automatically):
+
+.. code-block:: jinja
+
+    {% extends "base.html" %}
+
+    {% block sidebar %}{% endblock %}
+    {% block title %}{% endblock %}
+    {% block content %}{% endblock %}
+
+.. note::
+
+    The ``use`` tag only imports a template if it does not extend another
+    template, if it does not define macros, and if the body is empty. But it
+    can *use* other templates.
+
+.. note::
+
+    Because ``use`` statements are resolved independently of the context
+    passed to the template, the template reference cannot be an expression.
+
+The main template can also override any imported block. If the template
+already defines the ``sidebar`` block, then the one defined in ``blocks.html``
+is ignored. To avoid name conflicts, you can rename imported blocks:
+
+.. code-block:: jinja
+
+    {% extends "base.html" %}
+
+    {% use "blocks.html" with sidebar as base_sidebar %}
+
+    {% block sidebar %}{% endblock %}
+    {% block title %}{% endblock %}
+    {% block content %}{% endblock %}
+
+Renaming also allows you to simulate inheritance by calling the "parent" block
+(like what you would have done with ``parent()``):
+
+.. code-block:: jinja
+
+    {% extends "base.html" %}
+
+    {% use "blocks.html" with sidebar as parent_sidebar %}
+
+    {% block sidebar %}
+        {{ block('parent_sidebar') }}
+    {% endblock %}
+
+    {% block title %}{% endblock %}
+    {% block content %}{% endblock %}
+
+.. note::
+
+    You can use as many ``use`` statements as you want in any given template.
+    If two imported templates define the same block, the latest one wins.
+
 .. _`Twig`:                https://github.com/Anomareh/PHP-Twig.tmbundle
 .. _`Jinja syntax plugin`: http://jinja.pocoo.org/2/documentation/integration
+.. _`Twig syntax plugin`:  https://github.com/blogsh/Twig-netbeans
 .. _`DateTime`:            http://www.php.net/manual/en/datetime.construct.php

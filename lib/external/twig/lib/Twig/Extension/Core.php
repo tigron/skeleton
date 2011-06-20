@@ -23,6 +23,7 @@ class Twig_Extension_Core extends Twig_Extension
             new Twig_TokenParser_Extends(),
             new Twig_TokenParser_Include(),
             new Twig_TokenParser_Block(),
+            new Twig_TokenParser_Use(),
             new Twig_TokenParser_Filter(),
             new Twig_TokenParser_Macro(),
             new Twig_TokenParser_Import(),
@@ -126,6 +127,7 @@ class Twig_Extension_Core extends Twig_Extension
             'defined'     => new Twig_Test_Function('twig_test_defined'),
             'sameas'      => new Twig_Test_Function('twig_test_sameas'),
             'none'        => new Twig_Test_Function('twig_test_none'),
+            'null'        => new Twig_Test_Function('twig_test_none'),
             'divisibleby' => new Twig_Test_Function('twig_test_divisibleby'),
             'constant'    => new Twig_Test_Function('twig_test_constant'),
             'empty'       => new Twig_Test_Function('twig_test_empty'),
@@ -202,7 +204,12 @@ class Twig_Extension_Core extends Twig_Extension
 function twig_date_format_filter($date, $format = 'F j, Y H:i')
 {
     if (!$date instanceof DateTime) {
-        $date = new DateTime((ctype_digit($date) ? '@' : '').$date);
+        if (ctype_digit((string) $date)) {
+            $date = new DateTime('@'.$date);
+            $date->setTimezone(new DateTimeZone(date_default_timezone_get()));
+        } else {
+            $date = new DateTime($date);
+        }
     }
 
     return $date->format($format);
@@ -495,5 +502,5 @@ function twig_test_defined($name, $context)
 
 function twig_test_empty($value)
 {
-    return null === $value || false === $value || '' === (string) $value;
+    return false === $value || (empty($value) && '0' != $value);
 }
