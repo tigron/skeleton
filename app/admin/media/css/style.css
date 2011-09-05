@@ -10,3 +10,56 @@ body {
 	margin-left: 1em;
 	margin-top: 1em;
 }
+
+button {
+    background-color:#f5f5f5;
+    border:1px solid #dedede;
+    border-top:1px solid #eee;
+    border-left:1px solid #eee;
+
+    font-size: 100%;
+    line-height: 120%;
+    text-decoration: none;
+    font-weight: bold;
+    color: #565656;
+    cursor: pointer;
+    width: auto;
+    overflow: visible;
+
+    margin:0 7px 0 0;
+    padding:4px 8px 4px 6px; /* Firefox */
+}
+
+button > img, a > img {
+	border: medium none;
+	height: 16px;
+	margin: 0 3px -3px 0 !important;
+	padding: 0;
+	width: 16px;	
+}
+
+button:hover {
+	background-color: #dff4ff;
+	border-color: #c2e1ef;
+	color: #336699;
+}
+
+button.positive {
+	color: #529214;
+}
+
+button.positive:hover {
+	border-color: #c6d880;
+	background-color: #e6efc2;
+}
+
+button.negative {
+	color: #d12f19;
+}
+
+button.negative:hover {
+	border-color: #fbc2c4;
+	background-color: #fbe3e4;
+}
+
+
