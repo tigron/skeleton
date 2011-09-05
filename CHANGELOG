@@ -1,9 +1,19 @@
+* 0.0.20110905 - Massive progress
+
+  * Add routing functionality with clean URL support
+  * Add jQuery UI support
+  * Add sticky session support
+  * Add country support by default
+  * Split 'Util' class in subclasses
+  * Cosmetic changes (path cleanup)
+  * Updates (jQuery, Twig, ...)
+
 * 0.0.20110217 - Initial version
 
-First version, cleaned up
+ First version, cleaned up
 
- * Initial version
- * Added Twig instead of Smarty
- * Got rid of Gettext, we now use PO files compiled to PHP arrays (x10 speed improvement)
- * Config contains routes which can be used to define clean URL schemes
- * URL can now contain language: http://application/nl/module
+  * Initial version
+  * Added Twig instead of Smarty
+  * Got rid of Gettext, we now use PO files compiled to PHP arrays (x10 speed improvement)
+  * Config contains routes which can be used to define clean URL schemes
+  * URL can now contain language: http://application/nl/module
