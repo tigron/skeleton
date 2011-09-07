@@ -33,6 +33,7 @@ abstract class Web_Module {
 		}
 
 		$template = Web_Template::Get();
+		$template->surrounding = false;
 		$module = get_class($this);
 		$module = str_replace('module_', '', strtolower($module));
 		$template->add_env('module', $module);

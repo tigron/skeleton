@@ -1,7 +1,6 @@
 <?php
 /**
  * Template class
- * Extends the Smarty object
  *
  * @package %%PACKAGE%%
  * @author Christophe Gosiau <christophe@tigron.be>
@@ -65,12 +64,17 @@ class Web_Template {
 	 */
 	public function __construct() {
 		Twig_Autoloader::register();
-		$loader = new Twig_Loader_Filesystem(
-			array(
-				APP_PATH . '/template',
-				APP_PATH . '/macro',
-			)
-		);
+		
+		$loader_paths = array();
+		if (file_exists(APP_PATH . '/macro')) {
+			$loader_paths[] = APP_PATH . '/macro';
+		}
+
+		if (file_exists(APP_PATH . '/template')) {
+			$loader_paths[] = APP_PATH . '/template';
+		}
+
+		$loader = new Twig_Loader_Filesystem($loader_paths);
 
 		$this->twig = new Twig_Environment(
 			$loader,
@@ -90,7 +94,9 @@ class Web_Template {
 			)
 		);
 
-		$this->twig->addGlobal('base', $this->twig->loadTemplate('base.macro'));
+		if (file_exists(APP_PATH . '/macro/base.macro')) {
+			$this->twig->addGlobal('base', $this->twig->loadTemplate('base.macro'));
+		}
 	}
 
 	/**
@@ -138,7 +144,7 @@ class Web_Template {
 	 * @access public
 	 */
 	public function display($template) {
-		Translation::set_language(Language::Get());
+		Translation::configure(Language::Get(), APP_NAME);
 
 		$variables = array_merge(
 			array(
