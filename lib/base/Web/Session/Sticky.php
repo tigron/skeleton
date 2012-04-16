@@ -114,22 +114,5 @@ class Web_Session_Sticky {
 		return self::$sticky_session;
 	}
 
-	/**
-	 * Sticky clear
-	 *
-	 * @access public
-	 * @param string $module
-	 */
-	public static function clear($module) {
-		if (!isset($_SESSION['system'])) {
-			return;
-		}
-		foreach ($_SESSION['system'] as $module_name => $variables) {
-			if ($module_name == $module) {
-				continue;
-			}
-			unset($_SESSION['system'][$module_name]);
-		}
-	}
 }
 ?>

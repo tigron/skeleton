@@ -74,6 +74,11 @@ class Util {
     public static function mime_type($file)  {
 		$handle = finfo_open(FILEINFO_MIME);
 		$mime_type = finfo_file($handle,$file);
+
+		if (strpos($mime_type, ';')) {
+			$mime_type = preg_replace('/;.*/', ' ', $mime_type);
+		}
+
 		return $mime_type;
     }
 
@@ -107,6 +112,29 @@ class Util {
 		}
 
 		return $name;
+	}
+
+	/**
+	 * Sanitize strings to ascii-only URL safe strings
+	 *
+	 * @access public
+	 * @param string $string The string to sanitize
+	 * @return string
+	 */
+	public static function sanitize_url($string) {
+		$string = strtolower($string);
+		$string = self::sanitize_filename($string);
+
+		$search = explode(",","ç,æ,œ,á,é,í,ó,ú,à,è,ì,ò,ù,ä,ë,ï,ö,ü,ÿ,â,ê,î,ô,û,å,e,i,ø,u");
+		$replace = explode(",","c,ae,oe,a,e,i,o,u,a,e,i,o,u,a,e,i,o,u,y,a,e,i,o,u,a,e,i,o,u");
+		$string = str_replace($search, $replace, $string);
+
+		$string = preg_replace('/[^(\x20-\x7F)]*/','', $string);
+	    $string = str_replace('_', '', $string);
+	    $string = str_replace('-', '', $string);
+	    $string = str_replace('.', '', $string);
+
+		return $string;
 	}
 
 	/**

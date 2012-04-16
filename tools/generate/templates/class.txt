@@ -5,12 +5,13 @@
  * @package %%Package%%
  * @author Christophe Gosiau <christophe@tigron.be>
  * @author Gerry Demaret <gerry@tigron.be>
+ * @author David Vandemaele <david@tigron.be>
  * @version $Id$
  */
 
 class %%classname%% {
 	/**
-	 * @var Int $id
+	 * @var int $id
 	 * @access public
 	 */
 	public $id;
@@ -163,11 +164,11 @@ class %%classname%% {
 	public static function get_all() {
 		$db = Database::Get();
 		$ids = $db->getCol('SELECT id FROM %%table_name%%', array());
-		$%%table_name%%s = array();
+		$items = array();
 		foreach ($ids as $id) {
-			$%%table_name%%s[] = %%classname%%::get_by_id($id);
+			$items[] = %%classname%%::get_by_id($id);
 		}
-		return $%%table_name%%s;
+		return $items;
 	}
 }
 ?>

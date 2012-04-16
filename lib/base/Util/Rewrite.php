@@ -59,6 +59,8 @@ class Util_Rewrite {
 
 		$params = array();
 		if (isset($url['query'])) {
+			// Allow &amp; instead of &
+			$url['query'] = str_replace('&amp;', '&', $url['query']);
 			parse_str($url['query'], $params);
 		}
 
@@ -125,7 +127,14 @@ class Util_Rewrite {
 				$querystring .= '/' . $params[$correct_variable];
 			}
 		}
-		return $language->name_short . $querystring;
+
+		// fragment (after '#') available?
+		if (isset($url['fragment'])) {
+			return $language->name_short . $querystring . '#' . $url['fragment'];
+		} else {
+			return $language->name_short . $querystring;
+		}
+
 	}
 }
 ?>

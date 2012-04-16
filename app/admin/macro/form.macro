@@ -1,0 +1,16 @@
+{% macro select_country(countries, name, selected) %}
+	<select name="{{ name }}">
+	{% for group in countries|keys  %}
+		{% if group == 'european' %}
+		    <optgroup label="{% trans "European" %}">
+		{% else %}
+		    <optgroup label="{% trans "Rest of the world" %}">
+		{% endif %}
+
+		{% for country in countries[group] %}
+		    <option value="{{ country.id }}" {% if selected == country.id %}selected{% endif %}>{{ country.name }}</option>
+		{% endfor %}
+		</optgroup>
+	{% endfor %}
+	</select>
+{% endmacro %}

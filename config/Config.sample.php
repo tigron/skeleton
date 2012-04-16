@@ -115,6 +115,24 @@ class Config {
 			 * Routes
 			 */
 			'routes' => Config_Routes::$routes,
+
+			/**
+			 * Picture formats
+			 *
+			 * Array containing all possible picture formats
+			 */
+			'picture_formats' => array(
+				'format_name'	=> array(
+					'height' => 600,
+					'width' => 800
+				),
+			),
+
+			/**
+			 * Archive mailbox
+			 */
+			'archive_mailbox' => '',
+
 		);
 	}
 }

@@ -7,10 +7,11 @@
  *
  * @author Christophe Gosiau <christophe@tigron.be>
  * @author Gerry Demaret <gerry@tigron.be>
+ * @author David Vandemaele <david@tigron.be>
  * @version $Id$
  */
 
-require_once dirname(__FILE__) . '/../config/global.php';
+require_once dirname(__FILE__) . '/../../config/global.php';
 
 if (!isset($argv[1])){
 	echo 'Error: specify table name' . "\n";
@@ -28,7 +29,7 @@ $table = strtolower($argv[1]);
 $db = Database::Get();
 
 $fields = $db->listTableFields(strtolower($table));
-$empty_class = file_get_contents(dirname(__FILE__) . '/empty_class.txt');
+$empty_class = file_get_contents(dirname(__FILE__) . '/templates/class.txt');
 $empty_class = str_replace('%%table_name%%', $table, $empty_class);
 
 $parts = explode('_', $table);

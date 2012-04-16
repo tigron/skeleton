@@ -8,12 +8,14 @@
  * @version $Id$
  */
 
-require_once dirname(__FILE__) . '/../config/global.php';
+require_once dirname(__FILE__) . '/../../config/global.php';
 
 require_once EXT_PATH . '/twig/lib/Twig/Autoloader.php';
 require_once LIB_PATH . '/model/Language.php';
 require_once LIB_PATH . '/base/Util.php';
 require_once LIB_PATH . '/base/Translation.php';
+
+$template_directories = array('template', 'macro');
 
 $config = Config::Get();
 Twig_Autoloader::register();
@@ -21,19 +23,33 @@ Twig_Autoloader::register();
 $applications_array = $config->applications;
 $applications = array();
 foreach ($applications_array as $application) {
-	$applications[$application] = true;
+	if (is_array($application)) {
+		$applications[] = $application['name'];
+	} else {
+		$applications[] = $application;
+	}
 }
 
-$applications = array_keys($applications);
+$applications[] = 'email';
+$applications[] = 'pdf';
 
 /**
  * First: generate the full template cache
  */
 foreach ($applications as $application) {
-	$directories = array(
-			ROOT_PATH . '/app/' . $application . '/template',
-			ROOT_PATH . '/app/' . $application . '/macro',
-	);
+	foreach ($template_directories as $template_directory) {
+		if ($application == 'email') {
+			$directory = STORE_PATH . '/email/template';
+		} elseif ($application == 'pdf') {
+			$directory = STORE_PATH . '/pdf/template';
+		} else {
+			$directory = ROOT_PATH . '/app/' . $application . '/template';
+		}
+
+		if (file_exists($directory)) {
+			$directories[] = $directory;
+		}
+	}
 
 	$loader = new Twig_Loader_Filesystem($directories);
 
@@ -55,7 +71,9 @@ foreach ($applications as $application) {
 		)
 	);
 
-	$twig->addGlobal('base', $twig->loadTemplate('base.macro'));
+	try {
+		$twig->addGlobal('base', $twig->loadTemplate('base.macro'));
+	} catch (Twig_Error_Loader $e) { /* base.macro not found, #care */ }
 
 	// iterate over all the templates
 	foreach ($directories as $directory) {
@@ -69,6 +87,8 @@ foreach ($applications as $application) {
 			$template = $twig->loadTemplate($file);
 		}
 	}
+
+	
 }
 
 /**
@@ -123,16 +143,18 @@ foreach ($applications as $application) {
  * them.
  */
 function translate_application($application) {
-	$files = scandir(TMP_PATH . '/twig/' . $application);
+	if (is_dir(TMP_PATH . '/twig/' . $application)) {
+		$files = scandir(TMP_PATH . '/twig/' . $application);
 
-	foreach ($files as $file) {
-		if ($file[0] == '.') {
-			continue;
-		}
+		foreach ($files as $file) {
+			if ($file[0] == '.') {
+				continue;
+			}
 
-		if (is_dir(TMP_PATH . '/twig/' . $application . '/' . $file)) {
-			translate_directory(TMP_PATH . '/twig/' . $application . '/' . $file, $application);
-			continue;
+			if (is_dir(TMP_PATH . '/twig/' . $application . '/' . $file)) {
+				translate_directory(TMP_PATH . '/twig/' . $application . '/' . $file, $application);
+				continue;
+			}
 		}
 	}
 }
@@ -173,6 +195,7 @@ function translate_file($filename, $application) {
 		if ($config->base_language == $language->name_short) {
 			continue;
 		}
+
 		if (!file_exists(PO_PATH . '/' . $language->name_short . '/')) {
 			mkdir(PO_PATH . '/' . $language->name_short . '/', 0755, true);
 		}
@@ -181,7 +204,9 @@ function translate_file($filename, $application) {
 			touch(PO_PATH . '/' . $language->name_short . '/' . $application . '.po');
 		}
 
-		echo 'translating ' . $filename . "\n";
+		$content = file($filename);
+		$content = substr($content[2], 3, strlen($content[2])-6);
+		echo 'translating ' . $filename . ' to ' . $language->name_short . ' for ' . $application . ' containing ' . $content . "\n";
 
 		$content = file_get_contents($filename);
 		$content_orig = $content;
@@ -215,6 +240,7 @@ function translate_file($filename, $application) {
 
 		$strings = array_merge($current_strings, $untranslated);
 		asort($strings);
+
 		Util::po_save(PO_PATH . '/' . $language->name_short . '/' . $application . '.po', $strings);
 	}
 }

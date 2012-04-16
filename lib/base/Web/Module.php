@@ -38,7 +38,6 @@ abstract class Web_Module {
 		$module = str_replace('module_', '', strtolower($module));
 		$template->add_env('module', $module);
 
-		Web_Session_Sticky::clear($module);
 		$session = Web_Session_Sticky::Get();
 		$session->module = $module;
 

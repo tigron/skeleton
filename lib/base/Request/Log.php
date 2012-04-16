@@ -8,7 +8,7 @@
  * @version $Id$
  */
 
-class Log {
+class Request_Log {
 	/**
 	 * Constructor
 	 *

@@ -11,7 +11,7 @@
 require_once LIB_PATH . '/base/Web/Module.php';
 require_once LIB_PATH . '/base/Web/Media.php';
 require_once LIB_PATH . '/base/Web/Session.php';
-require_once LIB_PATH . '/base/Log.php';
+require_once LIB_PATH . '/base/Request/Log.php';
 require_once LIB_PATH . '/model/Language.php';
 
 class Web_Handler {
@@ -239,7 +239,7 @@ class Web_Handler {
 			$queries = substr_count($database->getDebugOutput(), 'execute(');
 			$execution_time = microtime(true) - $start;
 
-			Log::log_request('Request: http://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'] . ' -- IP: ' . $_SERVER['REMOTE_ADDR'] . ' -- Queries: ' . $queries . ' -- Time: ' . $execution_time);
+			Request_Log::log_request('Request: http://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'] . ' -- IP: ' . $_SERVER['REMOTE_ADDR'] . ' -- Queries: ' . $queries . ' -- Time: ' . $execution_time);
 		}
 	}
 }
