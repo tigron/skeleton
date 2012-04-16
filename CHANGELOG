@@ -1,3 +1,11 @@
+* 0.0.20120416
+
+  * Add File support (File, Picture, Store)
+  * Add Log support
+  * Add Email support (Template)
+  * Update (Twig 1.6.5)
+  * Minor tweaks
+  
 * 0.0.20110905 - Massive progress
 
   * Add routing functionality with clean URL support
