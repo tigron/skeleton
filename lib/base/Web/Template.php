@@ -8,7 +8,6 @@
  * @version $Id$
  */
 
-require_once EXT_PATH . '/twig/lib/Twig/Autoloader.php';
 require_once LIB_PATH . '/base/Translation.php';
 
 class Web_Template {

@@ -25,6 +25,11 @@ define('LIB_PATH', realpath(ROOT_PATH . '/lib'));
 define('EXT_PATH', realpath(LIB_PATH . '/external'));
 
 /**
+ * Define the Packages path (composer)
+ */
+define('PACKAGE_PATH', realpath(EXT_PATH . '/packages'));
+
+/**
  * TMP Path
  */
 define('TMP_PATH', realpath(ROOT_PATH . '/tmp'));
@@ -37,5 +42,6 @@ define('PO_PATH', realpath(ROOT_PATH . '/po'));
 require_once ROOT_PATH . '/config/Config.php';
 require_once LIB_PATH . '/base/Errorhandling.php';
 require_once LIB_PATH . '/base/Database.php';
+require_once PACKAGE_PATH . '/vendor/autoload.php';
 
 ?>
