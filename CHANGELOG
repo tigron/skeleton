@@ -1,3 +1,7 @@
+* 0.0.20120704
+
+  * Use getcomposer for packages (Twig)
+
 * 0.0.20120416
 
   * Add File support (File, Picture, Store)
