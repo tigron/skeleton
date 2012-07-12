@@ -39,6 +39,11 @@ define('TMP_PATH', realpath(ROOT_PATH . '/tmp'));
  */
 define('PO_PATH', realpath(ROOT_PATH . '/po'));
 
+/**
+ * STORE Path
+ */
+define('STORE_PATH', realpath(ROOT_PATH . '/store'));
+
 require_once ROOT_PATH . '/config/Config.php';
 require_once LIB_PATH . '/base/Errorhandling.php';
 require_once LIB_PATH . '/base/Database.php';

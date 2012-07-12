@@ -5,9 +5,13 @@
 
 	<meta name="description" content="Application" />
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-
 	<link rel="shortcut icon" href="http://10.2.0.22/favicon.ico">
-	<link rel="stylesheet" href="/reset.css&/style.css&/jquery.ui.css&/jquery.ui.timepicker.css&/jquery.wysiwyg.css&/jquery.colorbox.css" type="text/css" media="handheld, all" />
-	<script type="text/javascript" src="/jquery.js&/jquery.ui.js&/jquery.ui.timepicker.js&/jquery.wysiwyg.js&/jquery.colorbox.js&/base.js"></script>
+	<link rel="stylesheet" href="/reset.css&/style.css&/jquery.ui.css&/jquery.ui.timepicker.css&/jquery.wysiwyg.css&/jquery.colorbox.css" type="text/css" media="handheld, all" />	
+	{% block css %}{% endblock css %}
 </head>
 <body>
+	{% block content %}{% endblock content %}
+	<script type="text/javascript" src="/jquery.js&/jquery.ui.js&/jquery.ui.timepicker.js&/jquery.wysiwyg.js&/jquery.colorbox.js&/base.js"></script>
+	{% block javascript %}{% endblock %}
+</body>
+</html>
