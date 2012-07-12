@@ -116,7 +116,7 @@ class Database_Proxy {
 	public function quote($values, $quotes = true) {
 		if (is_array($values)) {
 			foreach ($values as $key => $value) {
-				$values[$key] = db_escape($value, $quotes);
+				$values[$key] = $this->quote($value, $quotes);
 			}
 		} else if ($values === null) {
 			$values = 'NULL';
@@ -154,11 +154,18 @@ class Database_Proxy {
 	 * Escape a variable
 	 *
 	 * @access public
-	 * @param string $field
+	 * @param mixed $values
 	 * @return string $escaped_field
 	 */
-	public function escape($field) {
-		return $this->database->real_escape_string($field);
+	public function escape($values) {
+		if (is_array($values)) {
+			foreach ($values as $key => $value) {
+				$values[$key] = $this->escape($value);
+			}
+			return $values;
+		} else {
+			return $this->database->real_escape_string($values);
+		}
 	}
 
 	/**
