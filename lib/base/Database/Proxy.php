@@ -109,8 +109,9 @@ class Database_Proxy {
 	/**
 	 * Quote a variable so it can be used in a query
 	 *
-	 * @access private
+	 * @access public
 	 * @param string $value
+	 * @return array $quoted_values
 	 */
 	public function quote($values, $quotes = true) {
 		if (is_array($values)) {
@@ -122,7 +123,7 @@ class Database_Proxy {
 		} else if (is_bool($values)) {
 			$values = $values ? 1 : 0;
 		} else if (!is_numeric($values)) {
-			$values = $this->database->real_escape_string($values);
+			$values = $this->escape($values);
 			if ($quotes) {
 				$values = '"' . $values . '"';
 			}
@@ -134,8 +135,9 @@ class Database_Proxy {
 	/**
 	 * Quote a variable so it can be used in a field name in a query
 	 *
-	 * @access private
+	 * @access public
 	 * @param string $field
+	 * @return string $quoted_field
 	 */
 	public function quote_identifier($field) {
 		$field = str_replace('`', '``', $field);
@@ -146,6 +148,17 @@ class Database_Proxy {
 		}
 
 		return implode('.', $parts);
+	}
+	
+	/**
+	 * Escape a variable
+	 *
+	 * @access public
+	 * @param string $field
+	 * @return string $escaped_field
+	 */
+	public function escape($field) {
+		return $this->database->real_escape_string($field);
 	}
 
 	/**
