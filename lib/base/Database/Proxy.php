@@ -103,17 +103,32 @@ class Database_Proxy {
 			$columns[] = &$row['Field'];
 		}
 
-		return stripslashes($columns);
+		return $this->stripslashes_result($columns);
 	}
 
 	/**
 	 * Quote a variable so it can be used in a query
 	 *
 	 * @access private
-	 * @param string $string
+	 * @param string $value
 	 */
-	public function quote($string) {
-		return $this->database->real_escape_string($string);
+	public function quote($values, $quotes = true) {
+		if (is_array($values)) {
+			foreach ($values as $key => $value) {
+				$values[$key] = db_escape($value, $quotes);
+			}
+		} else if ($values === null) {
+			$values = 'NULL';
+		} else if (is_bool($values)) {
+			$values = $values ? 1 : 0;
+		} else if (!is_numeric($values)) {
+			$values = $this->database->real_escape_string($values);
+			if ($quotes) {
+				$values = '"' . $values . '"';
+			}
+		}
+
+		return $values;
 	}
 
 	/**
@@ -230,17 +245,17 @@ class Database_Proxy {
 	 * Insert query
 	 *
 	 * @access private
-	 * @param array $arguments
+	 * @param array $params
 	 */
-	public function insert($table, $arguments) {
-		$keys = array_keys($arguments);
+	public function insert($table, $params) {
+		$keys = array_keys($params);
 		foreach ($keys as $key => $value) {
 			$keys[$key] = $this->quote_identifier($value);
 		}
 
 		$query = 'INSERT INTO ' . $this->quote_identifier($table) . ' (' . implode(',', $keys) . ') VALUES (';
 
-		for ($i=0; $i < count($arguments); $i++) {
+		for ($i=0; $i < count($params); $i++) {
 			if ($i > 0) {
 				$query .= ', ';
 			}
@@ -248,7 +263,7 @@ class Database_Proxy {
 		}
 
 		$query .= ') ';
-		$statement = $this->get_statement($query, $arguments);
+		$statement = $this->get_statement($query, $params);
 		$statement->execute();
 	}
 
@@ -261,7 +276,7 @@ class Database_Proxy {
 	 * @param string $where
 	 */
 	public function update($table, $params, $where) {
-		$keys = array_keys($arguments);
+		$keys = array_keys($params);
 		foreach ($keys as $key => $value) {
 			$keys[$key] = $this->quote_identifier($value);
 		}
@@ -269,7 +284,7 @@ class Database_Proxy {
 		$query = 'UPDATE ' . $this->quote_identifier($table) . ' SET ';
 
 		$first = true;
-		foreach ($arguments as $key => $value) {
+		foreach ($params as $key => $value) {
 			if (!$first) {
 				$query .= ', ';
 			}
@@ -279,7 +294,7 @@ class Database_Proxy {
 
 		$query .= ' WHERE ' . $where;
 
-		$statement = $this->get_statement($query, $arguments);
+		$statement = $this->get_statement($query, $params);
 		$statement->execute();
 	}
 
@@ -316,7 +331,7 @@ class Database_Proxy {
 	 * @param array $params	 
 	 */
 	public function get_all($query, $params = array()) {
-		$statement = $this->get_statement($arguments[0], $arguments[1]);
+		$statement = $this->get_statement($query, $params);
 		$statement->execute();
 		return $this->stripslashes_result($statement->fetch_assoc());
 	}
@@ -329,7 +344,7 @@ class Database_Proxy {
 	 * @param array $params
 	 */
 	public function query($query, $params = array()) {
-		$statement = $this->get_statement($arguments[0], $arguments[1]);
+		$statement = $this->get_statement($query, $params);
 		$statement->execute();
 	}
 }

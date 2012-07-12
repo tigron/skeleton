@@ -63,3 +63,4 @@ class Database_Statement extends Mysqli_Stmt {
 		return $data;
 	}
 }
+?>
