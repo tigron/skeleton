@@ -39,9 +39,9 @@ class Util {
 	 * @param string $table
 	 * @return array $fields
 	 */
-	public static function get_table_fields($table) {
+	public static function get_table_columns($table) {
 		$db = Database::Get();
-		$fields = $db->listTableFields(strtolower($table));
+		$fields = $db->get_columns(strtolower($table));
 		return $fields;
 	}
 
@@ -54,7 +54,7 @@ class Util {
 	 * @return $filtered_data
 	 */
 	public static function filter_table_data($table, $data) {
-		$table_fields = Util::get_table_fields($table);
+		$table_fields = Util::get_table_columns($table);
 		$result = array();
 		foreach ($table_fields as $field) {
 			if (isset($data[$field])) {
