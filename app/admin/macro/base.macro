@@ -105,51 +105,29 @@
  #}
 
 {% macro confirm_ajax(link, type, icon, target, message, parameters, callback_function) %}
-	{% set id = env.template.get_unique() %}
+	{% set id = env.template.get_unique() %}	
 
-	<script type="text/javascript">
-		$(function() {
-			$( "#dialog-{{ id }}" ).dialog({
-				resizable: false,
-				autoOpen: false,
-				minWidth: 600,
-				modal: true,
-				title: '{{ 'Confirm'|trans }}',
-				buttons: {
-					'{{ 'Confirm'|trans }}': function() {
-						$.get('{{ target|raw }}', {
-						{% for parameter, value in parameters %}
-							{{ parameter }}: '{{ value }}'{% if loop.last == false %},{% endif %}
-						{% endfor %}
-						}
-						);
-						$( this ).dialog( "close" );
-						{% if callback_function != '' %}
-							{{ callback_function }};
-						{% endif %}
-					},
-					'{{ 'Cancel'|trans }}': function() {
-						$( this ).dialog( "close" );
-					},
-				},
-			});
-		});
-	</script>
-
-	<div id="dialog-{{ id }}">
+	<div id="confirm_{{ id }}">
 		{{ message }}
 	</div>
+
+	<form id="form_{{ id }}" action="{{ target|raw }}" method="get">
+		{% for parameter, value in parameters %}
+			<input type="hidden" name="{{ parameter }}" value="{{ value }}" />			
+		{% endfor %}
+			<input type="hidden" name="callback_function" value="{{ callback_function }}" />
+	</form>
 
 	{% if icon != '' %}
 		{% set icon = '<img src="' ~ icon ~ '" title="' ~ icon ~ '" alt="' ~ icon ~ '" />' %}
 	{% endif %}
 
 	{% if type == 'link' %}
-		<a href="{{ target|raw }}" onclick="javascript: $('#dialog-{{ id }}').dialog('open'); return false;">
+		<a href="{{ target|raw }}" class="macro_confirm ajax" id="trigger_{{ id }}">
 			{{ icon|raw }} {{ link|raw }}
 		</a>
 	{% elseif type == 'button' %}
-		<button onclick="javascript: $('#dialog-{{ id }}').dialog('open'); return false;">
+		<button class="macro_confirm ajax" id="trigger_{{ id }}">
 			{{ icon|raw }} {{ link|raw }}
 		</button>
 	{% endif %}

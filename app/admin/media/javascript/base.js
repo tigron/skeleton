@@ -51,8 +51,17 @@ function init_dialogs() {
 				modal: true,
 				title: "Confirm",
 				buttons: {
-					"Confirm": function() {
-						$('#form_' + id).submit();
+					"Confirm": function() {						
+						if ($(this).hasClass('ajax')) {
+							var callback = $('#form_' + id + ' input[name="callback_function"]').val();
+							$('#form_' + id).ajaxSubmit({url: $('#form_' + id).attr('action'), type: 'get'});
+							$( this ).dialog('close');
+							if (callback != '') {
+								$.globalEval(callback);
+							}
+						} else }
+							$('#form_' + id).submit();
+						}
 					},
 					"Cancel": function() {
 						$( this ).dialog('close');
@@ -63,9 +72,9 @@ function init_dialogs() {
 			$(this).bind('click', function() {						
 				dialogs[id].dialog('open'); 
 				return false;
-			});
-
-		} else {
+			});		
+			
+		} else if($(this).hasClass('macro_modal')) {
 
 			dialogs[id] = $("#modal_" + id).dialog({
 				resizable: false,
