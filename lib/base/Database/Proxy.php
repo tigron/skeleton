@@ -183,8 +183,6 @@ class Database_Proxy {
 	 * @return Database_Statement $statement
 	 */
 	private function get_statement($query, $params = array()) {
-	echo 'get_statement' . "<br />";
-	print_r($this->queries);
 		$query_log = array($query, $params);
 		$this->query_log[] = $query_log;
 		$this->queries++;
