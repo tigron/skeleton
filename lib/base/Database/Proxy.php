@@ -94,7 +94,7 @@ class Database_Proxy {
 	 * @param string $table
 	 */
 	public function get_columns($table) {
-		$statement = $this->get_statement('SHOW columns FROM ' . $table, array());
+		$statement = $this->get_statement('SHOW columns FROM ' . $this->quote_identifier($table) , array());
 		$statement->execute();
 		$result = $statement->fetch_assoc();
 
@@ -308,7 +308,7 @@ class Database_Proxy {
 			if (!$first) {
 				$query .= ', ';
 			}
-			$query .= $key . '= ?';
+			$query .= $this->quote_identifier($key) . '= ?';
 			$first = false;
 		}
 

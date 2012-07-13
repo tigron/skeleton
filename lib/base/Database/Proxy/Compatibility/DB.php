@@ -36,6 +36,7 @@ class Database_Proxy_Compatibility_DB extends Database_Proxy {
 			case 'quote':               return $this->quote($arguments[0]); break;
 			case 'quoteidentifier':     return $this->quote_identifier($arguments[0]); break;
 			case 'listtablefields':		return $this->get_columns($arguments[0], $arguments[1]); break;
+			case 'escape':				return $this->escape($arguments[0]);
 			case 'getdebugoutput':		return ''; break;
 			default:                    debug_print_backtrace(); return call_user_func_array(array($this->database, $method), $arguments);
 		}
