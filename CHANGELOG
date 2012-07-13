@@ -1,3 +1,9 @@
+* 0.0.20120713
+
+  * Update (Jquery 1.7.2)
+  * Missing image for jquery wysiwyg
+  * moving javascript in macro to external file (base.js)
+
 * 0.0.20120704
 
   * Use getcomposer for packages (Twig)
