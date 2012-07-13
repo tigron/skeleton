@@ -18,16 +18,16 @@
 	{% endif %}
 
 	{% if type == 'link' %}
-		<a href="{{ target|raw }}" onclick="javascript:$('#form-{{ id }}').submit(); return false;">
+		<a href="{{ target|raw }}" class="macro_link" id="trigger_{{ id }}">
 			{{ icon|raw }} {{ link|raw }}
 		</a>
 	{% elseif type == 'button' %}
-		<button onclick="javascript:$('#form-{{ id }}').submit(); return false;">
+		<button class="macro_link" id="trigger_{{ id }}">
 			{{ icon|raw }} {{ link|raw }}
 		</button>
 	{% endif %}
 
-	<form id="form-{{ id }}" action="{{ target|raw }}" method="post">
+	<form id="form_{{ id }}" action="{{ target|raw }}" method="post">
 		{% for parameter, value in parameters %}
 			<input type="hidden" name="{{ parameter }}" value="{{ value }}" />
 		{% endfor %}
@@ -46,26 +46,8 @@
 	{% set parameters = {
 		'buttons': false,
 	}|merge(parameters|default({})) %}
-
-	<script type="text/javascript">
-		$(function() {
-			$( "#dialog-{{ id }}" ).dialog({
-				resizable: false,
-				autoOpen: false,
-				minWidth: 600,
-				modal: true,
-				{% if parameters.buttons != false %}
-					buttons: {
-						{{ 'Close'|trans }}: function() {
-							$( this ).dialog( "close" );
-						}
-					}
-				{% endif %}
-			});
-		});
-	</script>
-
-	<div id="dialog-{{ id }}" title="{{ title }}">
+	
+	<div id="modal_{{ id }}" title="{{ title }}">
 		{% include 'snippet/' ~ snippet ~ '.twig' with parameters %}
 	</div>
 
@@ -74,11 +56,11 @@
 	{% endif %}
 
 	{% if type == 'link' %}
-		<a href="#" onclick="javascript: $('#dialog-{{ id }}').dialog('open'); return false;">
+		<a href="javascript:void(0);" class="macro_modal" id="trigger_{{ id }}">
 			{{ icon|raw }} {{ link|raw }}
 		</a>
 	{% elseif type == 'button' %}
-		<button onclick="javascript:$('#dialog-{{ id }}').dialog('open'); return false;">
+		<button class="macro_modal no_buttons" id="trigger_{{ id }}">
 			{{ icon|raw }} {{ link|raw }}
 		</button>
 	{% endif %}
@@ -91,33 +73,13 @@
  #}
 
 {% macro confirm(link, type, icon, target, message, parameters) %}
-	{% set id = env.template.get_unique() %}
+	{% set id = env.template.get_unique() %}	
 
-	<script type="text/javascript">
-		$(function() {
-			$( "#dialog-{{ id }}" ).dialog({
-				resizable: false,
-				autoOpen: false,
-				minWidth: 600,
-				modal: true,
-				title: '{{ 'Confirm'|trans }}',
-				buttons: {
-					{{ 'Confirm'|trans }}: function() {
-						$('#form-{{ id }}').submit();
-					},
-					{{ 'Cancel'|trans }}: function() {
-						$( this ).dialog( "close" );
-					},
-				},
-			});
-		});
-	</script>
-
-	<div id="dialog-{{ id }}">
+	<div id="confirm_{{ id }}">
 		{{ message }}
 	</div>
 
-	<form id="form-{{ id }}" action="{{ target|raw }}" method="post">
+	<form id="form_{{ id }}" action="{{ target|raw }}" method="post">
 		{% for parameter, value in parameters %}
 			<input type="hidden" name="{{ parameter }}" value="{{ value }}" />
 		{% endfor %}
@@ -128,11 +90,11 @@
 	{% endif %}
 
 	{% if type == 'link' %}
-		<a href="{{ target|raw }}" onclick="javascript: $('#dialog-{{ id }}').dialog('open'); return false;">
+		<a href="{{ target|raw }}" class="macro_confirm" id="trigger_{{ id }}">
 			{{ icon|raw }} {{ link|raw }}
 		</a>
 	{% elseif type == 'button' %}
-		<button onclick="javascript: $('#dialog-{{ id }}').dialog('open'); return false;">
+		<button class="macro_confirm" id="trigger_{{ id }}">
 			{{ icon|raw }} {{ link|raw }}
 		</button>
 	{% endif %}
