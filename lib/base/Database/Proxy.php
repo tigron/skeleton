@@ -24,6 +24,14 @@ class Database_Proxy {
 	 * @access public
 	 */
 	public $queries = 0;
+	
+	/**
+	 * Query_log
+	 *
+	 * @var array
+	 * @access public
+	 */
+	public $query_log = array();
 
 	/**
 	 * DatabaseProxy constructor
@@ -100,7 +108,7 @@ class Database_Proxy {
 
 		$columns = array();
 		foreach ($result as $row) {
-			$columns[] = &$row['Field'];
+			$columns[] = &$row['field'];
 		}
 
 		return $this->stripslashes_result($columns);
@@ -175,6 +183,12 @@ class Database_Proxy {
 	 * @return Database_Statement $statement
 	 */
 	private function get_statement($query, $params = array()) {
+	echo 'get_statement' . "<br />";
+	print_r($this->queries);
+		$query_log = array($query, $params);
+		$this->query_log[] = $query_log;
+		$this->queries++;
+
 		$statement = new Database_Statement($this->database, $query);
 
 		if (count($params) == 0) {
@@ -235,9 +249,12 @@ class Database_Proxy {
 
 		$result = $statement->fetch_assoc();
 
-		if (count($result) != 1) {
+		if (count($result) == 0) {
+			return null;
+		} else if (count($result) > 1) {
 			throw new Exception('Resultset has more than 1 row');
 		}
+
 		return $this->stripslashes_result($result[0]);
 	}
 
@@ -268,6 +285,8 @@ class Database_Proxy {
 	 * @param array $params
 	 */
 	public function insert($table, $params) {
+		$params = Util::filter_table_data($table, $params, $this);
+
 		$keys = array_keys($params);
 		foreach ($keys as $key => $value) {
 			$keys[$key] = $this->quote_identifier($value);
@@ -296,6 +315,8 @@ class Database_Proxy {
 	 * @param string $where
 	 */
 	public function update($table, $params, $where) {
+		$params = Util::filter_table_data($table, $params, $this);
+	
 		$keys = array_keys($params);
 		foreach ($keys as $key => $value) {
 			$keys[$key] = $this->quote_identifier($value);

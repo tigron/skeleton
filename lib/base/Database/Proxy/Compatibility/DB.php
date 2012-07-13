@@ -21,7 +21,6 @@ class Database_Proxy_Compatibility_DB extends Database_Proxy {
 	 * @access public
 	 */
 	public function __call($method, $arguments) {
-		$this->queries++;
 		if (!isset($arguments[1])) {
 			$arguments[1] = array();
 		}
@@ -49,8 +48,6 @@ class Database_Proxy_Compatibility_DB extends Database_Proxy {
 	 * @access private
 	 */
 	private function autoexecute($arguments) {
-		$arguments[1] = Util::filter_table_data($arguments[0], $arguments[1], $this);
-
 		if ($arguments[2] == MDB2_AUTOQUERY_INSERT) {
 			$this->insert($arguments[0], $arguments[1]);
 		} else {

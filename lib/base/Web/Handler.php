@@ -236,7 +236,7 @@ class Web_Handler {
 		// Record debug information
 		if ($config->debug == true) {
 			$database = Database::get();
-			$queries = substr_count($database->getDebugOutput(), 'execute(');
+			$queries = $database->queries;
 			$execution_time = microtime(true) - $start;
 
 			Request_Log::log_request('Request: http://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'] . ' -- IP: ' . $_SERVER['REMOTE_ADDR'] . ' -- Queries: ' . $queries . ' -- Time: ' . $execution_time);

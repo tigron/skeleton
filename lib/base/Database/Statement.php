@@ -10,6 +10,19 @@
 class Database_Statement extends Mysqli_Stmt {
 
 	/**
+	 * Constructor
+	 *
+	 * @access Mysqli $database
+	 * @access string $query
+	 */
+	public function __construct($database_resource, $query) {
+		parent::__construct($database_resource, $query);
+		if ($this->sqlstate != 0) {
+			throw new Exception($this->error);
+		}
+	}
+
+	/**
 	 * Get columns of resultset
 	 *
 	 * @access public
@@ -28,9 +41,9 @@ class Database_Statement extends Mysqli_Stmt {
 		$columns = array();
 		while ($column = $meta->fetch_field()) {
 			if ($database_in_key === true) {
-				$columns[] = $column->db . '.' . $column->table . '.' . $column->name;
+				$columns[] = $column->db . '.' . $column->table . '.' . strtolower($column->name);
 			} else {
-				$columns[] = $column->table . '.' . $column->name;
+				$columns[] = $column->table . '.' . strtolower($column->name);
 			}
 		}
 		return $columns;
