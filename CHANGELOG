@@ -1,3 +1,8 @@
+* 0.0.20120823
+
+  * Remove composer packages from source (use php composer.phar install after checkout/export)
+  * Use swiftmailer as mailer lib
+
 * 0.0.20120713
 
   * Update (Jquery 1.7.2)
