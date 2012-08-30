@@ -9,6 +9,7 @@
  */
 
 require_once LIB_PATH . '/model/File.php';
+require_once EXT_PATH . '/Php_Image.php';
 
 class Picture extends File {
 
@@ -146,124 +147,26 @@ class Picture extends File {
 	}
 	
 	/**
-	 * Get virtual dimensions of the picture after resize
-	 *
-	 * @param string $size
-	 * @access private
-	 */
-	public function get_output_dimensions($size){
-		if ($size == 'original') {
-			return array('width'=>$this->width, 'height'=>$this->height);
-		}	
-
-		$config = Config::Get();
-		$picture_formats = $config->picture_formats;
-
-		if (!isset($picture_formats[$size])) {
-			throw new Exception('Unknown format, please update config file');
-		}
-
-		if (isset($picture_formats[$size]['height'])) {
-			$output_height = $picture_formats[$size]['height'];
-		} else {
-			$output_height = -1;
-		}
-
-		if (isset($picture_formats[$size]['width'])) {
-			$output_width = $picture_formats[$size]['width'];
-		} else {
-			$output_width = -1;
-		}
-
-		//Now find out what should be the output size
-		$width = $this->width;
-		$height = $this->height;
-
-		if ($output_height == -1 OR $width/$height*$output_height > $output_width) {
-			$output_height = -1;
-		} elseif ($output_width == -1 OR $height/$width*$output_width > $output_height) {
-			$output_width = -1;
-		}
-
-		if ($output_width == -1) {
-			$output_width = round($width /$height * $output_height,0);
-		}
-		if ($output_height == -1) {
-			$output_height = round($height / $width * $output_width,0);
-		}
-
-		return array('width'=>$output_width, 'height'=>$output_height);
-	}
-
-	/**
 	 * Resize the picture
 	 *
 	 * @access private
 	 * @param string $size
 	 */
-	private function resize($size) {
-		$path = $this->get_path();
-		$output_dimensions = $this->get_output_dimensions($size);
-
-		$image = imagecreatefromjpeg($path);
-		$destination = imagecreatetruecolor($output_dimensions['width'], $output_dimensions['height']);
-		imagecopyresampled($destination, $image, 0, 0, 0, 0, $output_dimensions['width'], $output_dimensions['height'], $this->width, $this->height);
-
+	private function resize($size) {		
 		if (!file_exists(TMP_PATH . '/picture/' . $size)) {
 			mkdir(TMP_PATH . '/picture/' . $size, 0755, true);
 		}
-
-		imagejpeg($destination, TMP_PATH . '/picture/' . $size . '/' . $this->unique_name);
-		imagedestroy($image);
-		imagedestroy($destination);
-	}
-
-	/**
-	 * Resize and crop the picture
-	 *
-	 * @access private
-	 * @param string $size
-	 */
-	private function crop($size) {
-		$path = $this->get_path();
-		$image = imagecreatefromjpeg($path);
-
-		$config = Config::Get();
-		$picture_formats = $config->picture_formats;
-		$picture_format = $picture_formats[$size];		
-
-		$thumb_width = $picture_format['width'];
-		$thumb_height = $picture_format['height'];
-		
-		$this->get_dimensions();
-		$original_aspect = $this->width / $this->height;
-		$thumb_aspect = $thumb_width / $thumb_height;
-
-		if ($original_aspect >= $thumb_aspect) {
-			$new_height = $thumb_height;
-			$new_width = $this->width / ($this->height / $thumb_height);
+			
+		if ($size == 'original') {
+			$resize_info = array('width' => $this->width, 'height' => $this->height, 'mode' => 'exact');
 		} else {
-			$new_width = $thumb_width;
-			$new_height = $this->height / ($this->width / $thumb_width);
+			$config = Config::Get();
+			$resize_info = $config->picture_formats[$size];
 		}
 
-		$thumb = imagecreatetruecolor($thumb_width, $thumb_height);
-		imagecopyresampled(
-							$thumb, 
-							$image, 
-							0 - ($new_width - $thumb_width) / 2, 
-							0 - ($new_height - $thumb_height) / 2,
-							0, 0,
-							$new_width, $new_height,
-							$this->width, $this->height);
-		
-		if (!file_exists(TMP_PATH . '/picture/' . $size . '_crop')) {
-			mkdir(TMP_PATH . '/picture/' . $size . '_crop', 0755, true);
-		}
-		
-		imagejpeg($thumb, TMP_PATH . '/picture/' . $size . '_crop/' . $this->unique_name);
-		imagedestroy($image);
-		imagedestroy($thumb);
+		$image = new Php_Image($this);
+		$image->resize($resize_info['width'], $resize_info['height'], $resize_info['mode']);
+		$image->output(TMP_PATH . '/picture/' . $size . '/' . $this->unique_name);		
 	}
 
 	/**
@@ -272,7 +175,7 @@ class Picture extends File {
 	 * @access public
 	 * @param string $size
 	 */
-	public function show($size = 'original', $crop = false) {
+	public function show($size = 'original') {
 		$config = Config::Get();
 		$picture_formats = $config->picture_formats;
 
@@ -280,20 +183,14 @@ class Picture extends File {
 			throw new Exception('Picture requested in unknown size');
 		}
 
-		if ($crop === true AND !file_exists(TMP_PATH . '/picture/' . $size . '_crop/' . $this->unique_name)) {
-			$this->crop($size);
-		} elseif ($crop === false AND !file_exists(TMP_PATH . '/picture/' . $size . '/' . $this->unique_name)) {
+		if(!file_exists(TMP_PATH . '/picture/' . $size . '/' . $this->unique_name)) {
 			$this->resize($size);
 		}
 
 		if ($size == 'original') {
 			$filename = $this->get_path();
 		} else {
-			if ($crop === true) {
-				$filename = TMP_PATH . '/picture/' . $size . '_crop/' . $this->unique_name;
-			} else {
-				$filename = TMP_PATH . '/picture/' . $size . '/' . $this->unique_name;
-			}
+			$filename = TMP_PATH . '/picture/' . $size . '/' . $this->unique_name;			
 		}
 
 		$gmt_mtime = gmdate('D, d M Y H:i:s', filemtime($filename)).' GMT';
@@ -311,10 +208,9 @@ class Picture extends File {
 
 		header('Last-Modified: '. $gmt_mtime);
 		header('Expires: '.gmdate('D, d M Y H:i:s', strtotime('+300 minutes')).' GMT');
-//		header('Content-Disposition: attachment; filename="'.$this->name.'"');
-		header('Content-Type: ' . $this->mimetype);
+		header('Content-Type: ' . $this->mime_type);
 		readfile($filename);
-		exit;
+		exit();
 	}
 
 	/**

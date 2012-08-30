@@ -1,3 +1,10 @@
+* 0.0.20120830
+
+  * Email lib uses swiftmailer
+  * Php_Image lib for resizing/cropping
+  * Minor tweaks
+
+
 * 0.0.20120823
 
   * Remove composer packages from source (use php composer.phar install after checkout/export)

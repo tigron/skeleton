@@ -139,7 +139,7 @@ class File {
 			'image/svg+xml',
 		);
 
-		if (in_array($this->mimetype, $mime_types)) {
+		if (in_array($this->mime_type, $mime_types)) {
 			return true;
 		}
 
@@ -186,7 +186,7 @@ class File {
 	 * @access public
 	 */
 	public function client_download() {
-		header('Content-type: ' . $this->details['mimetype']);
+		header('Content-type: ' . $this->details['mime_type']);
 		header('Content-Disposition: attachment; filename="'.$this->details['name'].'"');
 		readfile($this->get_path());
 		exit();
@@ -198,7 +198,7 @@ class File {
 	 * @access public
 	 */
 	public function client_inline() {
-		header('Content-type: ' . $this->details['mimetype']);
+		header('Content-type: ' . $this->details['mime_type']);
 		header('Content-Disposition: inline; filename="'.$this->details['name'].'"');
 		readfile($this->get_path());
 		exit();

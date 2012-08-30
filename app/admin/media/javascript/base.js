@@ -59,7 +59,7 @@ function init_dialogs() {
 							if (callback != '') {
 								$.globalEval(callback);
 							}
-						} else }
+						} else {
 							$('#form_' + id).submit();
 						}
 					},

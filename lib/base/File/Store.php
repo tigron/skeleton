@@ -46,7 +46,7 @@ class File_Store {
 
 		file_put_contents($unique_name, $content);
 		$size = filesize($unique_name);
-		$file->mimetype = Util::mime_type($unique_name);
+		$file->mime_type = Util::mime_type($unique_name);
 		$file->unique_name = basename($unique_name);
 		$file->size = filesize($unique_name);
 		$file->save();
@@ -88,8 +88,8 @@ class File_Store {
 		$file->unique_name = basename($unique_name);
 		$file->size = filesize($unique_name);
 		$finfo = finfo_open(FILEINFO_MIME_TYPE);
-		$mimetype = finfo_file($finfo, $unique_name);
-		$file->mimetype = $mimetype;
+		$mime_type = finfo_file($finfo, $unique_name);
+		$file->mimetype = $mime_type;
 		$file->save();
 		
 		if ($file->is_picture()) {

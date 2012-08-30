@@ -32,6 +32,13 @@ class Module_Index extends Web_Module {
 	 * @access public
 	 */
 	public function display() {
+		$template = Web_Template::Get();
+		$options = array (
+						array('id' => 1, 'name' => 'option 1'),
+						array('id' => 2, 'name' => 'option 2'),
+						array('id' => 3, 'name' => 'option 3')
+		);
+		$template->assign('dummy_options', $options);
 	}
 
 	/**

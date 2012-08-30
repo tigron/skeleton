@@ -96,6 +96,10 @@ class Web_Template {
 		if (file_exists(APP_PATH . '/macro/base.macro')) {
 			$this->twig->addGlobal('base', $this->twig->loadTemplate('base.macro'));
 		}
+
+		if (file_exists(APP_PATH . '/macro/form.macro')) {
+			$this->twig->addGlobal('form', $this->twig->loadTemplate('form.macro'));
+		}
 	}
 
 	/**

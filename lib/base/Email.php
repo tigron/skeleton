@@ -7,14 +7,9 @@
  * @package %%PACKAGE%%
  * @author Christophe Gosiau <christophe@tigron.be>
  * @author Gerry Demaret <gerry@tigron.be>
+ * @author David Vandemaele <david@tigron.be>
  * @version $Id$
  */
-
-require_once 'Mail.php';
-require_once 'Mail/mime.php';
-
-require_once LIB_PATH . '/base/Email/Template.php';
-require_once LIB_PATH . '/base/File/Store.php';
 
 class Email {
 	/**
@@ -180,55 +175,42 @@ class Email {
 			$template->assign($key, $value);
 		}
 
-		$mime = new Mail_Mime(PHP_EOL);
-
-		$mime->setHtmlBody($template->render('html'));
-		$mime->setTxtBody($template->render('text'));
+		$config = Config::Get();					
+		$transport = Swift_MailTransport::newInstance();
+		$mailer = Swift_Mailer::newInstance($transport);
+		$message = Swift_Message::newInstance()			
+			->setBody($template->render('html'), 'text/html')
+			->addPart($template->render('text'), 'text/plain')
+			->setSubject($template->render('subject'))
+		;
 		
-		$this->add_html_images($mime);
-		$this->attach_files($mime);
-
-		$body = $mime->get(
-			array (
-				'head_charset' => 'UTF-8',
-				'text_charset' => 'UTF-8',
-				'html_charset' => 'UTF-8',
-				'html_encoding' => 'base64',
-			)
-		);
-
 		if (isset($this->sender['name'])) {
-			$sender = mb_encode_mimeheader($this->sender['name'], 'ISO-8859-1') . ' <' . $this->sender['email'] . '>';
+			$message->setFrom(array($this->sender['email'] => $this->sender['name']));
 		} else {
-			$sender = $this->sender['email'];
+			$message->setFrom($this->sender['email']);
 		}
 
-		$headers = array(
-			'From' => $sender,
-			'Subject' => $template->render('subject'),
-			'X-MailType' => $this->type,
-		);
-
-		$config = Config::Get();
-		if ($config->archive_mailbox != '') {
-			$this->add_recipient_address('', $config->archive_mailbox, null, 'bcc');
+		if (isset($config->archive_mailbox) AND $config->archive_mailbox != '') {
+			$message->addBcc($config->archive_mailbox);
 		}
+
+		$this->add_html_images($message);
+		$this->attach_files();
 
 		foreach ($this->recipients as $type => $recipients) {
 			foreach ($recipients as $recipient) {
-				$addresses[] = mb_encode_mimeheader($recipient['name'], 'ISO-8859-1') . ' <' . $recipient['email'] . '>';
+				if ($recipient['name'] != '') {
+					$addresses[$recipient['email']] = $recipient['name'];
+				} else {
+					$addresses[] = $recipient['email'];
+				}
 			}
 
-			$headers[ucfirst($type)] = implode(', ', $addresses);
+			$set_to = 'set' . ucfirst($type);
+			call_user_func(array($message, $set_to), $addresses);
 		}
 
-		$headers = $mime->headers($headers);
-
-		$mail = new Mail();
-		$mail = $mail->factory('mail');
-		$mail->_params = '-f ' . $this->sender['email'] . ' -r ' . $this->sender['email'];
-
-		$mail->send($headers['To'], $headers, $body);
+		$mailer->send($message);
 		unset($template);
 	}
 
@@ -263,19 +245,23 @@ class Email {
 	 * Add embedded HTML images (image dir)
 	 *
 	 * @access private
+	 * @param Swift_Message $message
 	 */
-	private function add_html_images(&$mime) {
+	private function add_html_images(&$message) {
 		$path = STORE_PATH . '/email/media/';
 		
-		$html_body = $mime->getHTMLBody();
+		$html_body = $message->getBody();
 
 		if ($handle = opendir($path)) {
 			while (false !== ($file = readdir($handle))) {
 				if (substr($file,0,1) != '.' && strpos($html_body, $file) !== false) {
-					$mime->addHTMLImage($path . $file, Util::mime_type($path . $file), $file);
+					$swift_image = Swift_Image::newInstance(file_get_contents($path . $file), $file, Util::mime_type($path . $file));
+					$html_body = str_replace($file, $message->embed($swift_image), $html_body);
 				}
 			}
 		}
+
+		$message->setBody($html_body);
 
 		closedir($handle);
 	}
@@ -284,15 +270,17 @@ class Email {
 	 * Attach files
 	 *
 	 * @access private
+	 * @param Swift_Message $message
 	 */
-	private function attach_files(&$mime) {
+	private function attach_files(&$message) {
 		foreach ($this->files as $file) {
-			$mime->addAttachment($file->get_contents(), $file->mimetype, $file->name, false);
+			$message->attach(Swift_Attachment::fromPath($file->get_path());
 		}
 
 		foreach ($this->manual_files as $file) {
-			$mime->addAttachment($file, Util::mime_type($file));
+			$message->attach(Swift_Attachment::fromPath($file);
 		}
 	}
 }
+
 ?>

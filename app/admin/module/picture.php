@@ -44,7 +44,7 @@ class Module_Picture extends Web_Module {
 			$this->display_404();
 		}
 		if (isset($_GET['size'])) {
-			$picture->show($_GET['size']);
+			$picture->show($_GET['size']);			
 		} else {
 			$picture->show();
 		}

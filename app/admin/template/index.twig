@@ -1,12 +1,13 @@
 {% extends "base.layout.twig" %}
 
 {% block content %}
+
+	
 	<div class="content">
 		<h1>It works!</h1>
 
-		Welcome to your application :-)
-
-
+		<p>Welcome to your application :-)</p>		
+		
 		<h2>Env</h2>
 		<h3>env.post</h3>
 		{{ env.post|print_r }}
@@ -33,6 +34,17 @@
 			<li>Modal: {{ base.modal('click me', 'button', '/icon/add.png', 'demo', 'Show snippet!', parameters) }}</li>
 			<li>Confirm: {{ base.confirm('click me', 'button', '/icon/add.png', '/index?action=confirm&id=2', 'Are you sure you want to confirm?', parameters) }}</li>
 		</ul>
+
+		<dl>
+			<dt>text</dt>
+			<dd>{{ form.input('dummy[name]', 'name x') }}</dd>
+
+			<dt>textarea</dt>
+			<dd>{{ form.textarea('dummy[text]', 'textarea data') }}</dd>
+			
+			<dt>select</dt>
+			<dd>{{ form.select('dummy[select_id]', 2, dummy_options ) }}</dd>
+		</dl>
 
 
 		<h2>Javascript</h2>
@@ -61,6 +73,13 @@
 			<a href="/3.jpg" class="lightbox" title="This is the content of the title attribute REL 2"><img src="/3_thumb.jpg"></a>
 			<a href="/4.jpg" class="lightbox" title="Demo title attribute REL 2"><img src="/4_thumb.jpg"></a>
 		</p>
+
+		<h3>Images</h3>
+		<p>
+			<img src="/picture?id=1&size=format_name" />
+			<img src="/picture?id=2&size=crop" />
+			<img src="/picture?id=3&size=format_name" />
+		</p>	
 
 		<h2>CSS</h2>
 		<h3>Buttons</h3>
