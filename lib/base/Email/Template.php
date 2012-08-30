@@ -8,7 +8,6 @@
  * @version $Id$
  */
 
-require_once EXT_PATH . '/twig/lib/Twig/Autoloader.php';
 require_once LIB_PATH . '/base/Translation.php';
 
 class Email_Template {
@@ -63,7 +62,7 @@ class Email_Template {
 			)
 		);
 
-		$this->twig->addExtension(new Twig_Extensions_Extension_Tigron());
+		//$this->twig->addExtension(new Twig_Extensions_Extension_Tigron());
 		$this->twig->addExtension(
 			new Twig_Extensions_Extension_I18n(
 				array(
