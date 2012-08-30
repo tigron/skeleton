@@ -195,7 +195,7 @@ class Email {
 		}
 
 		$this->add_html_images($message);
-		$this->attach_files();
+		$this->attach_files($message);
 
 		foreach ($this->recipients as $type => $recipients) {
 			foreach ($recipients as $recipient) {
@@ -274,11 +274,11 @@ class Email {
 	 */
 	private function attach_files(&$message) {
 		foreach ($this->files as $file) {
-			$message->attach(Swift_Attachment::fromPath($file->get_path());
+			$message->attach(Swift_Attachment::fromPath($file->get_path()));
 		}
 
 		foreach ($this->manual_files as $file) {
-			$message->attach(Swift_Attachment::fromPath($file);
+			$message->attach(Swift_Attachment::fromPath($file));
 		}
 	}
 }
