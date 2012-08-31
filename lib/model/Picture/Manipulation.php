@@ -1,8 +1,8 @@
 <?php
 /**
- * Email class
+ * Picture_Manipulation class
  *
- * Send emails
+ * Manipulates pictures
  *
  * @package %%PACKAGE%%
  * @author Christophe Gosiau <christophe@tigron.be>
@@ -13,7 +13,7 @@
 
 require_once LIB_PATH . '/base/Util.php';
 
-class php_image {
+class Picture_Manipulation {
 
 	/**
 	 * Contains image resource
@@ -68,26 +68,13 @@ class php_image {
 	 * Load image
 	 *
 	 * @access private
-	 * @param string $file
+	 * @param Picture $picture
 	 */
-	private function load($file) {
-		if (is_object($file) AND get_class($file) == 'Picture') {
-			$path = $file->get_path();
-			$width = $file->width;
-			$height = $file->height;
-			$mime_type = $file->mime_type;
-		} elseif (is_string($file) AND file_exists($file)) {
-			$path = $file;
-			list($width, $height) = $this->get_dimensions($path);
-			$mime_type = $this->get_mime_type($path);
-		} else {
-			throw new Exception ('This is not an existing file or Picture object');
-		}
-
-		$this->width = $width;
-		$this->height = $height;
-		$this->mime_type = $mime_type;
-		$this->image = $this->open($path);
+	private function load(Picture $picture) {
+		$this->width = $picture->width;
+		$this->height = $îcture->height;
+		$this->mime_type = $picture->mime_type;
+		$this->image = $this->open($picture->get_path());
 	}
 
 	/**

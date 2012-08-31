@@ -9,7 +9,7 @@
  */
 
 require_once LIB_PATH . '/model/File.php';
-require_once EXT_PATH . '/Php_Image.php';
+require_once LIB_PATH . '/model/Picture/Manipulation.php';
 
 class Picture extends File {
 
@@ -164,7 +164,7 @@ class Picture extends File {
 			$resize_info = $config->picture_formats[$size];
 		}
 
-		$image = new Php_Image($this);
+		$image = new Picture_Manipulation($this);
 		$image->resize($resize_info['width'], $resize_info['height'], $resize_info['mode']);
 		$image->output(TMP_PATH . '/picture/' . $size . '/' . $this->unique_name);		
 	}
