@@ -72,7 +72,7 @@ class Picture_Manipulation {
 	 */
 	private function load(Picture $picture) {
 		$this->width = $picture->width;
-		$this->height = $îcture->height;
+		$this->height = $picture->height;
 		$this->mime_type = $picture->mime_type;
 		$this->image = $this->open($picture->get_path());
 	}
