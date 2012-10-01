@@ -62,8 +62,9 @@ class File {
 	 *
 	 * @access public
 	 */
-	public function save() {
+	public function save($get_details = true) {
 		$db = Database::Get();
+
 		if (!isset($this->id) OR $this->id === null) {
 			$mode = MDB2_AUTOQUERY_INSERT;
 			$this->details['created'] = date('Y-m-d H:i:s');
@@ -74,12 +75,14 @@ class File {
 		}
 
 		$db->autoExecute('file', $this->details, $mode, $where);
-
+		
 		if ($mode === MDB2_AUTOQUERY_INSERT) {
 			$this->id = $db->getOne('SELECT LAST_INSERT_ID();');
 		}
 
-		$this->get_details();
+		if ($get_details) {
+			$this->get_details();
+		}
 	}
 
 	/**
@@ -221,7 +224,12 @@ class File {
 	 * @return file
 	 */
 	public static function get_by_id($id) {
-		return new File($id);
+		$file = new File($id);
+		if ($file->is_picture()) {
+			return Picture::get_by_id($id);
+		}
+
+		return $file;
 	}
 
 	/**

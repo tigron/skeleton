@@ -79,7 +79,7 @@ class Util {
 			$mime_type = preg_replace('/;.*/', ' ', $mime_type);
 		}
 
-		return $mime_type;
+		return trim($mime_type);
     }
 
 	/**

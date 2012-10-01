@@ -65,7 +65,9 @@ class Picture extends File {
 	 *
 	 * @access public
 	 */
-	public function save() {
+	public function save($get_details = true) {
+		parent::save(false);
+		
 		$db = Database::Get();
 		if (!isset($this->local_details['id']) OR $this->local_details['id'] === null) {
 			$mode = MDB2_AUTOQUERY_INSERT;
