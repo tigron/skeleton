@@ -138,7 +138,7 @@
  #}
 {% macro errors(errors) %}
 	<div class="error">
-		{% if errors|count == 1 %}
+		{% if errors|length == 1 %}
 			{% for field, error in errors %}
 				{{ 'The field %field% was not filled in correctly'|replace({'%field%': field})|trans }}
 			{% endfor %}

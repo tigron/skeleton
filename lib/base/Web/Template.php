@@ -78,12 +78,13 @@ class Web_Template {
 		$this->twig = new Twig_Environment(
 			$loader,
 			array(
+				'debug' => true,
 				'cache' => TMP_PATH . '/twig/' . APP_NAME,
 				'auto_reload' => true,
 			)
 		);
 
-		//$this->twig->addExtension(new Twig_Extensions_Extension_Tigron());
+		$this->twig->addExtension(new Twig_Extension_Debug());
 		$this->twig->addExtension(
 			new Twig_Extensions_Extension_I18n(
 				array(
