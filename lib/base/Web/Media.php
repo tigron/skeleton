@@ -61,14 +61,14 @@ class Web_Media {
 
 			$mtime = 0;
 			foreach ($files as $file) {
-				$mtime = self::fetch('mtime', $file, $extension);
+				$file_mtime = self::fetch('mtime', $file, $extension);
 
-				if ($mtime === false) {
-					self::fail();
+				if ($file_mtime === false) {
+					self::fail($extension);
 				}
 
-				if ($file['mtime'] > $mtime) {
-					$mtime = $file['mtime'];
+				if ($file_mtime > $mtime) {
+					$mtime = $file_mtime;
 				}
 			}
 
