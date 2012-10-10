@@ -18,7 +18,7 @@ class Module_Picture extends Web_Module {
 	 * @access public
 	 * @var bool $login_required
 	 */
-	public $login_required = true;
+	public $login_required = false;
 
 	/**
 	 * Template to use

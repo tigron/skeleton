@@ -83,7 +83,7 @@ class Web_Template {
 			)
 		);
 
-		$this->twig->addExtension(new Twig_Extensions_Extension_Tigron());
+		//$this->twig->addExtension(new Twig_Extensions_Extension_Tigron());
 		$this->twig->addExtension(
 			new Twig_Extensions_Extension_I18n(
 				array(
