@@ -74,6 +74,20 @@ class Web_Handler {
 
 		$application = $applications[$_SERVER['SERVER_NAME']];
 
+		if (!is_array($application)) {
+			$application = array('name' => $application);
+		}
+
+		$default_settings = array(
+			'media' => true,
+			'module' => array(
+				'default' => 'index',
+				'404' => '404',
+			)
+		);
+
+		$application = array_merge($default_settings, $application);
+
 		define('APP_NAME',		$application);
 		define('APP_PATH',		realpath(ROOT_PATH . '/app/' . $application));
 		define('MEDIA_PATH',	APP_PATH . '/media');
@@ -83,7 +97,9 @@ class Web_Handler {
 		/**
 		 * Check if this is an image or a media type
 		 */
-		Web_Media::Detect($request_parts);
+		if ($application['media'] == true) {
+			Web_Media::Detect($request_parts);
+		}
 
 		/**
 		 * Set the language to the template
@@ -211,26 +227,33 @@ class Web_Handler {
 
 		header('Content-type: text/html; charset=utf-8');
 
-		if (file_exists(strtolower(MODULE_PATH . '/' . implode('/', $request_parts) . '.php'))) {
-			// Does the module exist on itself?
-			require_once(MODULE_PATH . '/' . implode('/', $request_parts) . '.php');
+		$possible_modules = array(
+			// Module was called directly
+			array(
+				'file' => implode('/', $request_parts) . '.php',
+				'classname' => 'Module_' . implode('_', $request_parts),
+			),
+			// Directory was called, start default module
+			array(
+				'file' => implode('/', $request_parts) . '/' . $application['module']['default'] . '.php',
+				'classname' => 'Module_' . implode('_', $request_parts) . '_' . $application['module']['default'],
+			),
+			// Nothing found, start 404
+			array(
+				'file' => $application['module']['404'] . '.php',
+				'classname' => 'Module_' . $application['module']['404'],
+			),
+		);
 
-			$classname = 'Module_' . implode('_', $request_parts);
-			$module = new $classname();
-			$module->accept_request();
-		} elseif (file_exists(strtolower(MODULE_PATH . '/' . implode('/', $request_parts) . '/index.php'))) {
-			// If not, is the module the user asked for actually a directory?
-			require_once(MODULE_PATH . '/' . implode('/', $request_parts) . '/index.php');
+		foreach ($possible_modules as $possible_module) {
+			$filename = strtolower(MODULE_PATH . '/' .  $possible_module['file']);
+			if (file_exists($filename)) {
+				require_once($filename);
 
-			$classname = 'Module_' . implode('_', $request_parts) . '_Index';
-			$module = new $classname();
-			$module->accept_request();
-		} else {
-			header("HTTP/1.0 404 Not Found");
-			require_once MODULE_PATH . '/404.php';
-
-			$module = new Module_404();
-			$module->accept_request();
+				$module = new $possible_module['classname'];
+				$module->accept_request();
+				break;
+			}
 		}
 
 		// Record debug information
