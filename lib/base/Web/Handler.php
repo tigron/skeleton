@@ -88,8 +88,8 @@ class Web_Handler {
 
 		$application = array_merge($default_settings, $application);
 
-		define('APP_NAME',		$application);
-		define('APP_PATH',		realpath(ROOT_PATH . '/app/' . $application));
+		define('APP_NAME',		$application['name']);
+		define('APP_PATH',		realpath(ROOT_PATH . '/app/' . $application['name']));
 		define('MEDIA_PATH',	APP_PATH . '/media');
 		define('MODULE_PATH',	APP_PATH . '/module');
 		define('TEMPLATE_PATH',	APP_PATH . '/template');
