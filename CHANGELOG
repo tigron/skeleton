@@ -1,9 +1,14 @@
+* 0.0.20130328
+
+  * Fix issue in handler
+  * Update Twig to 1.* insteaf of fixing it at 1.12.0
+  * Update composer
+
 * 0.0.20120830
 
   * Email lib uses swiftmailer
   * Php_Image lib for resizing/cropping
   * Minor tweaks
-
 
 * 0.0.20120823
 
