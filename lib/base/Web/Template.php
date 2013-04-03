@@ -9,6 +9,7 @@
  */
 
 require_once LIB_PATH . '/base/Translation.php';
+require_once LIB_PATH . '/base/Web/Template/Twig/Extension/Default.php';
 
 class Web_Template {
 	/**
@@ -84,6 +85,10 @@ class Web_Template {
 			)
 		);
 
+		
+
+		$this->twig->addExtension(new Template_Twig_Extension_Default());
+		$this->twig->addExtension(new Twig_Extensions_Extension_Text());
 		$this->twig->addExtension(new Twig_Extension_Debug());
 		$this->twig->addExtension(
 			new Twig_Extensions_Extension_I18n(
@@ -157,8 +162,7 @@ class Web_Template {
 				'cookie' => $_COOKIE,
 				'server' => $_SERVER,
 				'session' => $_SESSION,
-				'template' => $this,
-				'now' => time()
+				'template' => $this
 			),
 			$this->environment
 		);

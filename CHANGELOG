@@ -1,7 +1,14 @@
+* 0.0.20130403
+
+  * Default Twig Extension with filter/functions (old Tigron Extension)
+  * Remove already built in filters
+  * Util Math
+  * Minor tweaks
+
 * 0.0.20130328
 
   * Fix issue in handler
-  * Update Twig to 1.* insteaf of fixing it at 1.12.0
+  * Update Twig to 1.* instead of fixing it at 1.12.0
   * Update composer
 
 * 0.0.20120830
