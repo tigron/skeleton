@@ -49,4 +49,11 @@ require_once LIB_PATH . '/base/Errorhandling.php';
 require_once LIB_PATH . '/base/Database.php';
 require_once PACKAGE_PATH . '/vendor/autoload.php';
 
+/**
+ * Require all traits
+ */
+foreach (glob(LIB_PATH . '/trait/*.php') as $trait) {
+    require_once $trait;
+}
+
 ?>
