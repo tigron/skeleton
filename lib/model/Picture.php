@@ -30,16 +30,6 @@ class Picture extends File {
 	private $local_fields = array('file_id', 'width', 'height');
 
 	/**
-	 * Constructor
-	 *
-	 * @access public
-	 * @param int $id
-	 */
-	public function __construct($id = null) {
-		parent::__construct($id);
-	}
-
-	/**
 	 * Get the details of this file
 	 *
 	 * @access private
@@ -213,18 +203,6 @@ class Picture extends File {
 		header('Content-Type: ' . $this->mime_type);
 		readfile($filename);
 		exit();
-	}
-
-	/**
-	 * Load array
-	 *
-	 * @access public
-	 * @param array $details
-	 */
-	public function load_array($details) {
-		foreach ($details as $key => $value) {
-			$this->$key = $value;
-		}
 	}
 
 	/**

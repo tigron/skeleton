@@ -11,120 +11,7 @@
 require_once LIB_PATH . '/base/File/Store.php';
 
 class File {
-	/**
-	 * @var Int $id
-	 * @access public
-	 */
-	public $id;
-
-	/**
-	 * Details
-	 *
-	 * @var array $details
-	 * @access private
-	 */
-	protected $details = array();
-
-	/**
-	 * Constructor
-	 *
-	 * @access public
-	 * @param int $id
-	 */
-	public function __construct($id = null) {
-		if ($id !== null) {
-			$this->id = $id;
-			$this->get_details();
-		}
-	}
-
-	/**
-	 * Get the details of this file
-	 *
-	 * @access private
-	 */
-	protected function get_details() {
-		if (!isset($this->id) OR $this->id === null) {
-			throw new Exception('Could not fetch file data: ID not set');
-		}
-
-		$db = Database::Get();
-		$details = $db->getRow('SELECT * FROM file WHERE id=?', array($this->id));
-		if ($details === null) {
-			throw new Exception('Could not fetch file data: no file found with id ' . $this->id);
-		}
-
-		$this->details = $details;
-	}
-
-	/**
-	 * Save the file
-	 *
-	 * @access public
-	 */
-	public function save($get_details = true) {
-		$db = Database::Get();
-
-		if (!isset($this->id) OR $this->id === null) {
-			$mode = MDB2_AUTOQUERY_INSERT;
-			$this->details['created'] = date('Y-m-d H:i:s');
-			$where = false;
-		} else {
-			$mode = MDB2_AUTOQUERY_UPDATE;
-			$where = 'id=' . $db->quote($this->id);
-		}
-
-		$db->autoExecute('file', $this->details, $mode, $where);
-		
-		if ($mode === MDB2_AUTOQUERY_INSERT) {
-			$this->id = $db->getOne('SELECT LAST_INSERT_ID();');
-		}
-
-		if ($get_details) {
-			$this->get_details();
-		}
-	}
-
-	/**
-	 * Set a detail
-	 *
-	 * @access public
-	 * @param string $key
-	 * @param mixex $value
-	 */
-	public function __set($key, $value) {
-		$this->details[$key] = $value;
-	}
-
-	/**
-	 * Get a detail
-	 *
-	 * @access public
-	 * @param string $key
-	 * @return mixed $value
-	 */
-	public function __get($key) {
-		if (!isset($this->details[$key])) {
-			throw new Exception('Unknown key requested: ' . $key);
-		} else {
-			return $this->details[$key];
-		}
-	}
-
-	/**
-	 * Isset
-	 *
-	 * @access public
-	 * @param string $key
-	 * @return bool $isset
-	 */
-	public function __isset($key) {
-		if (isset($this->details[$key])) {
-			return true;
-		} else {
-			return false;
-		}
-	}
+	use Model, Save, Get, Delete
 
 	/**
 	 * Is this a picture
@@ -150,18 +37,6 @@ class File {
 	}
 
 	/**
-	 * Load array
-	 *
-	 * @access public
-	 * @param array $details
-	 */
-	public function load_array($details) {
-		foreach ($details as $key => $value) {
-			$this->$key = $value;
-		}
-	}
-
-	/**
 	 * Get path
 	 *
 	 * @access public
@@ -171,16 +46,6 @@ class File {
 		$created = strtotime($this->created);
 		$path = STORE_PATH . '/file/' . date('Y', $created) . '/' . date('m', $created) . '/' . date('d', $created) . '/' . $this->unique_name;
 		return $path;
-	}
-
-	/**
-	 * Delete
-	 *
-	 * @access public
-	 */
-	public function delete() {
-		$db = Database::Get();
-		$db->query('DELETE FROM file WHERE id=?', array($this->id));
 	}
 
 	/**
@@ -214,38 +79,6 @@ class File {
 	 */
 	public function get_contents() {
 		return file_get_contents($this->get_path());
-	}
-
-	/**
-	 * Get a File by ID
-	 *
-	 * @access public
-	 * @parm int $id
-	 * @return file
-	 */
-	public static function get_by_id($id) {
-		$file = new File($id);
-		if ($file->is_picture()) {
-			return Picture::get_by_id($id);
-		}
-
-		return $file;
-	}
-
-	/**
-	 * Get all
-	 *
-	 * @access public
-	 * @return array files
-	 */
-	public static function get_all() {
-		$db = Database::Get();
-		$ids = $db->getCol('SELECT id FROM file', array());
-		$files = array();
-		foreach ($ids as $id) {
-			$files[] = File::get_by_id($id);
-		}
-		return $files;
 	}
 
 	/**

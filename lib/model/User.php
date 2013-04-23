@@ -14,58 +14,13 @@ require_once LIB_PATH . '/model/Log.php';
 require_once LIB_PATH . '/model/Language.php';
 
 class User {
+	use Model, Get, Save, Delete
 
 	/**
 	 * @var User $user
 	 * @access private
 	 */
 	private static $user = null;
-
-	/**
-	 * @var Int $id
-	 * @access public
-	 */
-	public $id;
-
-	/**
-	 * Details
-	 *
-	 * @var array $details
-	 * @access private
-	 */
-	private $details = array();
-
-	/**
-	 * Constructor
-	 *
-	 * @access public
-	 * @param int $id
-	 */
-	public function __construct($id = null) {
-		if ($id !== null) {
-			$this->id = $id;
-			$this->get_details();
-		}
-	}
-
-	/**
-	 * Get the details of this user
-	 *
-	 * @access private
-	 */
-	private function get_details() {
-		if (!isset($this->id) OR $this->id === null) {
-			throw new Exception('Could not fetch user data: ID not set');
-		}
-
-		$db = Database::Get();
-		$details = $db->getRow('SELECT * FROM user WHERE id=?', array($this->id));
-		if ($details === null) {
-			throw new Exception('Could not fetch user data: no user found with id ' . $this->id);
-		}
-
-		$this->details = $details;
-	}
 
 	/**
 	 * Validate user data
@@ -141,131 +96,6 @@ class User {
 		}
 
 		$this->get_details();
-	}
-
-	/**
-	 * Set a detail
-	 *
-	 * @access public
-	 * @param string $key
-	 * @param mixex $value
-	 */
-	public function __set($key, $value) {
-		if (($key == 'password' OR $key == 'repeat_password') AND strlen($value) > 0) {
-			$value = sha1($value);
-		}
-
-		$this->details[$key] = $value;
-	}
-
-	/**
-	 * Get a detail
-	 *
-	 * @access public
-	 * @param string $key
-	 * @return mixed $value
-	 */
-	public function __get($key) {
-		if ($key == 'language') {
-			return Language::get_by_id($this->language_id);
-		} elseif ($key == 'country') {
-			return Country::get_by_id($this->country_id);
-		} elseif (!isset($this->details[$key])) {
-			throw new Exception('Unknown key requested: ' . $key);
-		} else {
-			return $this->details[$key];
-		}
-	}
-
-	/**
-	 * Isset
-	 *
-	 * @access public
-	 * @param string $key
-	 * @return bool $isset
-	 */
-	public function __isset($key) {
-		if ($key == 'country') {
-			return true;
-		} elseif (isset($this->details[$key])) {
-			return true;
-		} else {
-			return false;
-		}
-	}
-
-	/**
-	 * Load array
-	 *
-	 * @access public
-	 * @param array $details
-	 */
-	public function load_array($details) {
-		foreach ($details as $key => $value) {
-			$this->$key = $value;
-		}
-	}
-
-	/**
-	 * Delete
-	 *
-	 * @access public
-	 */
-	public function delete() {
-		$db = Database::Get();
-		$db->query('DELETE FROM user WHERE id=?', array($this->id));
-	}
-
-	/**
-	 * Get video vote
-	 *
-	 * @access public
-	 * @param Video $video
-	 * @return mixed
-	 */
-	public function get_video_vote(Video $video) {
-		try {
-			$video_vote = Video_Vote::get_by_video_user($video, $this);
-			return $video_vote;
-		} catch (Exception $e) {}
-
-		return false;
-	}
-
-	/**
-	 * Get User info
-	 * 
-	 * @access public
-	 */
-	public function get_info() {
-		return $this->details;
-	}
-
-	/**
-	 * Get a User by ID
-	 *
-	 * @access public
-	 * @parm int $id
-	 * @return user
-	 */
-	public static function get_by_id($id) {
-		return new User($id);
-	}
-
-	/**
-	 * Get all
-	 *
-	 * @access public
-	 * @return array users
-	 */
-	public static function get_all() {
-		$db = Database::Get();
-		$ids = $db->getCol('SELECT id FROM user', array());
-		$users = array();
-		foreach ($ids as $id) {
-			$users[] = User::get_by_id($id);
-		}
-		return $users;
 	}
 
 	/**
@@ -346,7 +176,6 @@ class User {
 	public static function set(User $user) {
 		self::$user = $user;
 	}
-
 
 	/**
 	 * Get paged
