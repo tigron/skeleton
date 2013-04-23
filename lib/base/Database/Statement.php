@@ -31,20 +31,9 @@ class Database_Statement extends Mysqli_Stmt {
 	private function get_columns() {
 		$meta = $this->result_metadata();
 
-		// FIXME: This is a check to be compatible with PHP versions > 5.3.6
-		if (version_compare(PHP_VERSION, '5.3.6') >= 0) {
-			$database_in_key = true;
-		} else {
-			$database_in_key = false;
-		}
-
 		$columns = array();
 		while ($column = $meta->fetch_field()) {
-			if ($database_in_key === true) {
-				$columns[] = $column->db . '.' . $column->table . '.' . strtolower($column->name);
-			} else {
-				$columns[] = $column->table . '.' . strtolower($column->name);
-			}
+			$columns[] = $column->db . '.' . $column->table . '.' . strtolower($column->name);
 		}
 		return $columns;
 	}

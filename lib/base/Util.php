@@ -37,10 +37,13 @@ class Util {
 	 *
 	 * @access public
 	 * @param string $table
+	 * @param Database $db
 	 * @return array $fields
 	 */
-	public static function get_table_columns($table) {
-		$db = Database::Get();
+	public static function get_table_columns($table, $db = null) {
+		if ($db === null) {
+			$db = Database::Get();
+		}
 		$fields = $db->get_columns(strtolower($table));
 		return $fields;
 	}
@@ -51,10 +54,11 @@ class Util {
 	 * @access public
 	 * @param string $table
 	 * @param array $data
+	 * @param Database $db
 	 * @return $filtered_data
 	 */
-	public static function filter_table_data($table, $data) {
-		$table_fields = Util::get_table_columns($table);
+	public static function filter_table_data($table, $data, $db = null) {
+		$table_fields = Util::get_table_columns($table, $db);
 		$result = array();
 		foreach ($table_fields as $field) {
 			if (isset($data[$field])) {
