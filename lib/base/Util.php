@@ -47,6 +47,21 @@ class Util {
 		$fields = $db->get_columns(strtolower($table));
 		return $fields;
 	}
+	
+	/**
+	 * Get table definition
+	 *
+	 * @access public
+	 * @param string $table
+	 * @param Database $db
+	 * @return array $definition
+	 */
+	public static function get_table_definition($table, $db = null) {
+		if ($db === null) {
+			$db = Datbase::Get();
+		}
+		return $db->get_table_definition(strtolower($table));
+	}
 
 	/**
 	 * Filter fields to insert/update table

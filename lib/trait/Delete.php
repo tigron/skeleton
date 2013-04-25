@@ -14,9 +14,8 @@ trait Delete {
 	 */
 	public function delete() {
 		$table = self::trait_get_database_table();
-		$database = self::trait_get_database_config_name();
+		$db = self::trait_get_database();
 
-		$db = Database::Get($database);
 		$db->query('DELETE FROM ' . $table . ' WHERE id=?', array($this->id));
 	}
 }

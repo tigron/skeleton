@@ -98,7 +98,7 @@ class Database_Proxy {
 	/**
 	 * Get table columns
 	 *
-	 * @access private
+	 * @access public
 	 * @param string $table
 	 */
 	public function get_columns($table) {
@@ -112,6 +112,19 @@ class Database_Proxy {
 		}
 
 		return $this->stripslashes_result($columns);
+	}
+	
+	/**
+	 * Get table definition
+	 *
+	 * @access public
+	 * @param string $table
+	 */
+	public function get_table_definition($table) {
+		$statement = $this->get_statement('DESC ' . $this->quote_identifier($table), array());
+		$statement->execute();
+		$result = $statement->fetch_assoc();
+		return $result;
 	}
 
 	/**
