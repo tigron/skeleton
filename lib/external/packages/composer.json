@@ -2,7 +2,8 @@
     "require": {
 	"twig/twig": "1.*",
 	"twig/extensions": "1.0.*@dev",
-	"swiftmailer/swiftmailer": "v4.3.0"
+	"swiftmailer/swiftmailer": "v4.3.0",
+	"sami/sami": "1.0.*@dev"
     }
 }
 
