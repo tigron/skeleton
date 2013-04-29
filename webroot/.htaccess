@@ -1,9 +1,15 @@
-#
-#Rerites all to the handler file
-#
+# Enable following symlinks
+Options +FollowSymLinks
+
 RewriteEngine On
-RewriteCond    %{REQUEST_URI} !^/handler.php
-RewriteRule    ^.*    /handler.php [L,NS]
+
+# If we have documentation present, serve it
+RewriteCond %{DOCUMENT_ROOT}/documentation/ -d
+RewriteRule ^documentation/.*$ - [L]
+
+# Rewrite all requests to the handler.php file
+RewriteCond %{REQUEST_URI} !^/handler.php
+RewriteRule ^(.*)?$ /handler.php [L,NS]
 
 # Force everything to be handled as UTF-8
 AddDefaultcharset UTF-8
