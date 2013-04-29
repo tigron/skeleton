@@ -22,29 +22,23 @@ trait Save {
 			}
 		}
 
-		$table = self::trait_get_database_table();
-
-		$db = self::trait_get_database();
-
-		if (!isset($this->id) OR $this->id === null) {
-			$mode = MDB2_AUTOQUERY_INSERT;
-			$this->details['created'] = date('Y-m-d H:i:s');
-			$where = false;
-			
-			if (is_callable(array($this, 'pre_insert'))) {
-				$this->pre_insert();
-			}
-			
-		} else {
-			$mode = MDB2_AUTOQUERY_UPDATE;
-			$this->details['updated'] = date('Y-m-d H:i:s');
-			$where = 'id=' . $db->quote($this->id);
+		// If we have a sanitize() method, execute it
+		if (is_callable(array($this, 'sanitize'))) {
+			$this->sanitize();
 		}
 
-		$db->autoExecute($table, $this->details, $mode, $where);
+		$table = self::trait_get_database_table();
+		$db = self::trait_get_database();
 
-		if ($mode === MDB2_AUTOQUERY_INSERT) {
-			$this->id = $db->getOne('SELECT LAST_INSERT_ID();');
+		// If $this->id is null, do an insert, otherwise do an update
+		if (!isset($this->id) OR $this->id === null) {
+			$this->details['created'] = date('Y-m-d H:i:s');
+			$db->insert($table, $this->details);
+			$this->id = $db->get_one('SELECT LAST_INSERT_ID()');
+		} else {
+			$this->details['updated'] = date('Y-m-d H:i:s');
+			$where = 'id=' . $db->quote($this->id);
+			$db->update($table, $this->details, $where);
 		}
 
 		$this->get_details();
