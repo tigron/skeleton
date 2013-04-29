@@ -4,8 +4,8 @@
  *
  * A compatibility layer to be complatible with the PEAR (M)DB(2) interfaces.
  *
- * @author Christophe Gosiau <christophe@safehex.be>
- * @author Gerry Demaret <gerry@safehex.be>
+ * @author Christophe Gosiau <christophe.gosiau@tigron.be>
+ * @author Gerry Demaret <gerry.demaret@tigron.be>
  */
 
 define('MDB2_AUTOQUERY_INSERT', 1);
