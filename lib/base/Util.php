@@ -157,6 +157,28 @@ class Util {
 	}
 
 	/**
+	 * Check if a directory is empty
+	 *
+	 * @access public
+	 * @param string $directory
+	 * @return bool $exists
+	 */
+	public static function is_dir_empty($dir) {
+		if (!is_readable($dir)) {
+			return null;
+		}
+
+		$handle = opendir($dir);
+		while (false !== ($entry = readdir($handle))) {
+			if ($entry != "." && $entry != "..") {
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+	/**
 	 * Call
 	 *
 	 * @access public
@@ -165,16 +187,23 @@ class Util {
 	 */
 	public static function __callstatic($method, $arguments) {
 		list($classname, $method) = explode('_', $method, 2);
-		$class = ucfirst($classname) . '.php';
-		require_once LIB_PATH . '/base/Util/' . $class;
+
+		$classname = ucfirst($classname);
+		$filename = LIB_PATH . '/base/Util/' . $classname . '.php';
+
+		if (file_exists($filename)) {
+			require_once $filename;
+		} else {
+			throw new Exception('File does not exist: ' . $filename);
+		}
+
 		$classname = 'Util_' . $classname;
 
 		if (!method_exists($classname, $method)) {
-			throw new Exception('method ' . $method . ' does not exists');
+			throw new Exception('Method ' . $method . ' does not exists, in autoloaded class ' . $classname);
 		}
 
 		$result = forward_static_call_array(array($classname, $method), $arguments);
 		return $result;
 	}
 }
-?>
