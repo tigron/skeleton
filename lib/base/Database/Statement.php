@@ -2,17 +2,17 @@
 /**
  * Database Statement Class
  *
- * @package %%PACKAGE%%
  * @author Christophe Gosiau <christophe@tigron.be>
  * @author Gerry Demaret <gerry@tigron.be>
- * @version $Id$
  */
-class Database_Statement extends Mysqli_Stmt {
 
+class Database_Statement extends Mysqli_Stmt {
 	/**
-	 * Constructor
+	 * Database_Statement constructor
 	 *
-	 * @access Mysqli $database
+	 * @access public
+	 * @param mysqlii $database MySQLi object containing the database connection
+	 * @param string $query The query to construct a statement for
 	 * @access string $query
 	 */
 	public function __construct($database_resource, $query) {
@@ -23,26 +23,38 @@ class Database_Statement extends Mysqli_Stmt {
 	}
 
 	/**
-	 * Get columns of resultset
+	 * Get all columns affected by a statement
 	 *
 	 * @access public
-	 * @return array $columns
+	 * @return array $columns Array containing the columns
 	 */
 	private function get_columns() {
 		$meta = $this->result_metadata();
 
+		// FIXME: This is a check to be compatible with PHP versions > 5.3.6
+		// Not having the database name in the key results in name collisions when using multiple databases
+		if (version_compare(PHP_VERSION, '5.3.6') >= 0) {
+			$database_in_key = true;
+		} else {
+			$database_in_key = false;
+		}
+
 		$columns = array();
 		while ($column = $meta->fetch_field()) {
-			$columns[] = $column->db . '.' . $column->table . '.' . strtolower($column->name);
+			if ($database_in_key === true) {
+				$columns[] = $column->db . '.' . $column->table . '.' . strtolower($column->name);
+			} else {
+				$columns[] = $column->table . '.' . strtolower($column->name);
+			}
 		}
 		return $columns;
 	}
-	
+
 	/**
-	 * Fetch_assoc
+	 * Fetch an associative array on a statement
 	 *
 	 * @access public
-	 * @return array $data
+	 * @return array $data The array containing the result
 	 */
 	public function fetch_assoc() {
 		$data = array();
@@ -53,6 +65,7 @@ class Database_Statement extends Mysqli_Stmt {
 		}
 
 		$result = call_user_func_array(array($this, 'bind_result'), $params);
+
 		$data = array();
 		while ($this->fetch()) {
 			$row = array();
@@ -62,7 +75,7 @@ class Database_Statement extends Mysqli_Stmt {
 			}
 			$data[] = $row;
 		}
+
 		return $data;
 	}
 }
-?>
