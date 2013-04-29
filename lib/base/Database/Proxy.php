@@ -114,9 +114,7 @@ class Database_Proxy {
 	 * @return array $result An array containing the columns
 	 */
 	public function get_columns($table) {
-		$statement = $this->get_statement('SHOW columns FROM ' . $this->quote_identifier($table) , array());
-		$statement->execute();
-		$result = $statement->fetch_assoc();
+		$result = $this->get_table_definition($table);
 
 		$columns = array();
 		foreach ($result as $row) {
