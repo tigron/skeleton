@@ -11,6 +11,8 @@
 require_once LIB_PATH . '/base/Translation.php';
 require_once LIB_PATH . '/base/Web/Template/Twig/Extension/Default.php';
 
+class Exception_Template_Syntax extends Exception {}
+
 class Web_Template {
 	/**
 	 * Template object
@@ -100,11 +102,19 @@ class Web_Template {
 		);
 
 		if (file_exists(APP_PATH . '/macro/base.macro')) {
-			$this->twig->addGlobal('base', $this->twig->loadTemplate('base.macro'));
+			try {
+				$this->twig->addGlobal('base', $this->twig->loadTemplate('base.macro'));
+			} catch (Twig_Error_Syntax $e) {
+				throw new Exception_Template_Syntax($e->getmessage());
+			}
 		}
 
 		if (file_exists(APP_PATH . '/macro/form.macro')) {
-			$this->twig->addGlobal('form', $this->twig->loadTemplate('form.macro'));
+			try {
+				$this->twig->addGlobal('form', $this->twig->loadTemplate('form.macro'));
+			} catch (Twig_Error_Syntax $e) {
+				throw new Exception_Template_Syntax($e->getmessage());
+			}
 		}
 	}
 
@@ -169,17 +179,21 @@ class Web_Template {
 
 		$this->twig->addGlobal('env', $variables);
 
-		if ($this->surrounding) {
-			$twig_template = $this->twig->loadTemplate('header.twig');
-			echo Util::rewrite_reverse_html($twig_template->render($this->parameters));
-		}
+		try {
+			if ($this->surrounding) {
+				$twig_template = $this->twig->loadTemplate('header.twig');
+				echo Util::rewrite_reverse_html($twig_template->render($this->parameters));
+			}
 
-		$twig_template = $this->twig->loadTemplate($template);
-		echo Util::rewrite_reverse_html($twig_template->render($this->parameters));
-
-		if ($this->surrounding) {
-			$twig_template = $this->twig->loadTemplate('footer.twig');
+			$twig_template = $this->twig->loadTemplate($template);
 			echo Util::rewrite_reverse_html($twig_template->render($this->parameters));
+
+			if ($this->surrounding) {
+				$twig_template = $this->twig->loadTemplate('footer.twig');
+				echo Util::rewrite_reverse_html($twig_template->render($this->parameters));
+			}
+		} catch (Twig_Error_Syntax $e) {
+			throw new Exception_Template_Syntax($e->getmessage());
 		}
 	}
 
