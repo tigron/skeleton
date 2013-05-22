@@ -67,6 +67,25 @@ class Config {
 	}
 
 	/**
+	 * Check if config var exists
+	 *
+	 * @param string key
+	 * @return bool $isset
+	 * @access public
+	 */
+	public function __isset($key) {
+		if (!isset($this->config_data) OR $this->config_data === null) {
+			$this->read();
+		}
+
+		if (isset($this->config_data[$key])) {
+			return true;
+		}
+
+		return false;
+	}
+
+	/**
 	 * Read config file
 	 *
 	 * Populates the $this->config var, now the config is just in this function
