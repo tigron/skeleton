@@ -127,7 +127,6 @@ class Picture_Manipulation {
 		}
 
 		imagedestroy($this->image_resized);
-		exit();
 	}
 
 	/**
