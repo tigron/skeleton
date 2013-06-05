@@ -56,3 +56,5 @@ CREATE TABLE IF NOT EXISTS `user` (
   `created` datetime NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;
+
+ALTER TABLE `user` DROP `date_of_birth`;

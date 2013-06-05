@@ -11,7 +11,7 @@
 require_once LIB_PATH . '/base/File/Store.php';
 
 class File {
-	use Model, Save, Get, Delete
+	use Model, Save, Get, Delete;
 
 	/**
 	 * Is this a picture
