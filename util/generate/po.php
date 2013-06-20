@@ -10,15 +10,19 @@
 
 require_once dirname(__FILE__) . '/../../config/global.php';
 
-require_once EXT_PATH . '/twig/lib/Twig/Autoloader.php';
 require_once LIB_PATH . '/model/Language.php';
 require_once LIB_PATH . '/base/Util.php';
 require_once LIB_PATH . '/base/Translation.php';
+require_once LIB_PATH . '/base/Web/Template.php';
 
-$template_directories = array('template', 'macro');
+$template_directories = array('template');
 
 $config = Config::Get();
 Twig_Autoloader::register();
+
+// This is a dummy line. A language is required, otherwise rendering the template for cache will cause an exception
+Translation::configure(Language::get_by_id(1), 'admin');
+
 
 $applications_array = $config->applications;
 $applications = array();
@@ -30,70 +34,42 @@ foreach ($applications_array as $application) {
 	}
 }
 
-$applications[] = 'email';
-$applications[] = 'pdf';
-
-/**
- * First: generate the full template cache
- */
+$to_generate = array();
 foreach ($applications as $application) {
-	foreach ($template_directories as $template_directory) {
-		if ($application == 'email') {
-			$directory = STORE_PATH . '/email/template';
-		} elseif ($application == 'pdf') {
-			$directory = STORE_PATH . '/pdf/template';
-		} else {
-			$directory = ROOT_PATH . '/app/' . $application . '/template';
-		}
-
-		if (file_exists($directory)) {
-			$directories[] = $directory;
-		}
+	if (file_exists(ROOT_PATH . '/app/' . $application . '/template')) {
+		$to_generate[] = array(	'app_name'	=>	$application,
+								'app_path'	=>	ROOT_PATH . '/app/' . $application . '/template');
 	}
-
-	$loader = new Twig_Loader_Filesystem($directories);
-
-	// force auto-reload to always have the latest version of the template
-	$twig = new Twig_Environment(
-		$loader, array(
-			'cache' => TMP_PATH . '/twig/' . $application,
-			'auto_reload' => true
-		)
-	);
-
-	$twig->addExtension(new Twig_Extensions_Extension_Tigron());
-	$twig->addExtension(
-		new Twig_Extensions_Extension_I18n(
-			array(
-				'function_translation' => 'Translation::translate',
-				'function_translation_plural' => 'Translation::translate_plural',
-			)
-		)
-	);
-
-	try {
-		$twig->addGlobal('base', $twig->loadTemplate('base.macro'));
-	} catch (Twig_Error_Loader $e) { /* base.macro not found, #care */ }
-
-	// iterate over all the templates
-	foreach ($directories as $directory) {
-		foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($directory), RecursiveIteratorIterator::LEAVES_ONLY) as $file) {
-			$file = str_replace($directory.'/', '', $file);
-
-			if (strrpos($file, '.') ==  (strlen($file)-1)) {
-				continue;
-			}
-
-			$template = $twig->loadTemplate($file);
-		}
-	}
-
-	
 }
+if (file_exists(STORE_PATH . '/pdf/template')) {
+	$to_generate[] = array(	'app_name' => 'pdf',
+							'app_path' => STORE_PATH . '/pdf/template');
+}
+if (file_exists(STORE_PATH . '/email/template')) {
+	$to_generate[] = array(	'app_name' => 'email',
+							'app_path' => STORE_PATH . '/email/template');
+}
+$applications = $to_generate;
+
+echo 'creating template cache' . "\n";
+foreach ($applications as $application) {
+	$application_path = str_replace('template', '', $application['app_path']);
+	$template = new Web_Template($application['app_name'], $application_path);
+
+	$files = get_files_from_directory($application['app_path']);
+	foreach ($files as $file) {
+		$template_file = str_replace($application['app_path'] . '/' , '', $file);
+		echo $application_path . $template_file . "\n";
+
+		$template->render($template_file, false);
+	}
+}
+echo "\n\n";
 
 /**
  * Second: make a copy of every po file
  */
+echo 'copying all po files' . "\n";
 foreach ($applications as $application) {
 	$languages = Language::get_all();
 
@@ -102,8 +78,8 @@ foreach ($applications as $application) {
 		if ($config->base_language == $language->name_short) {
 			continue;
 		}
-		if (file_exists(PO_PATH . '/' . $language->name_short . '/' . $application . '.po')) {
-			rename(PO_PATH . '/' . $language->name_short . '/' . $application . '.po', PO_PATH . '/' . $language->name_short . '/' . $application . '_def.po');
+		if (file_exists(PO_PATH . '/' . $language->name_short . '/' . $application['app_name'] . '.po')) {
+			rename(PO_PATH . '/' . $language->name_short . '/' . $application['app_name'] . '.po', PO_PATH . '/' . $language->name_short . '/' . $application['app_name'] . '_def.po');
 		}
 	}
 }
@@ -111,6 +87,7 @@ foreach ($applications as $application) {
 /**
  * Third: translate every application
  */
+echo 'translate applications' . "\n";
 foreach ($applications as $application) {
 	translate_application($application);
 }
@@ -127,12 +104,12 @@ foreach ($applications as $application) {
 			continue;
 		}
 
-		if (!file_exists(PO_PATH . '/' . $language->name_short . '/' . $application . '_def.po')) {
+		if (!file_exists(PO_PATH . '/' . $language->name_short . '/' . $application['app_name'] . '_def.po')) {
 			continue;
 		}
 
-		Util::po_merge(PO_PATH . '/' . $language->name_short . '/' . $application . '_def.po', PO_PATH . '/' . $language->name_short . '/' . $application . '.po');
-		rename(PO_PATH . '/' . $language->name_short . '/' . $application . '_def.po', PO_PATH . '/' . $language->name_short . '/' . $application . '.po');
+		Util::po_merge(PO_PATH . '/' . $language->name_short . '/' . $application['app_name'] . '_def.po', PO_PATH . '/' . $language->name_short . '/' . $application['app_name'] . '.po');
+		rename(PO_PATH . '/' . $language->name_short . '/' . $application['app_name'] . '_def.po', PO_PATH . '/' . $language->name_short . '/' . $application['app_name'] . '.po');
 	}
 }
 
@@ -143,20 +120,45 @@ foreach ($applications as $application) {
  * them.
  */
 function translate_application($application) {
-	if (is_dir(TMP_PATH . '/twig/' . $application)) {
-		$files = scandir(TMP_PATH . '/twig/' . $application);
+	if (is_dir(TMP_PATH . '/twig/' . $application['app_name'])) {
+		$files = scandir(TMP_PATH . '/twig/' . $application['app_name']);
 
 		foreach ($files as $file) {
 			if ($file[0] == '.') {
 				continue;
 			}
 
-			if (is_dir(TMP_PATH . '/twig/' . $application . '/' . $file)) {
-				translate_directory(TMP_PATH . '/twig/' . $application . '/' . $file, $application);
+			if (is_dir(TMP_PATH . '/twig/' . $application['app_name'] . '/' . $file)) {
+				translate_directory(TMP_PATH . '/twig/' . $application['app_name'] . '/' . $file, $application['app_name']);
 				continue;
 			}
 		}
 	}
+}
+
+/**
+ * Get files from directory recursively
+ */
+function get_files_from_directory($directory) {
+	$files = scandir($directory);
+	$return_list = array();
+
+	foreach ($files as $key => $file) {
+		
+		if ($file[0] == '.') {
+			unset($files[$key]);
+			continue;
+		}
+
+		if (is_dir($directory . '/' . $file)) {
+			unset($files[$key]);
+			$return_list = array_merge($return_list, get_files_from_directory($directory . '/' . $file));
+			continue;
+		}
+		$return_list[] = $directory . '/' . $file;		
+
+	}
+	return $return_list;
 }
 
 /**
@@ -240,7 +242,6 @@ function translate_file($filename, $application) {
 
 		$strings = array_merge($current_strings, $untranslated);
 		asort($strings);
-
 		Util::po_save(PO_PATH . '/' . $language->name_short . '/' . $application . '.po', $strings);
 	}
 }

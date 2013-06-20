@@ -157,30 +157,6 @@ class Picture_Manipulation {
 	}
 
 	/**
-	 * Calculate width using new height
-	 *
-	 * @access private
-	 * @param int $new_height
-	 * @return float $output_width
-	 */
-	private function calculate_size_by_height($new_height) {
-		$ratio = $this->width / $this->height;
-		return $new_height * $ratio;
-	}
-
-	/**
-	 * Calculate height using new width
-	 *
-	 * @access private
-	 * @param int $new_width
-	 * @return float $output_height
-	 */
-	private function calculate_size_by_width($new_width) {
-		$ratio = $this->height / $this->width;
-		return $new_width * $ratio;
-	}
-
-	/**
 	 * Calculate output dimensions
 	 *
 	 * @access private
@@ -189,23 +165,25 @@ class Picture_Manipulation {
 	 * @return array $output_dimensions
 	 */
 	private function calculate_size($new_width, $new_height) {
-		if ($this->height < $this->width) {
+		
+		$old_aspect_ratio = $this->width / $this->height;
+
+		if (is_null($new_width)) {
+			$new_width = round($new_height * $old_aspect_ratio);
+		} elseif (is_null($new_height)){
+			$new_height = round($new_width / $old_aspect_ratio);
+		}
+		
+		$new_aspect_ratio = $new_width / $new_height;
+		if ($new_aspect_ratio == $old_aspect_ratio) {
 			$output_width = $new_width;
-			$output_height = $this->calculate_size_by_width($new_width);
-		} elseif ($this->height > $this->width) {
-			$output_width = $this->calculate_size_by_height($new_height);
 			$output_height = $new_height;
-		} else {
-			if ($new_height < $new_width) {
-				$output_width = $new_width;
-				$output_height = $this->calculate_size_by_width($new_width);
-			} else if ($new_height > $new_width) {
-				$output_width = $this->calculate_size_by_height($new_height);
-				$output_height = $new_height;
-			} else {
-				$output_width = $new_width;
-				$output_height = $new_height;
-			}
+		} elseif ($new_aspect_ratio < $old_aspect_ratio) {
+			$output_height = round($new_width / $old_aspect_ratio);
+			$output_width = $new_width;
+		} elseif ($new_aspect_ratio > $old_aspect_ratio) {
+			$output_width = round($new_height * $old_aspect_ratio);
+			$output_height = $new_height;
 		}
 
 		return array($output_width, $output_height);
@@ -277,9 +255,9 @@ class Picture_Manipulation {
 		if (is_null($new_width) AND is_null($new_height)) {
 			throw new Exception('specifiy output dimensions');
 		}
-
-		list($output_width, $output_height) = $this->get_output_dimensions($new_width, $new_height, $mode);
 		
+		list($output_width, $output_height) = $this->get_output_dimensions($new_width, $new_height, $mode);
+
 		$this->image_resized = imagecreatetruecolor($output_width, $output_height);
 
 		if ($this->mime_type == 'image/gif' OR $this->mime_type == 'image/png') {
@@ -300,7 +278,7 @@ class Picture_Manipulation {
 		imagecopyresampled($this->image_resized, $this->image, 0, 0, 0, 0, $output_width, $output_height, $this->width, $this->height);
 		
 		if ($mode == 'crop') {
-			$this->crop($output_width, $output_height, $new_width, $new_height);
+			$this->crop($output_width, $output_height, $new_width, $new_height);			
 		}
 	}
 

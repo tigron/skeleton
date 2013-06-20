@@ -10,6 +10,7 @@
 
 require_once LIB_PATH . '/base/Translation.php';
 require_once LIB_PATH . '/base/Web/Template/Twig/Extension/Default.php';
+require_once LIB_PATH . '/base/Web/Template/Twig/Extension/I18n/Tigron.php';
 
 class Exception_Template_Syntax extends Exception {}
 
@@ -60,20 +61,47 @@ class Web_Template {
 	 * @var bool $surrounding
 	 */
 	public $surrounding = true;
+	
+	/**
+	 * App path
+	 *
+	 * @access private
+	 * @var string $app_path
+	 */
+	private $app_path = '';
+	
+	/**
+	 * App name
+	 *
+	 * @access private
+	 * @var string $app_name
+	 */
+	private $app_name = '';
 
 	/**
 	 * Constructor
 	 */
-	public function __construct() {
+	public function __construct($app_name = null, $app_path = null) {
+		if ($app_name === null) {
+			$this->app_name = APP_NAME;
+		} else {
+			$this->app_name = $app_name;
+		}
+		if ($app_path === null) {
+			$this->app_path = APP_PATH;
+		} else {
+			$this->app_path = $app_path;
+		}
+
 		Twig_Autoloader::register();
 		
 		$loader_paths = array();
-		if (file_exists(APP_PATH . '/macro')) {
-			$loader_paths[] = APP_PATH . '/macro';
+		if (file_exists($this->app_path . '/macro')) {
+			$loader_paths[] = $this->app_path . '/macro';
 		}
 
-		if (file_exists(APP_PATH . '/template')) {
-			$loader_paths[] = APP_PATH . '/template';
+		if (file_exists($this->app_path . '/template')) {
+			$loader_paths[] = $this->app_path . '/template';
 		}
 
 		$loader = new Twig_Loader_Filesystem($loader_paths);
@@ -81,8 +109,8 @@ class Web_Template {
 		$this->twig = new Twig_Environment(
 			$loader,
 			array(
-				'debug' => true,
-				'cache' => TMP_PATH . '/twig/' . APP_NAME,
+				'debug' => false,
+				'cache' => TMP_PATH . '/twig/' . $this->app_name,
 				'auto_reload' => true,
 			)
 		);
@@ -93,15 +121,10 @@ class Web_Template {
 		$this->twig->addExtension(new Twig_Extensions_Extension_Text());
 		$this->twig->addExtension(new Twig_Extension_Debug());
 		$this->twig->addExtension(
-			new Twig_Extensions_Extension_I18n(
-				array(
-					'function_translation' => 'Translation::translate',
-					'function_translation_plural' => 'Translation::translate_plural',
-				)
-			)
+			new Twig_Extensions_Extension_I18n_Tigron()
 		);
 
-		if (file_exists(APP_PATH . '/macro/base.macro')) {
+		if (file_exists($this->app_path . '/macro/base.macro')) {
 			try {
 				$this->twig->addGlobal('base', $this->twig->loadTemplate('base.macro'));
 			} catch (Twig_Error_Syntax $e) {
@@ -109,7 +132,7 @@ class Web_Template {
 			}
 		}
 
-		if (file_exists(APP_PATH . '/macro/form.macro')) {
+		if (file_exists($this->app_path . '/macro/form.macro')) {
 			try {
 				$this->twig->addGlobal('form', $this->twig->loadTemplate('form.macro'));
 			} catch (Twig_Error_Syntax $e) {
@@ -163,8 +186,8 @@ class Web_Template {
 	 * @access public
 	 */
 	public function display($template) {
-		Translation::configure(Language::Get(), APP_NAME);
-
+		Translation::configure(Language::Get(), $this->app_name);
+		$html = '';
 		$variables = array_merge(
 			array(
 				'post' => $_POST,
@@ -178,23 +201,26 @@ class Web_Template {
 		);
 
 		$this->twig->addGlobal('env', $variables);
-
+		echo $this->render($template);
+	}
+	
+	/**
+	 * Render the template
+	 *
+	 * @access public
+	 * @return string $html
+	 */
+	public function render($template, $reverse_rewrite = true) {
 		try {
-			if ($this->surrounding) {
-				$twig_template = $this->twig->loadTemplate('header.twig');
-				echo Util::rewrite_reverse_html($twig_template->render($this->parameters));
-			}
-
 			$twig_template = $this->twig->loadTemplate($template);
-			echo Util::rewrite_reverse_html($twig_template->render($this->parameters));
-
-			if ($this->surrounding) {
-				$twig_template = $this->twig->loadTemplate('footer.twig');
-				echo Util::rewrite_reverse_html($twig_template->render($this->parameters));
+			$html = $twig_template->render($this->parameters);
+			if ($reverse_rewrite) {
+				$html = Util::rewrite_reverse_html($html);
 			}
 		} catch (Twig_Error_Syntax $e) {
 			throw new Exception_Template_Syntax($e->getmessage());
-		}
+		}	
+		return $html;
 	}
 
 	/**

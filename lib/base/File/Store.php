@@ -53,7 +53,7 @@ class File_Store {
 
 		if ($file->is_picture()) {
 			$picture = new Picture();
-			$picture->file_id = $file->id;
+			$picture->id = $file->id;
 			$picture->save();
 			return $picture;
 		}
@@ -93,7 +93,10 @@ class File_Store {
 		$file->save();
 		
 		if ($file->is_picture()) {
-			$picture = Picture::get_by_id($file->id);
+			$picture = new Picture();
+			$picture->id = $file->id;
+			$picture->save();
+			return $picture;
 		}
 		return $file;
 	}

@@ -56,7 +56,9 @@ class Picture extends File {
 	 * @access public
 	 */
 	public function save($get_details = true) {
-		parent::save(false);
+		if (!isset($this->id)) {
+			parent::save(false);
+		}
 		
 		$db = Database::Get();
 		if (!isset($this->local_details['id']) OR $this->local_details['id'] === null) {
