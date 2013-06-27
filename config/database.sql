@@ -57,4 +57,5 @@ CREATE TABLE IF NOT EXISTS `user` (
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;
 
-ALTER TABLE `user` DROP `date_of_birth`;
+ALTER TABLE  `file` ADD  `md5sum` VARCHAR( 32 ) NOT NULL AFTER  `name`;
+ALTER TABLE  `file` DROP  `unique_name`;

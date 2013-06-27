@@ -11,8 +11,19 @@
 require_once LIB_PATH . '/base/File/Store.php';
 
 class File {
-	use Model, Save, Get, Delete;
+	use Model, Save, Get;
 
+	/**
+	 * Delete a file
+	 *
+	 * @access public
+	 */
+	public function delete() {
+		File_Store::delete_file($this);
+		$db = Database::Get();
+		$db->query('DELETE FROM file WHERE id=?', array($this->id));
+	}
+	
 	/**
 	 * Is this a picture
 	 *
@@ -43,9 +54,7 @@ class File {
 	 * @return string $path
 	 */
 	public function get_path() {
-		$created = strtotime($this->created);
-		$path = STORE_PATH . '/file/' . date('Y', $created) . '/' . date('m', $created) . '/' . date('d', $created) . '/' . $this->unique_name;
-		return $path;
+		return File_Store::get_path($this);
 	}
 
 	/**
@@ -72,35 +81,5 @@ class File {
 		exit();
 	}
 
-	/**
-	 * Get content of the file
-	 *
-	 * @access public
-	 */
-	public function get_contents() {
-		return file_get_contents($this->get_path());
-	}
-
-	/**
-	 * Get by unique_name
-	 *
-	 * @access public
-	 * @param string $unique_name
-	 * @return File $file
-	 */
-	public static function get_by_unique_name($name) {
-		$db = Database::Get();
-		$id = $db->getOne('SELECT id FROM file WHERE unique_name=?', array($name));
-		if ($id === null) {
-			throw new Exception('File not found');
-		}
-		
-		$file = File::get_by_id($id);
-		if ($file->is_picture()) {
-			return Picture::get_by_id($file->id);
-		} else {
-			return $file;
-		}
-	}
 }
 ?>
