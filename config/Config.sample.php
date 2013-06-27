@@ -48,25 +48,6 @@ class Config {
 	}
 
 	/**
-	 * Isset
-	 *
-	 * @access public
-	 * @param string $key
-	 * @return bool $isset
-	 */
-	public function __isset($key) {
-		if (!isset($this->config_data) OR $this->config_data === null) {
-			$this->read();
-		}
-		
-		if (isset($this->config_data[$key])) {
-			return true;
-		} else {
-			return false;
-		}
-	}
-
-	/**
 	 * Get config vars as properties
 	 *
 	 * @param string name
