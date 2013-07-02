@@ -177,18 +177,19 @@ class Web_Handler {
 				}
 			}
 
-			$route = '';
-			foreach($request_parts as $key => $request_part) {
-				$route .= '/' . $request_part;
-
+			$route = '/' . implode($request_parts, '/');
+			for ($x=count($request_parts); $x > 0; $x--) { 
+				
 				// Check if the request is defined by a route
 				if (array_key_exists($route, $routes)) {
+					
 					$template->add_env('route', $route);
 
 					// Check if the route matches without variables and if it's allowed to do so
 					if ($route != '/' . implode($request_parts, '/')) {
-						$variables = array_slice($request_parts, $key+1);
-
+						
+						$variables = array_slice($request_parts, $x+1);
+						print_r($variables);
 						$variable_match = null;
 						foreach ($routes[$route]['variables'] as $variable_possibility) {
 							if (count($variables) == substr_count($variable_possibility, '$')) {
@@ -216,8 +217,11 @@ class Web_Handler {
 					$request_parts = explode('/', $routes[$route]['target']);
 					break;
 				}
+
+				$route = substr($route, 0, strrpos($route, '/'));
 			}
 		}
+		
 
 		$last_part = $request_parts[count($request_parts)-1];
 		if (strpos($last_part,'?')) {
