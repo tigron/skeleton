@@ -189,7 +189,6 @@ class Web_Handler {
 					if ($route != '/' . implode($request_parts, '/')) {
 						
 						$variables = array_slice($request_parts, $x+1);
-						print_r($variables);
 						$variable_match = null;
 						foreach ($routes[$route]['variables'] as $variable_possibility) {
 							if (count($variables) == substr_count($variable_possibility, '$')) {
