@@ -1,3 +1,9 @@
+* 0.0.20130728
+
+  * Quick cleanup
+  * Release under MIT License
+  * Switch from svn to git
+
 * 0.0.20130403
 
   * Default Twig Extension with filter/functions (old Tigron Extension)
@@ -39,7 +45,7 @@
   * Add Email support (Template)
   * Update (Twig 1.6.5)
   * Minor tweaks
-  
+
 * 0.0.20110905 - Massive progress
 
   * Add routing functionality with clean URL support
