@@ -1,0 +1,5 @@
+config/Config.php
+tmp/*
+store/file/*
+store/documentation/*
+lib/external/packages/vendor/*
