@@ -2,10 +2,8 @@
 /**
  * HTTP request Handler
  *
- * @package %%PACKAGE%%
  * @author Christophe Gosiau <christophe@tigron.be>
  * @author Gerry Demaret <gerry@tigron.be>
- * @version $Id$
  */
 
 require_once LIB_PATH . '/base/Web/Module.php';
@@ -178,16 +176,16 @@ class Web_Handler {
 			}
 
 			$route = '/' . implode($request_parts, '/');
-			for ($x=count($request_parts); $x > 0; $x--) { 
-				
+			for ($x=count($request_parts); $x > 0; $x--) {
+
 				// Check if the request is defined by a route
 				if (array_key_exists($route, $routes)) {
-					
+
 					$template->add_env('route', $route);
 
 					// Check if the route matches without variables and if it's allowed to do so
 					if ($route != '/' . implode($request_parts, '/')) {
-						
+
 						$variables = array_slice($request_parts, $x+1);
 						$variable_match = null;
 						foreach ($routes[$route]['variables'] as $variable_possibility) {
@@ -220,7 +218,6 @@ class Web_Handler {
 				$route = substr($route, 0, strrpos($route, '/'));
 			}
 		}
-		
 
 		$last_part = $request_parts[count($request_parts)-1];
 		if (strpos($last_part,'?')) {
@@ -269,4 +266,3 @@ class Web_Handler {
 		}
 	}
 }
-?>

@@ -4,11 +4,9 @@
  *
  * Manipulates pictures
  *
- * @package %%PACKAGE%%
  * @author Christophe Gosiau <christophe@tigron.be>
  * @author Gerry Demaret <gerry@tigron.be>
  * @author David Vandemaele <david@tigron.be>
- * @version $Id$
  */
 
 require_once LIB_PATH . '/base/Util.php';
@@ -165,7 +163,6 @@ class Picture_Manipulation {
 	 * @return array $output_dimensions
 	 */
 	private function calculate_size($new_width, $new_height) {
-		
 		$old_aspect_ratio = $this->width / $this->height;
 
 		if (is_null($new_width)) {
@@ -173,7 +170,7 @@ class Picture_Manipulation {
 		} elseif (is_null($new_height)){
 			$new_height = round($new_width / $old_aspect_ratio);
 		}
-		
+
 		$new_aspect_ratio = $new_width / $new_height;
 		if ($new_aspect_ratio == $old_aspect_ratio) {
 			$output_width = $new_width;
@@ -255,7 +252,7 @@ class Picture_Manipulation {
 		if (is_null($new_width) AND is_null($new_height)) {
 			throw new Exception('specifiy output dimensions');
 		}
-		
+
 		list($output_width, $output_height) = $this->get_output_dimensions($new_width, $new_height, $mode);
 
 		$this->image_resized = imagecreatetruecolor($output_width, $output_height);
@@ -276,9 +273,9 @@ class Picture_Manipulation {
 		}
 
 		imagecopyresampled($this->image_resized, $this->image, 0, 0, 0, 0, $output_width, $output_height, $this->width, $this->height);
-		
+
 		if ($mode == 'crop') {
-			$this->crop($output_width, $output_height, $new_width, $new_height);			
+			$this->crop($output_width, $output_height, $new_width, $new_height);
 		}
 	}
 

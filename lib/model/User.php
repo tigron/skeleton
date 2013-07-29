@@ -2,11 +2,9 @@
 /**
  * User class
  *
- * @package %%Package%%
  * @author Christophe Gosiau <christophe@tigron.be>
  * @author Gerry Demaret <gerry@tigron.be>
  * @author David Vandemaele <david@tigron.be>
- * @version $Id$
  */
 
 require_once LIB_PATH . '/model/Country.php';
@@ -14,7 +12,7 @@ require_once LIB_PATH . '/model/Log.php';
 require_once LIB_PATH . '/model/Language.php';
 
 class User {
-	use Model, Get, Save, Delete
+	use Model, Get, Save, Delete;
 
 	/**
 	 * @var User $user
@@ -35,9 +33,9 @@ class User {
 			if (!isset($this->details[$required_field]) OR $this->details[$required_field] == '') {
 				$errors[$required_field] = 'required';
 			}
-		}		
+		}
 
-		if (count($errors) > 0) {			
+		if (count($errors) > 0) {
 			return false;
 		}
 
@@ -55,7 +53,7 @@ class User {
 				$errors['username'] = 'already exists';
 			} catch (Exception $e) { }
 		}
-		
+
 		if ($this->id === null) {
 			try {
 				$user = self::get_by_email($this->details['email']);
@@ -92,7 +90,7 @@ class User {
 			$this->id = $db->getOne('SELECT LAST_INSERT_ID();');
 			Log::create('add', $this);
 		} else {
-			Log::create('edit', $this);		
+			Log::create('edit', $this);
 		}
 
 		$this->get_details();
@@ -108,7 +106,7 @@ class User {
 	public static function get_by_username($username) {
 		$db = Database::Get();
 		$id = $db->getOne('SELECT id FROM user WHERE username = ?', array($username));
-		
+
 		if ($id === null) {
 			throw new Exception('User not found');
 		}
@@ -126,7 +124,7 @@ class User {
 	public static function get_by_email($email) {
 		$db = Database::Get();
 		$id = $db->getOne('SELECT id FROM user WHERE email = ?', array($email));
-		
+
 		if ($id === null) {
 			throw new Exception('User not found');
 		}
@@ -152,7 +150,7 @@ class User {
 
 		return $user;
 	}
-	
+
 	/**
 	 * Get the current user
 	 *
@@ -166,7 +164,7 @@ class User {
 
 		throw new Exception('No user set');
 	}
-	
+
 	/**
 	 * Set the current user
 	 *
@@ -276,4 +274,3 @@ class User {
 		return $count;
 	}
 }
-?>

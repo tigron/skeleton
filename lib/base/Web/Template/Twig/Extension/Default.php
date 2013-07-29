@@ -1,14 +1,12 @@
 <?php
-
 /**
- * This file is part of Twig.
+ * Additional functions and filters for Twig
  *
- * (c) 2011 Tigron
- *
- * @author Tigron <info@tigron.be>
+ * @author Christophe Gosiau <christophe@tigron.be>
+ * @author Gerry Demaret <gerry@tigron.be>
  */
-class Template_Twig_Extension_Default extends Twig_Extension
-{
+
+class Template_Twig_Extension_Default extends Twig_Extension {
     /**
      * Returns a list of filters
      *
@@ -17,10 +15,10 @@ class Template_Twig_Extension_Default extends Twig_Extension
     public function getFilters() {
         return array(
 			new Twig_SimpleFilter('print_r', array($this, 'print_r_filter'), array('is_safe' => array('html'))),
-			new Twig_SimpleFilter('serialize', array($this, 'serialize_filter'), array('is_safe' => array('html'))),			
+			new Twig_SimpleFilter('serialize', array($this, 'serialize_filter'), array('is_safe' => array('html'))),
 			new Twig_SimpleFilter('round', array($this, 'round_filter'), array('is_safe' => array('html'))),
 			new Twig_SimpleFilter('date', array($this, 'date_filter'), array('needs_environment' => true, 'is_safe' => array('html'))),
-			new Twig_SimpleFilter('datetime', array($this, 'datetime_filter'), array('needs_environment' => true, 'is_safe' => array('html')))			
+			new Twig_SimpleFilter('datetime', array($this, 'datetime_filter'), array('needs_environment' => true, 'is_safe' => array('html')))
         );
 	}
 
@@ -44,7 +42,7 @@ class Template_Twig_Extension_Default extends Twig_Extension
 	 * @param mixed $value
 	 * @param bool $raw
 	 * @return string $output
-	 */	
+	 */
 	public function print_r_filter($value, $raw = false) {
 		if ($raw === false) {
 			$output = '<pre>';
@@ -64,7 +62,7 @@ class Template_Twig_Extension_Default extends Twig_Extension
 	 *
 	 * @param mixed $value
 	 * @return string $output
-	 */	
+	 */
 	public function serialize_filter($value) {
 	    return serialize($value);
 	}
@@ -75,7 +73,7 @@ class Template_Twig_Extension_Default extends Twig_Extension
 	 * @param float $value
 	 * @param int $decimal
 	 * @return int $output
-	 */	
+	 */
 	public function round_filter($value, $decimal=0) {
 		return round($value, $decimal);
 	}
@@ -86,7 +84,7 @@ class Template_Twig_Extension_Default extends Twig_Extension
 	 * @param string $date
 	 * @param string $format
 	 * @return string $output
-	 */	
+	 */
 	public function date_filter(Twig_Environment $env, $date, $format = 'd/m/Y') {
 		return twig_date_format_filter($env, $date, $format);
 	}
@@ -97,20 +95,18 @@ class Template_Twig_Extension_Default extends Twig_Extension
 	 * @param string $datetime
 	 * @param string $format
 	 * @return string $output
-	 */	
+	 */
 	public function datetime_filter(Twig_Environment $env, $datetime, $format = 'd/m/Y H:i:s') {
 		return twig_date_format_filter($env, $datetime, $format);
 	}
 
-	
-	
 	/**
 	 * Function strpos
 	 *
 	 * @param mixed $value
 	 * @param string $to_search
 	 * @return mixed $output
-	 */	
+	 */
 	public function strpos_function($value, $to_search) {
 	    return strpos($value, $to_search);
 	}
@@ -121,7 +117,7 @@ class Template_Twig_Extension_Default extends Twig_Extension
 	 * @param float $value
 	 * @param float $value2
 	 * @return float $sum
-	 */	
+	 */
 	public function math_add_function($value, $value2) {
 		return Util::math_add($value, $value2);
 	}
@@ -132,7 +128,7 @@ class Template_Twig_Extension_Default extends Twig_Extension
 	 * @param float $value
 	 * @param float $value2
 	 * @return float $diff
-	 */	
+	 */
 	public function math_sub_function($value, $value2) {
 		return Util::math_sub($value, $value2);
 	}
@@ -143,7 +139,7 @@ class Template_Twig_Extension_Default extends Twig_Extension
 	 * @param float $value
 	 * @param float $value2
 	 * @return float $product
-	 */	
+	 */
 	public function math_mul_function($value, $value2) {
 		return Util::math_mul($value, $value2);
 	}

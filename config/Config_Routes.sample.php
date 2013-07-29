@@ -2,10 +2,8 @@
 /**
  * Route configuration class
  *
- * @package %%PACKAGE%%
  * @author Christophe Gosiau <christophe@tigron.be>
  * @author Gerry Demaret <gerry@tigron.be>
- * @version $Id$
  */
 class Config_Routes {
 
@@ -29,7 +27,7 @@ class Config_Routes {
 					'default' => '/default/route/to/index',
 					'en' => '/test/routing/engine',
 				),
-				// Variables that match the route, if no variables should match as well, use ''				
+				// Variables that match the route, if no variables should match as well, use ''
 				'variables' => array(
 					'',
 					'$action',
@@ -50,4 +48,3 @@ class Config_Routes {
 		),
 	);
 }
-?>

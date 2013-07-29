@@ -4,10 +4,8 @@
  *
  * Contains general purpose utilities
  *
- * @package %%PACKAGE%%
  * @author Christophe Gosiau <christophe@tigron.be>
  * @author Gerry Demaret <gerry@tigron.be>
- * @version $Id$
  */
 
 class Util {
@@ -47,7 +45,7 @@ class Util {
 		$fields = $db->get_columns(strtolower($table));
 		return $fields;
 	}
-	
+
 	/**
 	 * Get table definition
 	 *

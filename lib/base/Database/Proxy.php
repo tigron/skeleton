@@ -20,7 +20,7 @@ class Database_Proxy {
 	 * @access public
 	 */
 	public $queries = 0;
-	
+
 	/**
 	 * @var array $query_log Array containing all executed queries
 	 * @access public
@@ -64,7 +64,7 @@ class Database_Proxy {
 		}
 
 		$this->database->set_charset('utf8');
-	}	
+	}
 
 	/**
 	 * Perform "stripslashes" on an array, usually a resultset
@@ -181,7 +181,7 @@ class Database_Proxy {
 
 		return implode('.', $parts);
 	}
-	
+
 	/**
 	 * Escape a variable with the usual real_escape_string implementation
 	 *
@@ -351,12 +351,12 @@ class Database_Proxy {
 	 */
 	public function update($table, $params, $where) {
 		$params = Util::filter_table_data($table, $params, $this);
-	
+
 		$keys = array_keys($params);
 		foreach ($keys as $key => $value) {
 			$keys[$key] = $this->quote_identifier($value);
 		}
-		
+
 		$query = 'UPDATE ' . $this->quote_identifier($table) . ' SET ';
 
 		$first = true;

@@ -4,10 +4,8 @@
  *
  * Handles errors, mails them to whoever.
  *
- * @package %%PACKAGE%%
  * @author Christophe Gosiau <christophe@tigron.be>
  * @author Gerry Demaret <gerry@tigron.be>
- * @version $Id$
  */
 
 function error_handler ($errno, $errstr, $errfile = '', $errline = '', $errcontext = array()) {
@@ -184,7 +182,7 @@ function report($subject, $message, $fatal = false, $backtrace = true) {
 			debug_print_backtrace();
 			$backtrace = ob_get_contents();
 		ob_end_clean();
-	
+
 		$html .= '<h2>Backtrace</h2> <pre>' . $backtrace . '</pre>';
 	}
 
@@ -202,7 +200,7 @@ function report($subject, $message, $fatal = false, $backtrace = true) {
 	'</html>';
 
 	$config = Config::get();
-	
+
 	$headers = 'From: ' . $config->errors_from . "\r\n";
 	$headers.= 'Content-Type: text/html; charset=ISO-8859-1 MIME-Version: 1.0';
 	mail($config->errors_to, $subject, $html, $headers);

@@ -2,10 +2,8 @@
 /**
  * Module 404
  *
- * @package %%PACKAGE%%
  * @author Christophe Gosiau <christophe@tigron.be>
  * @author Gerry Demaret <gerry@tigron.be>
- * @version $Id$
  */
 
 class Module_404 extends Web_Module {
@@ -35,4 +33,3 @@ class Module_404 extends Web_Module {
 		echo '404';
 	}
 }
-?>

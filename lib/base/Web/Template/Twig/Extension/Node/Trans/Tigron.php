@@ -1,24 +1,13 @@
 <?php
-
-/*
- * This file is part of Twig.
- *
- * (c) 2010 Fabien Potencier
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- */
-
 /**
- * Represents a trans node.
+ * Translation extension for Twig
  *
- * @package    twig
- * @author     Fabien Potencier <fabien.potencier@symfony-project.com>
+ * @author Christophe Gosiau <christophe@tigron.be>
+ * @author Gerry Demaret <gerry@tigron.be>
  */
-class Twig_Extensions_Node_Trans_Tigron extends Twig_Node
-{
-    public function __construct(Twig_NodeInterface $body, Twig_NodeInterface $plural = null, Twig_Node_Expression $count = null, $lineno, $tag = null)
-    {
+
+class Twig_Extensions_Node_Trans_Tigron extends Twig_Node {
+    public function __construct(Twig_NodeInterface $body, Twig_NodeInterface $plural = null, Twig_Node_Expression $count = null, $lineno, $tag = null) {
         parent::__construct(array('count' => $count, 'body' => $body, 'plural' => $plural), array(), $lineno, $tag);
     }
 
@@ -27,8 +16,7 @@ class Twig_Extensions_Node_Trans_Tigron extends Twig_Node
      *
      * @param Twig_Compiler A Twig_Compiler instance
      */
-    public function compile(Twig_Compiler $compiler)
-    {
+    public function compile(Twig_Compiler $compiler) {
         $compiler->addDebugInfo($this);
 
         list($msg, $vars) = $this->compileString($this->getNode('body'));
@@ -98,8 +86,7 @@ class Twig_Extensions_Node_Trans_Tigron extends Twig_Node
         }
     }
 
-    protected function compileString(Twig_NodeInterface $body)
-    {
+    protected function compileString(Twig_NodeInterface $body) {
         if ($body instanceof Twig_Node_Expression_Name || $body instanceof Twig_Node_Expression_Constant || $body instanceof Twig_Node_Expression_TempName) {
             return array($body, array());
         }

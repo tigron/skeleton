@@ -2,10 +2,8 @@
 /**
  * Template class
  *
- * @package %%PACKAGE%%
  * @author Christophe Gosiau <christophe@tigron.be>
  * @author Gerry Demaret <gerry@tigron.be>
- * @version $Id$
  */
 
 require_once LIB_PATH . '/base/Translation.php';
@@ -61,7 +59,7 @@ class Web_Template {
 	 * @var bool $surrounding
 	 */
 	public $surrounding = true;
-	
+
 	/**
 	 * App path
 	 *
@@ -69,7 +67,7 @@ class Web_Template {
 	 * @var string $app_path
 	 */
 	private $app_path = '';
-	
+
 	/**
 	 * App name
 	 *
@@ -94,7 +92,7 @@ class Web_Template {
 		}
 
 		Twig_Autoloader::register();
-		
+
 		$loader_paths = array();
 		if (file_exists($this->app_path . '/macro')) {
 			$loader_paths[] = $this->app_path . '/macro';
@@ -114,8 +112,6 @@ class Web_Template {
 				'auto_reload' => true,
 			)
 		);
-
-		
 
 		$this->twig->addExtension(new Template_Twig_Extension_Default());
 		$this->twig->addExtension(new Twig_Extensions_Extension_Text());
@@ -203,7 +199,7 @@ class Web_Template {
 		$this->twig->addGlobal('env', $variables);
 		echo $this->render($template);
 	}
-	
+
 	/**
 	 * Render the template
 	 *
@@ -219,7 +215,8 @@ class Web_Template {
 			}
 		} catch (Twig_Error_Syntax $e) {
 			throw new Exception_Template_Syntax($e->getmessage());
-		}	
+		}
+
 		return $html;
 	}
 
@@ -237,4 +234,3 @@ class Web_Template {
 		return self::$template;
 	}
 }
-?>

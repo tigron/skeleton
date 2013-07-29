@@ -2,10 +2,8 @@
 /**
  * Module Index
  *
- * @package %%PACKAGE%%
  * @author Christophe Gosiau <christophe@tigron.be>
  * @author Gerry Demaret <gerry@tigron.be>
- * @version $Id$
  */
 
 class Module_Index extends Web_Module {
@@ -50,4 +48,3 @@ class Module_Index extends Web_Module {
 		Web_Session::redirect('/index?action=i_have_been_redirected');
 	}
 }
-?>

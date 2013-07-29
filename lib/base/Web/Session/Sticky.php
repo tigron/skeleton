@@ -2,10 +2,8 @@
 /**
  * Session class to control the session
  *
- * @package %%PACKAGE%%
  * @author Christophe Gosiau <christophe@tigron.be>
  * @author Gerry Demaret <gerry@tigron.be>
- * @version $Id$
  */
 
 class Web_Session_Sticky {
@@ -113,6 +111,4 @@ class Web_Session_Sticky {
 		}
 		return self::$sticky_session;
 	}
-
 }
-?>

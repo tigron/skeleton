@@ -2,10 +2,8 @@
 /**
  * Media detection and serving of media files
  *
- * @package %%PACKAGE%%
  * @author Christophe Gosiau <christophe@tigron.be>
  * @author Gerry Demaret <gerry@tigron.be>
- * @version $Id$
  */
 
 class Web_Media {
@@ -223,4 +221,3 @@ class Web_Media {
 		header('Expires: '.gmdate('D, d M Y H:i:s', strtotime('+30 minutes')).' GMT');
 	}
 }
-?>

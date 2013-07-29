@@ -46,7 +46,7 @@
 	{% set parameters = {
 		'buttons': false,
 	}|merge(parameters|default({})) %}
-	
+
 	<div id="modal_{{ id }}" title="{{ title }}">
 		{% include 'snippet/' ~ snippet ~ '.twig' with parameters %}
 	</div>
@@ -68,12 +68,12 @@
 {% endmacro %}
 
 
-{## 
+{##
  # Confirm macro
  #}
 
 {% macro confirm(link, type, icon, target, message, parameters) %}
-	{% set id = env.template.get_unique() %}	
+	{% set id = env.template.get_unique() %}
 
 	<div id="confirm_{{ id }}">
 		{{ message }}
@@ -100,12 +100,12 @@
 	{% endif %}
 {% endmacro %}
 
-{## 
+{##
  # Confirm macro with AJAX callback
  #}
 
 {% macro confirm_ajax(link, type, icon, target, message, parameters, callback_function) %}
-	{% set id = env.template.get_unique() %}	
+	{% set id = env.template.get_unique() %}
 
 	<div id="confirm_{{ id }}">
 		{{ message }}
@@ -113,7 +113,7 @@
 
 	<form id="form_{{ id }}" action="{{ target|raw }}" method="get">
 		{% for parameter, value in parameters %}
-			<input type="hidden" name="{{ parameter }}" value="{{ value }}" />			
+			<input type="hidden" name="{{ parameter }}" value="{{ value }}" />
 		{% endfor %}
 			<input type="hidden" name="callback_function" value="{{ callback_function }}" />
 	</form>
@@ -149,7 +149,7 @@
 					{% trans "and" %}
 				{% else %}
 					{% if loop.first %}
-					{% else %}, 
+					{% else %},
 					{% endif %}
 				{% endif %} {{ field }}
 			{% endfor %}

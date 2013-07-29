@@ -2,10 +2,8 @@
 /**
  * Country class
  *
- * @package %%Package%%
  * @author Christophe Gosiau <christophe@tigron.be>
  * @author Gerry Demaret <gerry@tigron.be>
- * @version $Id$
  */
 
 class Country {

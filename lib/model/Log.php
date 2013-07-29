@@ -2,11 +2,9 @@
 /**
  * Log class
  *
- * @package %%Package%%
  * @author Christophe Gosiau <christophe@tigron.be>
  * @author Gerry Demaret <gerry@tigron.be>
  * @author David Vandemaele <david@tigron.be>
- * @version $Id$
  */
 
 class Log {
@@ -43,7 +41,7 @@ class Log {
 
 		return $logs;
 	}
-	
+
 	/**
 	 * Create a log object
 	 *
@@ -59,14 +57,14 @@ class Log {
 		}
 
 		$log = new Log();
-		
+
 		try {
 			$user = User::Get();
-			$log->user_id = $user->id;			
+			$log->user_id = $user->id;
 		} catch (Exception $e) {
 			$log->user_id = 0;
-		}		
-		
+		}
+
 		if ($action == 'add') {
 			$content = ucfirst($classname) . ' created';
 		} elseif ($action == 'edit') {
@@ -83,4 +81,3 @@ class Log {
 		return $log;
 	}
 }
-?>

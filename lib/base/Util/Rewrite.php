@@ -4,10 +4,8 @@
  *
  * Contains rewrite utils
  *
- * @package %%PACKAGE%%
  * @author Christophe Gosiau <christophe@tigron.be>
  * @author Gerry Demaret <gerry@tigron.be>
- * @version $Id$
  */
 
 class Util_Rewrite {
@@ -19,7 +17,7 @@ class Util_Rewrite {
 	 * @param string $html
 	 * @return string $html_with_reverse_rewrite
 	 */
-	public static function reverse_html($html) {	
+	public static function reverse_html($html) {
 		$html = preg_replace_callback('@\<([^>]*) (href|src|action)="/([^"]*)?"@iU', 'Util_Rewrite::reverse_html_callback', $html);
 		return $html;
 	}
@@ -134,7 +132,5 @@ class Util_Rewrite {
 		} else {
 			return $language->name_short . $querystring;
 		}
-
 	}
 }
-?>

@@ -2,10 +2,8 @@
 /**
  * Module startup and handling
  *
- * @package %%PACKAGE%%
  * @author Christophe Gosiau <christophe@tigron.be>
  * @author Gerry Demaret <gerry@tigron.be>
- * @version $Id$
  */
 
 require_once LIB_PATH . '/base/Web/Session/Sticky.php';
@@ -69,4 +67,3 @@ abstract class Web_Module {
 	 */
 	abstract public function display();
 }
-?>

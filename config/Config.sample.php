@@ -2,10 +2,8 @@
 /**
  * Configuration class
  *
- * @package %%PACKAGE%%
  * @author Christophe Gosiau <christophe@tigron.be>
  * @author Gerry Demaret <gerry@tigron.be>
- * @version $Id$
  */
 
 require_once ROOT_PATH . '/config/Config_Routes.php';
@@ -155,4 +153,3 @@ class Config {
 		);
 	}
 }
-?>

@@ -2,10 +2,8 @@
 /**
  * Picture class
  *
- * @package %%Package%%
  * @author Christophe Gosiau <christophe@tigron.be>
  * @author Gerry Demaret <gerry@tigron.be>
- * @version $Id$
  */
 
 require_once LIB_PATH . '/model/File.php';
@@ -59,7 +57,7 @@ class Picture extends File {
 		if (!isset($this->id)) {
 			parent::save(false);
 		}
-		
+
 		$db = Database::Get();
 		if (!isset($this->local_details['id']) OR $this->local_details['id'] === null) {
 			$mode = MDB2_AUTOQUERY_INSERT;
@@ -91,7 +89,7 @@ class Picture extends File {
 	 */
 	public function __set($key, $value) {
 		if (in_array($key, $this->local_fields)) {
-			$this->local_details[$key] = $value;		
+			$this->local_details[$key] = $value;
 		} else {
 			parent::__set($key, $value);
 		}
@@ -126,31 +124,31 @@ class Picture extends File {
 			return parent::__isset($key);
 		}
 	}
-	
+
 	/**
 	 * Get the dimensions of the picture
 	 *
 	 * @access private
 	 */
 	private function get_dimensions() {
-		$path = $this->get_path();	
+		$path = $this->get_path();
 		list($width, $height) = getimagesize($path);
 		$this->width = $width;
 		$this->height = $height;
 		$this->save();
 	}
-	
+
 	/**
 	 * Resize the picture
 	 *
 	 * @access private
 	 * @param string $size
 	 */
-	private function resize($size) {		
+	private function resize($size) {
 		if (!file_exists(TMP_PATH . '/picture/' . $size)) {
 			mkdir(TMP_PATH . '/picture/' . $size, 0755, true);
 		}
-			
+
 		if ($size == 'original') {
 			$resize_info = array('width' => $this->width, 'height' => $this->height, 'mode' => 'exact');
 		} else {
@@ -160,7 +158,7 @@ class Picture extends File {
 
 		$image = new Picture_Manipulation($this);
 		$image->resize($resize_info['width'], $resize_info['height'], $resize_info['mode']);
-		$image->output(TMP_PATH . '/picture/' . $size . '/' . $this->unique_name);		
+		$image->output(TMP_PATH . '/picture/' . $size . '/' . $this->unique_name);
 	}
 
 	/**
@@ -184,7 +182,7 @@ class Picture extends File {
 		if ($size == 'original') {
 			$filename = $this->get_path();
 		} else {
-			$filename = TMP_PATH . '/picture/' . $size . '/' . $this->unique_name;			
+			$filename = TMP_PATH . '/picture/' . $size . '/' . $this->unique_name;
 		}
 
 		$gmt_mtime = gmdate('D, d M Y H:i:s', filemtime($filename)).' GMT';
@@ -238,4 +236,3 @@ class Picture extends File {
 		return new Picture($id);
 	}
 }
-?>

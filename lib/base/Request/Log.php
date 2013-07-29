@@ -2,10 +2,8 @@
 /**
  * Logging class
  *
- * @package %%PACKAGE%%
  * @author Christophe Gosiau <christophe@tigron.be>
  * @author Gerry Demaret <gerry@tigron.be>
- * @version $Id$
  */
 
 class Request_Log {
@@ -30,4 +28,3 @@ class Request_Log {
 		file_put_contents(TMP_PATH . '/log/request.log', '[' . date('d/m/Y H:i:s') . '] ' . $string . "\n", FILE_APPEND);
 	}
 }
-?>

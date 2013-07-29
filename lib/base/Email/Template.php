@@ -2,10 +2,8 @@
 /**
  * Mail Template class
  *
- * @package %%PACKAGE%%
  * @author Christophe Gosiau <christophe@tigron.be>
  * @author Gerry Demaret <gerry@tigron.be>
- * @version $Id$
  */
 
 require_once LIB_PATH . '/base/Translation.php';
@@ -106,11 +104,11 @@ class Email_Template {
 			'now' => time()
 		);
 		$this->twig->addGlobal('env', $variables);
-		
+
 		$return = '';
 		$twig_template = $this->twig->loadTemplate($this->name . '/' . $type . '.twig');
 		$return .= Util::rewrite_reverse_html($twig_template->render($this->variables));
-		
+
 		// If an application was running, fix it
 		if (defined('APP_NAME')) {
 			Translation::configure($current_language, APP_NAME);
@@ -118,4 +116,3 @@ class Email_Template {
 		return $return;
 	}
 }
-?>

@@ -5,7 +5,6 @@
  *
  * @author Christophe Gosiau <christophe@tigron.be>
  * @author Gerry Demaret <gerry@tigron.be>
- * @version $Id$
  */
 
 require_once dirname(__FILE__) . '/../../config/global.php';
@@ -144,7 +143,7 @@ function get_files_from_directory($directory) {
 	$return_list = array();
 
 	foreach ($files as $key => $file) {
-		
+
 		if ($file[0] == '.') {
 			unset($files[$key]);
 			continue;
@@ -155,7 +154,7 @@ function get_files_from_directory($directory) {
 			$return_list = array_merge($return_list, get_files_from_directory($directory . '/' . $file));
 			continue;
 		}
-		$return_list[] = $directory . '/' . $file;		
+		$return_list[] = $directory . '/' . $file;
 
 	}
 	return $return_list;
@@ -245,4 +244,3 @@ function translate_file($filename, $application) {
 		Util::po_save(PO_PATH . '/' . $language->name_short . '/' . $application . '.po', $strings);
 	}
 }
-?>

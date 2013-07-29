@@ -5,7 +5,7 @@
  * To actually create the documentation itself, run this command:
  *
  *   php lib/external/packages/vendor/sami/sami/sami.php update util/generate/documentation.php
- * 
+ *
  * @author Christophe Gosiau <christophe@tigron.be>
  * @author Gerry Demaret <gerry@tigron.be>
  */
@@ -14,7 +14,7 @@ require_once dirname(__FILE__) . '/../../config/global.php';
 require_once LIB_PATH . '/external/packages/vendor/sami/sami/sami.php';
 
 use Symfony\Component\Finder\Finder;
- 
+
 $iterator = Finder::create()
     ->files()
     ->name('*.php')

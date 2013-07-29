@@ -1,9 +1,9 @@
 <?php
 /**
- * trait: Delete
+ * trait: Page
  *
- * @author Christophe Gosiau <christophe.gosiau@tigron.be>
- * @author Gerry Demaret <gerry.demaret@tigron.be>
+ * @author Christophe Gosiau <christophe@tigron.be>
+ * @author Gerry Demaret <gerry@tigron.be>
  */
 
 trait Page {
@@ -61,8 +61,7 @@ trait Page {
 		if ($page < 1) {
 			$page = 1;
 		}
-		
-		
+
 		if (isset($extra_conditions['%search%'])) {
 			$iteration = 0;
 			foreach ($definition as $field_array) {
@@ -70,8 +69,9 @@ trait Page {
 					$where .= 'AND (0';
 				}
 				$where .= 'OR ' . $field_array . " LIKE '%"  . $extra_conditions['%search%'] . "%' ";
-				$iteration++;				
+				$iteration++;
 			}
+
 			if (count($definition) > 0) {
 				$where .= ') ';
 			}
@@ -140,7 +140,7 @@ trait Page {
 					$where .= 'AND (0';
 				}
 				$where .= 'OR ' . $field_array . " LIKE '%"  . $extra_conditions['%search%'] . "%' ";
-				$iteration++;				
+				$iteration++;
 			}
 			if (count($definition) > 0) {
 				$where .= ') ';
@@ -154,5 +154,5 @@ trait Page {
 		$count = $db->getOne($sql);
 
 		return $count;
-	}	
+	}
 }

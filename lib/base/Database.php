@@ -2,10 +2,8 @@
 /**
  * Database class
  *
- * @package %%PACKAGE%%
  * @author Christophe Gosiau <christophe@tigron.be>
  * @author Gerry Demaret <gerry@tigron.be>
- * @version $Id$
  */
 
 require_once LIB_PATH . '/base/Util.php';
@@ -43,4 +41,3 @@ class Database {
 		return self::$proxy[$config_db];
 	}
 }
-?>

@@ -30,16 +30,14 @@ function init_dialogs() {
 	$.each($('.macro_link'), function(i) {
 			$(this).bind('click', function() {
 				id = $(this).attr('id').replace('trigger_', '');
-				$('#form_' + id).submit(); 
+				$('#form_' + id).submit();
 				return false;
-			});			
+			});
 		});
-			
 
-	var dialogs = {};	
+	var dialogs = {};
 
-	$.each($('.macro_confirm, .macro_modal'), function(i) {		
-		
+	$.each($('.macro_confirm, .macro_modal'), function(i) {
 		var id = $(this).attr('id').replace('trigger_', '');
 
 		if ($(this).hasClass('macro_confirm')) {
@@ -51,7 +49,7 @@ function init_dialogs() {
 				modal: true,
 				title: "Confirm",
 				buttons: {
-					"Confirm": function() {						
+					"Confirm": function() {
 						if ($(this).hasClass('ajax')) {
 							var callback = $('#form_' + id + ' input[name="callback_function"]').val();
 							$('#form_' + id).ajaxSubmit({url: $('#form_' + id).attr('action'), type: 'get'});
@@ -69,11 +67,11 @@ function init_dialogs() {
 				},
 			});
 
-			$(this).bind('click', function() {						
-				dialogs[id].dialog('open'); 
+			$(this).bind('click', function() {
+				dialogs[id].dialog('open');
 				return false;
-			});		
-			
+			});
+
 		} else if($(this).hasClass('macro_modal')) {
 
 			dialogs[id] = $("#modal_" + id).dialog({
@@ -82,9 +80,9 @@ function init_dialogs() {
 				minWidth: 600,
 				modal: true
 			});
-			
+
 			if (!$(this).hasClass('no_buttons')) {
-			
+
 				dialogs[id].dialog('option', 'buttons', [
 					{
 						text: "Close",
@@ -94,13 +92,11 @@ function init_dialogs() {
 					}]
 				);
 			}
-			
-			$(this).click(function() {						
-				dialogs[id].dialog('open'); 
+
+			$(this).click(function() {
+				dialogs[id].dialog('open');
 				return false;
 			});
-		}				
-		
+		}
 	});
-
 }

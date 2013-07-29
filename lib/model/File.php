@@ -2,10 +2,8 @@
 /**
  * File class
  *
- * @package %%Package%%
  * @author Christophe Gosiau <christophe@tigron.be>
  * @author Gerry Demaret <gerry@tigron.be>
- * @version $Id$
  */
 
 require_once LIB_PATH . '/base/File/Store.php';
@@ -23,7 +21,7 @@ class File {
 		$db = Database::Get();
 		$db->query('DELETE FROM file WHERE id=?', array($this->id));
 	}
-	
+
 	/**
 	 * Is this a picture
 	 *
@@ -80,6 +78,4 @@ class File {
 		readfile($this->get_path());
 		exit();
 	}
-
 }
-?>

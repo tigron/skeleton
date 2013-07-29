@@ -4,10 +4,8 @@
  *
  * Contains utilities for calculations
  *
- * @package %%PACKAGE%%
  * @author Christophe Gosiau <christophe@tigron.be>
  * @author Gerry Demaret <gerry@tigron.be>
- * @version $Id$
  */
 
 class Util_Math {
@@ -23,7 +21,7 @@ class Util_Math {
 		bcscale(2);
 		return bcadd($param1, $param2);
 	}
-	
+
 	/**
 	 * Sub
 	 *
@@ -36,7 +34,7 @@ class Util_Math {
 		bcscale(2);
 		return bcsub($param1, $param2);
 	}
-	
+
 	/**
 	 * Mul
 	 *
@@ -49,7 +47,4 @@ class Util_Math {
 		bcscale(2);
 		return bcmul($param1, $param2);
 	}
-
-
 }
-?>

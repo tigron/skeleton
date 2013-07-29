@@ -2,10 +2,8 @@
 /**
  * Module Index
  *
- * @package %%PACKAGE%%
  * @author Christophe Gosiau <christophe@tigron.be>
  * @author Gerry Demaret <gerry@tigron.be>
- * @version $Id$
  */
 
 require_once LIB_PATH . '/model/Picture.php';
@@ -44,7 +42,7 @@ class Module_Picture extends Web_Module {
 			$this->display_404();
 		}
 		if (isset($_GET['size'])) {
-			$picture->show($_GET['size']);			
+			$picture->show($_GET['size']);
 		} else {
 			$picture->show();
 		}
@@ -61,4 +59,3 @@ class Module_Picture extends Web_Module {
 		exit;
 	}
 }
-?>

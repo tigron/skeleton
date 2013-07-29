@@ -4,10 +4,8 @@
  *
  * Stores and retrieves files
  *
- * @package %%PACKAGE%%
  * @author Gerry Demaret <gerry@tigron.be>
  * @author Christophe Gosiau <christophe@tigron.be>
- * @version $Id$
  */
 
 require_once LIB_PATH . '/model/File.php';
@@ -31,27 +29,26 @@ class File_Store {
 	 * @access public
 	 */
 	public static function store($name, $content) {
-
-	// create a file object
+		// create a file object
 		$file = new File();
 		$file->name = $name;
 		$file->md5sum = hash('md5', $content);
 		$file->save();
 
-	// create directory if not exist
+		// create directory if not exist
 		$path = self::get_path($file);
 		$pathinfo = pathinfo($path);
 		if (!is_dir($pathinfo['dirname'])) {
 			mkdir($pathinfo['dirname'], 0755, true);
-		}		
+		}
 
-	// store file on disk	
+		// store file on disk
 		file_put_contents($path, $content);
 
-	// get file extension
+		// get file extension
 		$finfo = finfo_open(FILEINFO_MIME);
 		$mime_type = finfo_file($finfo, $path);
-		
+
 		$file->mime_type = $mime_type;
 		$file->size = filesize($path);
 		$file->save();
@@ -74,33 +71,32 @@ class File_Store {
 	 * @return File $file
 	 */
 	public static function upload($fileinfo) {
-		
-	// create a file object
+		// create a file object
 		$file = new File();
 		$file->name = $fileinfo['name'];
 		$file->md5sum = hash('md5', file_get_contents($fileinfo['tmp_name']));
 		$file->save();
 
-	// create directory if not exist
+		// create directory if not exist
 		$path = self::get_path($file);
 		$pathinfo = pathinfo($path);
 		if (!is_dir($pathinfo['dirname'])) {
 			mkdir($pathinfo['dirname'], 0755, true);
-		}		
+		}
 
-	// store file on disk	
+		// store file on disk
 		if (!move_uploaded_file($fileinfo['tmp_name'], $path)) {
 			throw new Exception('upload failed');
 		}
-		
-	// get file extension
+
+		// get file extension
 		$finfo = finfo_open(FILEINFO_MIME);
 		$mime_type = finfo_file($finfo, $path);
 
 		$file->mime_type = $mime_type;
 		$file->size = filesize($path);
 		$file->save();
-		
+
 		if ($file->is_picture()) {
 			$picture = new Picture();
 			$picture->id = $file->id;
@@ -159,4 +155,3 @@ class File_Store {
 		return $path;
 	}
 }
-?>

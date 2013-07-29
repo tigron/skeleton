@@ -4,11 +4,9 @@
  *
  * Send emails
  *
- * @package %%PACKAGE%%
  * @author Christophe Gosiau <christophe@tigron.be>
  * @author Gerry Demaret <gerry@tigron.be>
  * @author David Vandemaele <david@tigron.be>
- * @version $Id$
  */
 
 class Email {
@@ -175,15 +173,15 @@ class Email {
 			$template->assign($key, $value);
 		}
 
-		$config = Config::Get();					
+		$config = Config::Get();
 		$transport = Swift_MailTransport::newInstance();
 		$mailer = Swift_Mailer::newInstance($transport);
-		$message = Swift_Message::newInstance()			
+		$message = Swift_Message::newInstance()
 			->setBody($template->render('html'), 'text/html')
 			->addPart($template->render('text'), 'text/plain')
 			->setSubject($template->render('subject'))
 		;
-		
+
 		if (isset($this->sender['name'])) {
 			$message->setFrom(array($this->sender['email'] => $this->sender['name']));
 		} else {
@@ -249,7 +247,7 @@ class Email {
 	 */
 	private function add_html_images(&$message) {
 		$path = STORE_PATH . '/email/media/';
-		
+
 		$html_body = $message->getBody();
 
 		if ($handle = opendir($path)) {
@@ -282,5 +280,3 @@ class Email {
 		}
 	}
 }
-
-?>

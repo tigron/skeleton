@@ -4,10 +4,8 @@
  *
  * Contains general purpose utilities
  *
- * @package %%PACKAGE%%
  * @author Christophe Gosiau <christophe@tigron.be>
  * @author Gerry Demaret <gerry@tigron.be>
- * @version $Id$
  */
 
 class Util_Po {
@@ -103,4 +101,3 @@ class Util_Po {
 		Util::po_save($base, $extra_strings);
 	}
 }
-?>

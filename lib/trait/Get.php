@@ -2,14 +2,14 @@
 /**
  * trait: Get
  *
- * @author Christophe Gosiau <christophe.gosiau@tigron.be>
- * @author Gerry Demaret <gerry.demaret@tigron.be>
+ * @author Christophe Gosiau <christophe@tigron.be>
+ * @author Gerry Demaret <gerry@tigron.be>
  */
 
 trait Get {
 	/**
 	 * Get object info
-	 * 
+	 *
 	 * @access public
 	 * @return array $details
 	 */

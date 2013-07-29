@@ -2,10 +2,8 @@
 /**
  * Handles paginating of query results
  *
- * @package %%PACKAGE%%
  * @author Christophe Gosiau <christophe@tigron.be>
  * @author Gerry Demaret <gerry@tigron.be>
- * @version $Id$
  */
 
 class Web_Pager {
@@ -187,4 +185,3 @@ class Web_Pager {
 		$this->links = '<div class="page_number">' . $links . '</div>';
 	}
 }
-?>

@@ -3,10 +3,8 @@
  * Global parameters
  * Do NOT use global variables, it makes baby Jesus cry. Use Config!
  *
- * @package %%PACKAGE%%
  * @author Christophe Gosiau <christophe@tigron.be>
  * @author Gerry Demaret <gerry@tigron.be>
- * @version $Id$
  */
 
 /**
@@ -55,5 +53,3 @@ require_once PACKAGE_PATH . '/vendor/autoload.php';
 foreach (glob(LIB_PATH . '/trait/*.php') as $trait) {
     require_once $trait;
 }
-
-?>
