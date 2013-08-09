@@ -186,7 +186,7 @@ class Web_Handler {
 					// Check if the route matches without variables and if it's allowed to do so
 					if ($route != '/' . implode($request_parts, '/')) {
 
-						$variables = array_slice($request_parts, $x+1);
+						$variables = array_slice($request_parts, $x);
 						$variable_match = null;
 						foreach ($routes[$route]['variables'] as $variable_possibility) {
 							if (count($variables) == substr_count($variable_possibility, '$')) {
