@@ -156,8 +156,23 @@ class Picture extends File {
 			$resize_info = $config->picture_formats[$size];
 		}
 
+		$new_width = null;
+		if (isset($resize_info['width'])) {
+			$new_width = $resize_info['width'];
+		}
+
+		$new_height = null;
+		if (isset($resize_info['height'])) {
+			$new_height = $resize_info['height'];
+		}
+
+		$mode = 'auto';
+		if (isset($resize_info['mode'])) {
+			$mode = $resize_info['mode'];
+		}
+
 		$image = new Picture_Manipulation($this);
-		$image->resize($resize_info['width'], $resize_info['height'], $resize_info['mode']);
+		$image->resize($new_width, $new_height, $mode);
 		$image->output(TMP_PATH . '/picture/' . $size . '/' . $this->unique_name);
 	}
 
