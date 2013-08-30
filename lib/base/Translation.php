@@ -40,7 +40,6 @@ class Translation {
 	 */
 	private $strings = array();
 
-
 	/**
 	 * Constructor
 	 *
@@ -67,11 +66,35 @@ class Translation {
 		if ($this->language->name_short == $config->base_language) {
 			return $string;
 		}
-		if (!isset($this->strings[$string]) OR $this->strings[$string] == '') {
+
+		if (!isset($this->strings[$string])) {
+			$this->add_to_po($string);
+		}
+
+		if ($this->strings[$string] == '') {
 			return '[NT]' . $string;
 		}
 
 		return $this->strings[$string];
+	}
+
+	/**
+	 * Add a string to the po file
+	 *
+	 * @access public
+	 * @param string $string
+	 */
+	public function add_to_po($string) {
+		$this->strings[$string] = '';
+		
+		$current_strings = Util::po_load(PO_PATH . '/' . $this->language->name_short . '.po');
+
+		$untranslated = array($string => '');
+		
+		$strings = array_merge($untranslated, $current_strings);
+		ksort($strings);
+
+		Util::po_save(PO_PATH . '/' . $this->language->name_short . '.po', $strings);
 	}
 
 	/**
