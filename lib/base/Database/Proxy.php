@@ -274,12 +274,6 @@ class Database_Proxy {
 		$statement = $this->get_statement($query, $params);
 		$statement->execute();
 
-		// To work around PHP bug #47928, we need to call store_result() after executing
-		// the query. This shouldn't have a negative impact on performance, it might cause
-		// a slight memory increase.
-		// See https://bugs.php.net/bug.php?id=47928
-		$statement->store_result();
-
 		$result = $statement->fetch_assoc();
 
 		if (count($result) == 0) {

@@ -57,6 +57,12 @@ class Database_Statement extends Mysqli_Stmt {
 	 * @return array $data The array containing the result
 	 */
 	public function fetch_assoc() {
+		// To work around PHP bug #47928, we need to call store_result() after executing
+		// the query. This shouldn't have a negative impact on performance, it might cause
+		// a slight memory increase.
+		// See https://bugs.php.net/bug.php?id=47928
+		$this->store_result();
+
 		$data = array();
 		$params = array();
 
