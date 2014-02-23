@@ -2,8 +2,8 @@
 /**
  * trait: Model
  *
- * @author Christophe Gosiau <christophe@tigron.be>
- * @author Gerry Demaret <gerry@tigron.be>
+ * @author Christophe Gosiau <christophe.gosiau@tigron.be>
+ * @author Gerry Demaret <gerry.demaret@tigron.be>
  */
 
 trait Model {
@@ -19,7 +19,16 @@ trait Model {
 	 * @var array $details
 	 * @access private
 	 */
-	private $details = array();
+	protected $details = array();
+
+	/**
+	 * Dirty fields
+	 * Unsaved fields
+	 *
+	 * @var array $dirty_fields
+	 * @access private
+	 */
+	private $dirty_fields = array();
 
 	/**
 	 * Constructor
@@ -39,7 +48,7 @@ trait Model {
 	 *
 	 * @access private
 	 */
-	private function get_details() {
+	protected function get_details() {
 		$table = self::trait_get_database_table();
 
 		if (!isset($this->id) OR $this->id === null) {
@@ -47,13 +56,15 @@ trait Model {
 		}
 
 		$db = self::trait_get_database();
-		$details = $db->getRow('SELECT * FROM ' . $table . ' WHERE id=?', array($this->id));
+
+		$details = $db->getRow('SELECT * FROM ' . $db->quoteIdentifier($table) . ' WHERE id=?', array($this->id));
 
 		if ($details === null) {
 			throw new Exception('Could not fetch ' . $table . ' data: none found with id ' . $this->id);
 		}
 
 		$this->details = $details;
+		$this->dirty_fields = array();
 	}
 
 	/**
@@ -76,9 +87,46 @@ trait Model {
 		}
 
 		if (is_object($value) AND property_exists($value, 'id')) {
-			$this->details[$key . '_id'] = $value->id;
+			$key = $key . '_id';
+			$this->$key = $value->id;
+			return;
 		}
 
+		if (isset(self::$object_text_fields)) {
+			if (strpos($key, 'text_') === 0) {
+				if ($this->id === null) {
+					$this->save();
+				}
+				$key = str_replace('text_', '', $key);
+				list($language, $label) = explode('_', $key, 2);
+
+				if (!in_array($label, self::$object_text_fields)) {
+					throw new Exception('Incorrect text field');
+				}
+
+				$language = Language::get_by_name_short($language);
+				$object_text = Object_Text::get_by_object_label_language($this, $label, $language);
+				$object_text->content = $value;
+				$object_text->save();
+				return;
+			}
+		}
+
+		if (!isset($this->details[$key])) {
+			$this->dirty_fields[$key] = '';
+		}
+
+		if (isset($this->details[$key]) AND $this->details[$key] != $value) {
+			// A new value is set, let's tag it as dirty
+
+			if (!isset($this->dirty_fields[$key])) {
+				$this->dirty_fields[$key] = $this->details[$key];
+			}
+		}
+
+		if (get_class() == 'Customer_Contact') {
+			var_dump($value);
+		}
 		$this->details[$key] = $value;
 	}
 
@@ -93,12 +141,30 @@ trait Model {
 		if (isset($this->details[strtolower($key) . '_id']) AND class_exists($key)) {
 			return $key::get_by_id($this->details[strtolower($key) . '_id']);
 		}
-
-		if (!isset($this->details[$key])) {
-			throw new Exception('Unknown key requested: ' . $key);
-		} else {
+		
+		if (isset($this->details[$key])) {
 			return $this->details[$key];
 		}
+
+		if (isset(self::$object_text_fields)) {
+			if (strpos($key, 'text_') === 0) {
+				$key = str_replace('text_', '', $key);
+				list($language, $label) = explode('_', $key, 2);
+
+				if (!in_array($label, self::$object_text_fields)) {
+					throw new Exception('Incorrect text field');
+				}
+
+				$language = Language::get_by_name_short($language);
+				if ($this->id === null) {
+					return '';
+				} else {
+					return Object_Text::get_by_object_label_language($this, $label, $language)->content;
+				}
+			}
+		}
+
+		throw new Exception('Unknown key requested: ' . $key);
 	}
 
 	/**
@@ -109,11 +175,52 @@ trait Model {
 	 * @return bool $isset
 	 */
 	public function __isset($key) {
+		if (isset($this->details[strtolower($key) . '_id']) AND class_exists($key)) {
+			return true;
+		}
+
 		if (isset($this->details[$key])) {
 			return true;
-		} else {
+		}
+
+		if (isset(self::$object_text_fields)) {
+			if (strpos($key, 'text_') === 0) {
+				$key = str_replace('text_', '', $key);
+				list($language, $label) = explode('_', $key);
+
+				if (!in_array($label, self::$object_text_fields)) {
+					return false;
+				} else {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * Is Dirty
+	 *
+	 * @access public
+	 * @return bool $dirty
+	 */
+	public function is_dirty() {
+		$dirty_fields = $this->get_dirty_fields();
+		if (count($dirty_fields) == 0) {
 			return false;
 		}
+
+		return true;
+	}
+
+	/**
+	 * Get dirty fields
+	 *
+	 * @access public
+	 * @return array $dirty_fields
+	 */
+	public function get_dirty_fields() {
+		return $this->dirty_fields;
 	}
 
 	/**
@@ -155,5 +262,32 @@ trait Model {
 		} else {
 			return strtolower(get_class());
 		}
+	}
+
+	/**
+	 * Trait_get_link_tables
+	 *
+	 * @access private
+	 * @return array $tables
+	 */
+	private static function trait_get_link_tables() {
+		$db = Database::Get();
+		$table = self::trait_get_database_table();
+		$fields = Util::mysql_get_table_fields($table);
+		$tables = $db->getCol('SHOW tables');
+
+		$joins = array();
+		foreach ($fields as $field) {
+			if (substr($field, -3) != '_id') {
+				continue;
+			}
+
+			$link_table = substr($field, 0, -3);
+
+			if (in_array($link_table, $tables)) {
+				$joins[] = $link_table;
+			}
+		}
+		return $joins;
 	}
 }

@@ -2,11 +2,89 @@
 /**
  * trait: Page
  *
- * @author Christophe Gosiau <christophe@tigron.be>
- * @author Gerry Demaret <gerry@tigron.be>
+ * @author Christophe Gosiau <christophe.gosiau@tigron.be>
+ * @author Gerry Demaret <gerry.demaret@tigron.be>
  */
 
 trait Page {
+	/**
+	 * Get where clause for paging
+	 *
+	 * @access public
+	 * @param array $extra_conditions
+	 */
+	private static function get_search_where($extra_conditions = array()) {
+		$db = self::trait_get_database();
+		$table = self::trait_get_database_table();
+		$fields = Util::mysql_get_table_fields($table);
+		$joins = self::trait_get_link_tables();
+
+		$extra_conditions_raw = $extra_conditions;
+		// Cleanup 'extra_conditions'
+		foreach ($extra_conditions as $key => $value) {
+			if ($key == '%search%') {
+				continue;
+			}
+
+			$exists = false;
+			foreach ($fields as $field) {
+				if ($field == $key) {
+					$exists = true;
+				}
+			}
+
+			if (!$exists) {
+				//unset($extra_conditions[$key]);
+			}
+		}
+
+		$where = "\n\t";
+
+		foreach ($extra_conditions as $key => $value) {
+			if ($key != '%search%') {
+				if (is_array($value[1])) {
+					$where .= 'AND (0';
+					foreach ($value[1] as $element) {
+						$where .= ' OR ' . $db->quoteidentifier($key) . ' ' . $value[0] . ' ' . $db->quote($element);
+					}
+					$where .= ') ';
+				} else {
+					$where .= 'AND ' . $db->quoteidentifier($key) . ' ' . $value[0] . ' ' . $db->quote($value[1]) . ' ' . "\n\t";
+				}
+			}
+		}
+
+		if (isset(self::$object_text_fields) AND count(self::$object_text_fields) > 0) {
+			// Object Text fields: language_id
+			if (isset($extra_conditions_raw['language_id'])) {
+				$where .= 'AND object_text.language_id = ' . $db->quote($extra_conditions_raw['language_id'][1]) . ' ' . "\n\t";
+			}
+		}
+
+		if (isset($extra_conditions['%search%'])) {
+			$where .= 'AND (0 ';
+
+			foreach ($fields as $field) {
+				$where .= 'OR ' . $table . '.' . $field . " LIKE '%"  . $extra_conditions['%search%'] . "%' " . "\n\t";
+			}
+
+			foreach ($joins as $join) {
+				$fields = Util::mysql_get_table_fields($join);
+				foreach ($fields as $field) {
+					$where .= 'OR ' . $join . '.' . $field . " LIKE '%"  . $extra_conditions['%search%'] . "%' " . "\n\t";
+				}
+			}
+
+			if (isset(self::$object_text_fields) AND count(self::$object_text_fields) > 0) {
+				$where .= "OR object_text.content LIKE '%" . $extra_conditions['%search%'] . "%' " . "\n\t";
+			}
+
+			$where .= ') ' . "\n";
+		}
+
+		return $where;
+	}
+
 	/**
 	 * Get paged
 	 *
@@ -17,43 +95,25 @@ trait Page {
 	 * @param int $all
 	 * @param array $extra_conditions
 	 */
-	public static function get_paged($sort, $direction, $page, $extra_conditions = array(), $all = false) {
+	public static function get_paged($sort = 1, $direction = 'ASC', $page = 1, $extra_conditions = array(), $all = false) {
 		$db = self::trait_get_database();
 		$table = self::trait_get_database_table();
+		$where = self::get_search_where($extra_conditions);
+		$joins = self::trait_get_link_tables();
 
-		$definition = Util::get_table_definition($table, $db);
-
-		// Cleanup 'extra_conditions'
-		foreach ($extra_conditions as $key => $value) {
-			if ($key == '%search%') {
-				continue;
-			}
-			$exists = false;
-			foreach ($definition as $field_array) {
-				if ($field_array['field'] == $key) {
-					$exists = true;
-				}
-			}
-			if (!$exists) {
-				unset($extra_conditions[$key]);
-			}
-		}
-
-		$where = '';
-
-		foreach ($extra_conditions as $key => $value) {
-			if ($key != '%search%') {
-				if (!is_array($extra_conditions[$key])) {
-					$where .= 'AND ' . $db->quoteidentifier($key) . ' = ' . $db->quote($value) . ' ';
-				} else {
-					$where .= 'AND ' . $db->quoteidentifier($key) . ' ' . $value[0] . ' ' . $db->quote($value[1]) . ' ';
-				}
-			}
+		$object = new self();
+		if (is_callable($sort)) {
+			$sorter = 'object';
+		} elseif (is_callable(array($object, $sort))) {
+			$sorter = 'object';
+		} else {
+			$sorter = 'db';
 		}
 
 		$config = Config::Get();
+
 		if (!$all) {
-			$limit = 20;
+			$limit = $config->items_per_page;
 		} else {
 			$limit = 1000;
 		}
@@ -62,32 +122,45 @@ trait Page {
 			$page = 1;
 		}
 
-		if (isset($extra_conditions['%search%'])) {
-			$iteration = 0;
-			foreach ($definition as $field_array) {
-				if ($iteration == 0) {
-					$where .= 'AND (0';
-				}
-				$where .= 'OR ' . $field_array . " LIKE '%"  . $extra_conditions['%search%'] . "%' ";
-				$iteration++;
-			}
+        if ($direction != 'ASC') {
+			$direction = 'DESC';
+        }
 
-			if (count($definition) > 0) {
-				$where .= ') ';
-			}
+		$sql  = 'SELECT DISTINCT(' . $table . '.id) ' . "\n";
+		$sql .= 'FROM `' . $table . '`' . "\n";
+		foreach ($joins as $join) {
+			$sql .= 'LEFT OUTER JOIN `' . $join . '` on `' . $table . '`.' . $join . '_id = ' . $join . '.id '  . "\n";
 		}
 
-		$sql = 'SELECT DISTINCT(id)
-		        FROM `' . $table . '`
-		        WHERE 1 ' . $where . '
-		        ORDER BY ' . $sort . ' ' . $direction . '
-		        LIMIT ' . ($page-1)*$limit . ', ' . $limit;
+		if (isset(self::$object_text_fields) AND count(self::$object_text_fields) > 0) {
+			$sql .= 'LEFT OUTER JOIN object_text ON object_text.classname = "' . get_class() . '" AND object_text.object_id=' . $table . '.id '  . "\n";
+		}
+		$sql .= 'WHERE 1 ' . $where . "\n";
+
+		if ($sorter == 'db') {
+			$sql .= 'ORDER BY ' . $sort . ' ' . $direction;
+		}
+
+		if ($all !== true AND $sorter == 'db') {
+			$sql .= ' LIMIT ' . ($page-1)*$limit . ', ' . $limit;
+		}
 
 		$ids = $db->getCol($sql);
 		$objects = array();
 		foreach ($ids as $id) {
 			$objects[] = self::get_by_id($id);
 		}
+
+		if ($sorter == 'object') {
+			$objects = Util::object_sort($objects, $sort, $direction);
+
+			if ($direction == 'DESC') {
+				$objects = array_reverse($objects);
+			}
+
+			$objects = array_slice($objects, ($page-1)*$limit, $limit);
+		}
+
 
 		return $objects;
 	}
@@ -102,55 +175,21 @@ trait Page {
 	public static function count($extra_conditions = array()) {
 		$db = self::trait_get_database();
 		$table = self::trait_get_database_table();
+		$where = self::get_search_where($extra_conditions);
+		$joins = self::trait_get_link_tables();
 
-		$definition = Util::get_table_definition($table, $db);
+		$sql  = 'SELECT COUNT(DISTINCT(' . $table . '.id)) ';
+		$sql .= 'FROM `' . $table . '` ';
 
-		// Cleanup 'extra_conditions'
-		foreach ($extra_conditions as $key => $value) {
-			if ($key == '%search%') {
-				continue;
-			}
-			$exists = false;
-			foreach ($definition as $field_array) {
-				if ($field_array['field'] == $key) {
-					$exists = true;
-				}
-			}
-			if (!$exists) {
-				unset($extra_conditions[$key]);
-			}
+		foreach ($joins as $join) {
+			$sql .= 'LEFT OUTER JOIN `' . $join . '` on `' . $table . '`.' . $join . '_id = ' . $join . '.id ';
+		}
+		if (isset(self::$object_text_fields) AND count(self::$object_text_fields) > 0) {
+			$sql .= 'LEFT OUTER JOIN object_text on object_text.classname = "' . get_class() . '" AND object_text.object_id=' . $table . '.id '  . "\n";
 		}
 
-		$where = '';
 
-		foreach ($extra_conditions as $key => $value) {
-			if ($key != '%search%') {
-				if (!is_array($extra_conditions[$key])) {
-					$where .= 'AND ' . $db->quoteidentifier($key) . ' = ' . $db->quote($value) . ' ';
-				} else {
-					$where .= 'AND ' . $db->quoteidentifier($key) . ' ' . $value[0] . ' ' . $db->quote($value[1]) . ' ';
-				}
-			}
-		}
-
-		if (isset($extra_conditions['%search%'])) {
-			$iteration = 0;
-			foreach ($definition as $field_array) {
-				if ($iteration == 0) {
-					$where .= 'AND (0';
-				}
-				$where .= 'OR ' . $field_array . " LIKE '%"  . $extra_conditions['%search%'] . "%' ";
-				$iteration++;
-			}
-			if (count($definition) > 0) {
-				$where .= ') ';
-			}
-		}
-
-		$sql = 'SELECT COUNT(DISTINCT(id))
-		        FROM `' . $table . '`
-		        WHERE 1 ' . $where;
-
+		$sql .= 'WHERE 1 ' . $where;
 		$count = $db->getOne($sql);
 
 		return $count;

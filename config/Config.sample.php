@@ -106,13 +106,6 @@ class Config {
 			'database' => 'mysqli://username:password@localhost/database',
 
 			/**
-			 * Applications
-			 */
-			'applications' => array(
-				'application.example.tld' => 'admin',
-			),
-
-			/**
 			 * Translation base language that the templates will be made up in
 			 * Do not change after creation of your project!
 			 */
@@ -127,11 +120,6 @@ class Config {
 			 * Items per page
 			 */
 			'items_per_page' => 20,
-
-			/**
-			 * Routes
-			 */
-			'routes' => Config_Routes::$routes,
 
 			/**
 			 * Picture formats

@@ -1,13 +1,24 @@
 <?php
-/**
- * Translation extension for Twig
+
+/*
+ * This file is part of Twig.
  *
- * @author Christophe Gosiau <christophe@tigron.be>
- * @author Gerry Demaret <gerry@tigron.be>
+ * (c) 2010 Fabien Potencier
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
  */
 
-class Twig_Extensions_Node_Trans_Tigron extends Twig_Node {
-    public function __construct(Twig_NodeInterface $body, Twig_NodeInterface $plural = null, Twig_Node_Expression $count = null, $lineno, $tag = null) {
+/**
+ * Represents a trans node.
+ *
+ * @package    twig
+ * @author     Fabien Potencier <fabien.potencier@symfony-project.com>
+ */
+class Twig_Extensions_Node_Trans_Tigron extends Twig_Node
+{
+    public function __construct(Twig_NodeInterface $body, Twig_NodeInterface $plural = null, Twig_Node_Expression $count = null, $lineno, $tag = null)
+    {
         parent::__construct(array('count' => $count, 'body' => $body, 'plural' => $plural), array(), $lineno, $tag);
     }
 
@@ -16,7 +27,8 @@ class Twig_Extensions_Node_Trans_Tigron extends Twig_Node {
      *
      * @param Twig_Compiler A Twig_Compiler instance
      */
-    public function compile(Twig_Compiler $compiler) {
+    public function compile(Twig_Compiler $compiler)
+    {
         $compiler->addDebugInfo($this);
 
         list($msg, $vars) = $this->compileString($this->getNode('body'));
@@ -45,7 +57,7 @@ class Twig_Extensions_Node_Trans_Tigron extends Twig_Node {
                 ;
             }
 
-            $compiler->raw('), array(');
+            $compiler->raw(', $context[\'env\'][\'translation\']), array(');
 
             foreach ($vars as $var) {
                 if ('count' === $var->getAttribute('name')) {
@@ -82,11 +94,12 @@ class Twig_Extensions_Node_Trans_Tigron extends Twig_Node {
                 ;
             }
 
-            $compiler->raw(");\n");
+            $compiler->raw(", " . '$context[\'env\'][\'translation\']' . ");\n");
         }
     }
 
-    protected function compileString(Twig_NodeInterface $body) {
+    protected function compileString(Twig_NodeInterface $body)
+    {
         if ($body instanceof Twig_Node_Expression_Name || $body instanceof Twig_Node_Expression_Constant || $body instanceof Twig_Node_Expression_TempName) {
             return array($body, array());
         }

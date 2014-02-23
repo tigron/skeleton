@@ -2,43 +2,63 @@
 /**
  * trait: Save
  *
- * @author Christophe Gosiau <christophe@tigron.be>
- * @author Gerry Demaret <gerry@tigron.be>
+ * @author Christophe Gosiau <christophe.gosiau@tigron.be>
+ * @author Gerry Demaret <gerry.demaret@tigron.be>
+ * @author David Vandemaele <david@tigron.be>
  */
 
-class Exception_Validation extends Exception {}
+class Exception_Validation extends Exception {
+
+	private $errors = [];
+
+	public function __construct($errors) {
+		$this->errors = $errors;
+	}
+
+	public function get_errors() {
+		return $this->errors;
+	}
+
+}
 
 trait Save {
+
 	/**
 	 * Save the object
 	 *
 	 * @access public
 	 */
-	public function save() {
+	public function save($validate = true) {
 		// If we have a validate() method, execute it
-		if (is_callable(array($this, 'validate'))) {
-			if ($this->validate() === false) {
-				throw new Exception_Validation();
+		if (is_callable(array($this, 'validate')) and $validate) {
+			if ($this->validate($errors) === false) {
+				throw new Exception_Validation($errors);
 			}
 		}
 
-		// If we have a sanitize() method, execute it
-		if (is_callable(array($this, 'sanitize'))) {
-			$this->sanitize();
-		}
-
 		$table = self::trait_get_database_table();
+
 		$db = self::trait_get_database();
 
-		// If $this->id is null, do an insert, otherwise do an update
 		if (!isset($this->id) OR $this->id === null) {
+			$mode = MDB2_AUTOQUERY_INSERT;
 			$this->details['created'] = date('Y-m-d H:i:s');
-			$db->insert($table, $this->details);
-			$this->id = $db->get_one('SELECT LAST_INSERT_ID()');
+			$where = false;
 		} else {
+			$mode = MDB2_AUTOQUERY_UPDATE;
 			$this->details['updated'] = date('Y-m-d H:i:s');
 			$where = 'id=' . $db->quote($this->id);
-			$db->update($table, $this->details, $where);
+		}
+
+		if (is_callable(array($this, 'generate_slug'))) {
+			$slug = $this->generate_slug();
+			$this->details['slug'] = $slug;
+		}
+
+		$db->autoExecute($table, $this->details, $mode, $where);
+
+		if ($mode === MDB2_AUTOQUERY_INSERT) {
+			$this->id = $db->getOne('SELECT LAST_INSERT_ID();');
 		}
 
 		$this->get_details();

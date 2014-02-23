@@ -20,33 +20,51 @@ abstract class Web_Module {
 	public $login_required = true;
 
 	/**
+	 * Template
+	 *
+	 * @var $template
+	 */
+	protected $template = null;
+
+	/**
 	 * Accept request and dispatch it to the module
 	 *
 	 * @access public
 	 */
 	public function accept_request() {
-		$application = APP_NAME;
-		if (is_callable(array($this, 'pre_' . $application))) {
-			call_user_func_array(array($this, 'pre_' . $application), array());
+		/**
+		 * Initialize sticky sessions
+		 */
+		Web_Session_Sticky::clear(get_class($this));
+		$session = Web_Session_Sticky::Get();
+		$session->module = get_class($this);
+		
+		/**
+		 * Pre-boot actions
+		 **/
+		if (Application::Get()->name == 'admin') {
+			$this->pre_admin();
 		}
 
 		$template = Web_Template::Get();
-		$template->surrounding = false;
-		$module = get_class($this);
-		$module = str_replace('module_', '', strtolower($module));
-		$template->add_env('module', $module);
+		$template->assign('session', $_SESSION);
+		$template->assign('MODULE', get_class($this));
 
-		$session = Web_Session_Sticky::Get();
-		$session->module = $module;
+		if (method_exists($this, 'secure')) {
+			$allowed = $this->secure();
+			if (!$allowed) {
+				throw new Exception('Possible security breach');
+			}
+		}
 
-		if (isset($_REQUEST['action']) AND is_callable(array($this, 'display_'.$_REQUEST['action']))) {
+		if (isset($_REQUEST['action']) AND method_exists($this, 'display_' . $_REQUEST['action'])) {
 			$template->assign('action', $_REQUEST['action']);
-			call_user_func_array(array($this, 'display_'.$_REQUEST['action']), array());
+			call_user_func(array($this, 'display_'.$_REQUEST['action']));
 		} else {
 			$this->display();
 		}
 
-		if ($this->template != null) {
+		if ($this->template !== null and $this->template != false) {
 			$template->display($this->template);
 		}
 	}
