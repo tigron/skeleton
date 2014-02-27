@@ -4,7 +4,10 @@
  *
  * @author Christophe Gosiau <christophe@tigron.be>
  * @author Gerry Demaret <gerry@tigron.be>
+ * @author David Vandemaele <david@tigron.be>
  */
+
+require_once LIB_PATH . '/base/Web/Session.php';
 
 class Web_Handler {
 	/**

@@ -10,8 +10,6 @@
 
 require_once LIB_PATH . '/base/Template/Twig/Extension/TokenParser/Trans/Tigron.php';
 require_once LIB_PATH . '/base/Template/Twig/Extension/Node/Trans/Tigron.php';
-require_once LIB_PATH . '/base/Template/Twig/Extension/Node/Expression/Binary/StartWith.php';
-
 
 class Twig_Extensions_Extension_I18n_Tigron extends Twig_Extensions_Extension_I18n
 {

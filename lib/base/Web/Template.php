@@ -7,10 +7,9 @@
  * @package %%PACKAGE%%
  * @author Christophe Gosiau <christophe@tigron.be>
  * @author Gerry Demaret <gerry@tigron.be>
+ * @author David Vandemaele <david@tigron.be>27/02/2014
  * @version $Id$
  */
-
-require_once LIB_PATH . '/base/Template.php';
 
 /**
  * Template class

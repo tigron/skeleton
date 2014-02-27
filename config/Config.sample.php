@@ -1,9 +1,11 @@
 <?php
 /**
- * Configuration class
+ * Configuration Class
  *
- * @author Christophe Gosiau <christophe@tigron.be>
+ * Implemented as singleton (only one instance globally).
+ *
  * @author Gerry Demaret <gerry@tigron.be>
+ * @author Christophe Gosiau <christophe@tigron.be>
  * @author David Vandemaele <david@tigron.be>
  */
 
@@ -14,7 +16,7 @@ class Config {
 	 * @var array
 	 * @access private
 	 */
-	private $config_data = null;
+	protected $config_data = [];
 
 	/**
 	 * Config object
@@ -22,26 +24,15 @@ class Config {
 	 * @var Config
 	 * @access private
 	 */
-	private static $config = false;
+	private static $config = null;
 
 	/**
 	 * Private (disabled) constructor
 	 *
 	 * @access private
 	 */
-	private function __construct() { }
-
-	/**
-	 * Get function, returns a Config object
-	 *
-	 * @return Config
-	 * @access public
-	 */
-	public static function Get() {
-		if (!isset(self::$config) OR self::$config == false) {
-			self::$config = new Config;
-		}
-		return self::$config;
+	public function __construct() {
+		$this->config_data = array_merge($this->read(), $this->config_data);
 	}
 
 	/**
@@ -53,14 +44,27 @@ class Config {
 	 * @access public
 	 */
 	public function __get($name) {
-		if (!isset($this->config_data) OR $this->config_data === null) {
-			$this->read();
-		}
-
 		if (!isset($this->config_data[$name])) {
 			throw new Exception('Attempting to read unkown config key: '.$name);
 		}
 		return $this->config_data[$name];
+	}
+
+	/**
+	 * Get function, returns a Config object
+	 *
+	 * @return Config
+	 * @access public
+	 */
+	public static function Get() {
+		if (!isset(self::$config)) {
+			try {
+				self::$config = Application::Get()->config;
+			} catch (Exception $e) {
+				return new Config();
+			}
+		}
+		return self::$config;
 	}
 
 	/**
@@ -91,9 +95,48 @@ class Config {
 	 * @access private
 	 */
 	private function read() {
-		$this->config_data = array(
+		return [
 			/**
-			 * Error handling settings
+			 * APPLICATION SPECIFIC CONFIGURATION
+			 *
+			 * The following configuration items needs to be overwritten in the application config file
+			 */
+
+			/**
+			 * The hostname to listen on
+			 */
+			'hostnames' => [],
+
+			/**
+			 * Routes
+			 */
+			'routes' => [],
+
+			/**
+			 * Default language. Used for sending mails when the language is not given
+			 */
+			'default_language' => 'en',
+
+			/**
+			 * Default module
+			 */
+			'module_default' => 'index',
+
+			/**
+			 * 404_module
+			 */
+			'module_404' => '404',
+
+			/**
+			 * GENERAL CONFIGURATION
+			 *
+			 * These configuration items can be overwritten by application specific configuration.
+			 * However they are probably the same for all applications.
+			 */
+
+			/**
+			 * Setting debug to true will enable debug output and error display.
+			 * Error email is not affected.
 			 */
 			'debug' => true,
 			'errors_from' => 'errors@example.com',
@@ -125,18 +168,18 @@ class Config {
 			 *
 			 * Array containing all possible picture formats
 			 */
-			'picture_formats' => array(
-				'format_name'	=> array(
+			'picture_formats' => [
+				'format_name'	=> [
 					'height' => 600,
 					'width' => 800
-				),
-			),
+				],
+			],
 
 			/**
 			 * Archive mailbox
 			 */
 			'archive_mailbox' => '',
 
-		);
+		];
 	}
 }

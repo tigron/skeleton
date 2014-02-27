@@ -4,20 +4,17 @@
  *
  * @author Christophe Gosiau <christophe@tigron.be>
  * @author Gerry Demaret <gerry@tigron.be>
+ * @author David Vandemaele <david@tigron.be>
  */
-
-require_once LIB_PATH . '/base/Web/Session/Sticky.php';
 
 abstract class Web_Module {
 
 	/**
-	 * Login required ?
-	 * Default = yes
+	 * Login required
 	 *
-	 * @access public
-	 * @var bool $login_required
+	 * @var $login_required
 	 */
-	public $login_required = true;
+	protected $login_required = true;
 
 	/**
 	 * Template

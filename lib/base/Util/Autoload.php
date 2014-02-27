@@ -7,6 +7,7 @@
  * @package %%PACKAGE%%
  * @author Christophe Gosiau <christophe@tigron.be>
  * @author Gerry Demaret <gerry@tigron.be>
+ * @author David Vandemaele <david@tigron.be>
  * @version $Id$
  */
 
@@ -20,7 +21,8 @@ class Util_Autoload {
 	 * @return string $name
 	 */
 	public static function classname($class) {
-		$path = ucwords(str_replace('_', '/', $class)) . '.php';
+		$path = str_replace('_', '/', $class) . '.php';
+		
 		if (file_exists(LIB_PATH . '/base/' . $path)) {
 			require_once LIB_PATH . '/base/' . $path;
 		} elseif (file_exists(LIB_PATH . '/model/' . $path)) {
@@ -28,4 +30,3 @@ class Util_Autoload {
 		}
 	}
 }
-

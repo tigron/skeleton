@@ -14,15 +14,14 @@ function error_handler ($errno, $errstr, $errfile = '', $errline = '', $errconte
 		return;
 	}
 
+	static $exec_id = 0;
+
+	if ($exec_id == 0) {
+		$exec_id = rand();
+	}
+
 	$msg = '';
 	$die = false;
-
-	/**
-	 * Backwards compatibility for PHP5.2
-	 */
-	if (!defined('E_DEPRECATED')) {
-		define('E_DEPRECATED', 8192);
-	}
 
 	$date = date('Y-m-d H:i:s (T)');
 	$errortype = array (E_ERROR             => 'Error',
@@ -57,6 +56,10 @@ function error_handler ($errno, $errstr, $errfile = '', $errline = '', $errconte
 			// Don't report notices errors for PEAR
 			if (preg_match('/^\/usr\/share\/php\/(.*)$/', $errfile, $matches))
 				return;
+		case E_DEPRECATED:
+			if (preg_match('/^\/usr\/share\/php\/(.*)$/', $errfile, $matches)) {
+				return;			
+			}
 	}
 
 	ob_start();
@@ -244,5 +247,3 @@ if ($config->debug) {
 	ini_set('display_startup_errors', 0);
 	ini_set('error_reporting', E_ALL & ~E_DEPRECATED);
 }
-
-?>
