@@ -4,9 +4,8 @@
  *
  * @author Christophe Gosiau <christophe@tigron.be>
  * @author Gerry Demaret <gerry@tigron.be>
+ * @author David Vandemaele <david@tigron.be>
  */
-
-require_once ROOT_PATH . '/config/Config_Routes.php';
 
 class Config {
 	/**
