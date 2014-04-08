@@ -86,6 +86,12 @@ trait Model {
 			}
 		}
 
+		if (is_callable(array($this, 'set_' . $key))) {
+			$method = 'set_' . $key;
+			$this->$method($value);
+			return;
+		}
+
 		if (is_object($value) AND property_exists($value, 'id')) {
 			$key = $key . '_id';
 			$this->$key = $value->id;
@@ -124,9 +130,6 @@ trait Model {
 			}
 		}
 
-		if (get_class() == 'Customer_Contact') {
-			var_dump($value);
-		}
 		$this->details[$key] = $value;
 	}
 

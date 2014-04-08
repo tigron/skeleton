@@ -113,6 +113,7 @@ class Template_Twig {
 		];
 		if (isset($_SESSION)) {
 			$variables['session'] = $_SESSION;
+			$variables['session_sticky'] = Web_Session_Sticky::Get();
 		}
 
 		$this->twig->addGlobal('env', $variables);

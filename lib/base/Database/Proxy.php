@@ -4,9 +4,8 @@
  *
  * @author Christophe Gosiau <christophe@tigron.be>
  * @author Gerry Demaret <gerry@tigron.be>
+ * @author David Vandemaele <david@tigron.be>
  */
-
-require_once LIB_PATH . '/base/Database/Statement.php';
 
 class Database_Proxy {
 	/**
@@ -314,7 +313,7 @@ class Database_Proxy {
 	 * @param array $params The values to insert into the table
 	 */
 	public function insert($table, $params) {
-		$params = Util::filter_table_data($table, $params, $this);
+		$params = Util::mysql_filter_table_data($table, $params, $this);
 
 		$keys = array_keys($params);
 		foreach ($keys as $key => $value) {
@@ -344,7 +343,7 @@ class Database_Proxy {
 	 * @param string $where A WHERE-clause to add to the query
 	 */
 	public function update($table, $params, $where) {
-		$params = Util::filter_table_data($table, $params, $this);
+		$params = Util::mysql_filter_table_data($table, $params, $this);
 
 		$keys = array_keys($params);
 		foreach ($keys as $key => $value) {

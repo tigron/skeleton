@@ -5,6 +5,7 @@
  * @package %%PACKAGE%%
  * @author Christophe Gosiau <christophe@tigron.be>
  * @author Gerry Demaret <gerry@tigron.be>
+ * @author David Vandemaele <david@tigron.be>
  * @version $Id$
  */
 
@@ -44,14 +45,10 @@ class Web_Session_Sticky {
 	 * @param string $value
 	 */
 	public function __set($key, $value) {
-		if ($this->module === null) {
-			throw new Exception('module not set');
+		if (!isset($_SESSION['system'])) {
+			$_SESSION['system'] = [];
 		}
-
-		if (!isset($_SESSION['system'][$this->module])) {
-			$_SESSION['system'][$this->module] = array();
-		}
-		$_SESSION['system'][$this->module][$key] = $value;
+		$_SESSION['system'][$key] = ['counter' => 0, 'data' => $value];
 	}
 
 	/**
@@ -62,13 +59,10 @@ class Web_Session_Sticky {
 	 * @param bool $remove_after_get
 	 */
 	public function __get($key) {
-		if ($this->module === null) {
-			throw new Exception('module not set');
-		}
-		if (!isset($_SESSION['system'][$this->module][$key])) {
+		if (!isset($_SESSION['system'][$key])) {
 			throw new Exception('Key not found');
 		}
-		return $_SESSION['system'][$this->module][$key];
+		return $_SESSION['system'][$key]['data'];
 	}
 
 	/**
@@ -78,10 +72,7 @@ class Web_Session_Sticky {
 	 * @param string $key
 	 */
 	public function __isset($key) {
-		if ($this->module === null) {
-			throw new Exception('module not set');
-		}
-		if (!isset($_SESSION['system'][$this->module][$key])) {
+		if (!isset($_SESSION['system'][$key])) {
 			return false;
 		} else {
 			return true;
@@ -95,10 +86,7 @@ class Web_Session_Sticky {
 	 * @param string $key
 	 */
 	public function __unset($key) {
-		if ($this->module === null) {
-			throw new Exception('module not set');
-		}
-		unset($_SESSION['system'][$this->module][$key]);
+		unset($_SESSION['system'][$key]);
 	}
 
 	/**
@@ -120,16 +108,17 @@ class Web_Session_Sticky {
 	 * @access public
 	 * @param string $module
 	 */
-	public static function clear($module) {
+	public static function clear() {
 		if (!isset($_SESSION['system'])) {
 			return;
 		}
-		foreach ($_SESSION['system'] as $module_name => $variables) {
-			if ($module_name == $module) {
+
+		foreach ($_SESSION['system'] as $key => $variables) {
+			if (isset($variables['counter']) AND $variables['counter'] < 1) {
+				$_SESSION['system'][$key]['counter']++;
 				continue;
 			}
-			unset($_SESSION['system'][$module_name]);
+			unset($_SESSION['system'][$key]);
 		}
 	}
 }
-?>

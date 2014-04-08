@@ -4,6 +4,7 @@
  *
  * @author Christophe Gosiau <christophe.gosiau@tigron.be>
  * @author Gerry Demaret <gerry.demaret@tigron.be>
+ * @author David Vandemaele <david.vandemaele@tigron.be>
  */
 
 trait Page {
@@ -42,6 +43,7 @@ trait Page {
 
 		foreach ($extra_conditions as $key => $value) {
 			if ($key != '%search%') {
+
 				if (is_array($value[1])) {
 					$where .= 'AND (0';
 					foreach ($value[1] as $element) {
@@ -61,7 +63,7 @@ trait Page {
 			}
 		}
 
-		if (isset($extra_conditions['%search%'])) {
+		if (isset($extra_conditions['%search%']) AND $extra_conditions['%search%'] != '') {
 			$where .= 'AND (0 ';
 
 			foreach ($fields as $field) {
@@ -95,7 +97,7 @@ trait Page {
 	 * @param int $all
 	 * @param array $extra_conditions
 	 */
-	public static function get_paged($sort = 1, $direction = 'ASC', $page = 1, $extra_conditions = array(), $all = false) {
+	public static function get_paged($sort = 1, $direction = 'asc', $page = 1, $extra_conditions = array(), $all = false) {
 		$db = self::trait_get_database();
 		$table = self::trait_get_database_table();
 		$where = self::get_search_where($extra_conditions);
@@ -104,7 +106,7 @@ trait Page {
 		$object = new self();
 		if (is_callable($sort)) {
 			$sorter = 'object';
-		} elseif (is_callable(array($object, $sort))) {
+		} elseif (method_exists($object, $sort) AND is_callable(array($object, $sort))) {
 			$sorter = 'object';
 		} else {
 			$sorter = 'db';
@@ -122,8 +124,8 @@ trait Page {
 			$page = 1;
 		}
 
-        if ($direction != 'ASC') {
-			$direction = 'DESC';
+        if ($direction != 'asc') {
+			$direction = 'desc';
         }
 
 		$sql  = 'SELECT DISTINCT(' . $table . '.id) ' . "\n";
@@ -133,7 +135,13 @@ trait Page {
 		}
 
 		if (isset(self::$object_text_fields) AND count(self::$object_text_fields) > 0) {
-			$sql .= 'LEFT OUTER JOIN object_text ON object_text.classname = "' . get_class() . '" AND object_text.object_id=' . $table . '.id '  . "\n";
+			$sql .= 'LEFT OUTER JOIN object_text ON object_text.classname = "' . get_class() . '" AND object_text.object_id=' . $table . '.id ';
+			if ($sorter == 'db' AND in_array($sort, self::$object_text_fields)) {
+				$sql .= 'AND object_text.label = ' . $db->quote($sort) . ' AND object_text.language_id = ' . Application::Get()->language->id . ' ';
+
+				$sort = 'object_text.content';
+			}
+			$sql .= "\n";
 		}
 		$sql .= 'WHERE 1 ' . $where . "\n";
 
@@ -154,7 +162,7 @@ trait Page {
 		if ($sorter == 'object') {
 			$objects = Util::object_sort($objects, $sort, $direction);
 
-			if ($direction == 'DESC') {
+			if ($direction == 'desc') {
 				$objects = array_reverse($objects);
 			}
 
