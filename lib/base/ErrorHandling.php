@@ -58,7 +58,7 @@ function error_handler ($errno, $errstr, $errfile = '', $errline = '', $errconte
 				return;
 		case E_DEPRECATED:
 			if (preg_match('/^\/usr\/share\/php\/(.*)$/', $errfile, $matches)) {
-				return;			
+				return;
 			}
 	}
 
@@ -206,7 +206,7 @@ function report($subject, $message, $fatal = false, $backtrace = true) {
 
 	$headers = 'From: ' . $config->errors_from . "\r\n";
 	$headers.= 'Content-Type: text/html; charset=ISO-8859-1 MIME-Version: 1.0';
-	mail($config->errors_to, $subject, $html, $headers);
+	mail($config->errors_to, $subject, $html, $headers, '-f ' . $config->errors_from);
 
 	if ($config->debug) {
 		echo $html;
