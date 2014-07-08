@@ -9,8 +9,6 @@
  * @author David Vandemaele <david@tigron.be>
  */
 
-require_once LIB_PATH . '/base/Util.php';
-
 class Picture_Manipulation {
 
 	/**
@@ -30,12 +28,12 @@ class Picture_Manipulation {
 	private $image_resized = '';
 
 	/**
-	 * Contains mime_type
+	 * Contains mimetype
 	 *
 	 * @access private
 	 * @var string
 	 */
-	private $mime_type = '';
+	private $mimetype = '';
 
 	/**
 	 * Contains width
@@ -71,7 +69,7 @@ class Picture_Manipulation {
 	private function load(Picture $picture) {
 		$this->width = $picture->width;
 		$this->height = $picture->height;
-		$this->mime_type = $picture->mime_type;
+		$this->mimetype = $picture->mimetype;
 		$this->image = $this->open($picture->get_path());
 	}
 
@@ -82,7 +80,7 @@ class Picture_Manipulation {
 	 * @return Resource $img
 	 */
 	private function open($path) {
-		switch ($this->mime_type) {
+		switch ($this->mimetype) {
 			case 'image/jpeg':
 				$img = imagecreatefromjpeg($path);
 				break;
@@ -109,7 +107,7 @@ class Picture_Manipulation {
 	 */
 	public function output($destination = null, $quality = 100) {
 
-		switch ($this->mime_type) {
+		switch ($this->mimetype) {
 			case 'image/jpeg':
 				imagejpeg($this->image_resized, $destination, $quality);
 				break;
@@ -172,7 +170,11 @@ class Picture_Manipulation {
 		}
 
 		$new_aspect_ratio = $new_width / $new_height;
-		if ($new_aspect_ratio == $old_aspect_ratio) {
+
+		if ($new_width > $this->width AND $new_height > $this->height) {
+			$output_width = $this->width;
+			$output_height = $this->height;
+		} elseif ($new_aspect_ratio == $old_aspect_ratio) {
 			$output_width = $new_width;
 			$output_height = $new_height;
 		} elseif ($new_aspect_ratio < $old_aspect_ratio) {
@@ -230,14 +232,14 @@ class Picture_Manipulation {
 	 *
 	 * @access public
 	 * @param mixed $path
-	 * @return string $mime_type
+	 * @return string $mimetype
 	 */
-	public function get_mime_type($path = null) {
+	public function get_mimetype($path = null) {
 		if (!is_null($path)) {
 			$this->path = $path;
 		}
 
-		return Util::get_mime_type($this->path);
+		return Util::get_mimetype($this->path);
 	}
 
 	/**
@@ -257,7 +259,7 @@ class Picture_Manipulation {
 
 		$this->image_resized = imagecreatetruecolor($output_width, $output_height);
 
-		if ($this->mime_type == 'image/gif' OR $this->mime_type == 'image/png') {
+		if ($this->mimetype == 'image/gif' OR $this->mimetype == 'image/png') {
 			$transparent_index = imagecolortransparent($this->image);
 			if ($transparent_index >= 0) { // GIF
 				imagepalettecopy($this->image, $this->image_resized);
