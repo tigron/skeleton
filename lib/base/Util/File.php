@@ -59,6 +59,6 @@ class Util_File {
 		}
 
 		return trim($mime_type);
-	}		
+	}
 }
 ?>
