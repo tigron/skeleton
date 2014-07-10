@@ -28,12 +28,12 @@ class Picture_Manipulation {
 	private $image_resized = '';
 
 	/**
-	 * Contains mimetype
+	 * Contains mime_type
 	 *
 	 * @access private
 	 * @var string
 	 */
-	private $mimetype = '';
+	private $mime_type = '';
 
 	/**
 	 * Contains width
@@ -69,7 +69,7 @@ class Picture_Manipulation {
 	private function load(Picture $picture) {
 		$this->width = $picture->width;
 		$this->height = $picture->height;
-		$this->mimetype = $picture->mimetype;
+		$this->mime_type = $picture->mime_type;
 		$this->image = $this->open($picture->get_path());
 	}
 
@@ -80,7 +80,7 @@ class Picture_Manipulation {
 	 * @return Resource $img
 	 */
 	private function open($path) {
-		switch ($this->mimetype) {
+		switch ($this->mime_type) {
 			case 'image/jpeg':
 				$img = imagecreatefromjpeg($path);
 				break;
@@ -107,7 +107,7 @@ class Picture_Manipulation {
 	 */
 	public function output($destination = null, $quality = 100) {
 
-		switch ($this->mimetype) {
+		switch ($this->mime_type) {
 			case 'image/jpeg':
 				imagejpeg($this->image_resized, $destination, $quality);
 				break;
@@ -232,14 +232,14 @@ class Picture_Manipulation {
 	 *
 	 * @access public
 	 * @param mixed $path
-	 * @return string $mimetype
+	 * @return string $mime_type
 	 */
-	public function get_mimetype($path = null) {
+	public function get_mime_type($path = null) {
 		if (!is_null($path)) {
 			$this->path = $path;
 		}
 
-		return Util::get_mimetype($this->path);
+		return Util::file_mime_type($this->path);
 	}
 
 	/**
@@ -259,7 +259,7 @@ class Picture_Manipulation {
 
 		$this->image_resized = imagecreatetruecolor($output_width, $output_height);
 
-		if ($this->mimetype == 'image/gif' OR $this->mimetype == 'image/png') {
+		if ($this->mime_type == 'image/gif' OR $this->mime_type == 'image/png') {
 			$transparent_index = imagecolortransparent($this->image);
 			if ($transparent_index >= 0) { // GIF
 				imagepalettecopy($this->image, $this->image_resized);
