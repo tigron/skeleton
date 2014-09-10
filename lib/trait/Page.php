@@ -4,7 +4,6 @@
  *
  * @author Christophe Gosiau <christophe.gosiau@tigron.be>
  * @author Gerry Demaret <gerry.demaret@tigron.be>
- * @author David Vandemaele <david.vandemaele@tigron.be>
  */
 
 trait Page {
@@ -13,12 +12,14 @@ trait Page {
 	 *
 	 * @access public
 	 * @param array $extra_conditions
+	 * @param array $extra_joins
 	 */
-	private static function get_search_where($extra_conditions = array()) {
+	private static function get_search_where($extra_conditions = [], $extra_joins = []) {
 		$db = self::trait_get_database();
 		$table = self::trait_get_database_table();
 		$fields = Util::mysql_get_table_fields($table);
 		$joins = self::trait_get_link_tables();
+		$joins = array_merge($joins, $extra_joins);
 
 		$extra_conditions_raw = $extra_conditions;
 		// Cleanup 'extra_conditions'
@@ -66,19 +67,36 @@ trait Page {
 		if (isset($extra_conditions['%search%']) AND $extra_conditions['%search%'] != '') {
 			$where .= 'AND (0 ';
 
+			$ec_search = explode(' ', trim($extra_conditions['%search%']));
+
 			foreach ($fields as $field) {
-				$where .= 'OR ' . $table . '.' . $field . " LIKE '%"  . $extra_conditions['%search%'] . "%' " . "\n\t";
+				foreach ($ec_search as $element) {
+					$where .= 'OR ' . $table . '.' . $field . " LIKE '%"  . $element . "%' " . "\n\t";
+				}
 			}
 
 			foreach ($joins as $join) {
 				$fields = Util::mysql_get_table_fields($join);
 				foreach ($fields as $field) {
-					$where .= 'OR ' . $join . '.' . $field . " LIKE '%"  . $extra_conditions['%search%'] . "%' " . "\n\t";
+					foreach ($ec_search as $element) {
+						$where .= 'OR ' . $join . '.' . $field . " LIKE '%"  . $element . "%' " . "\n\t";
+					}
+				}
+			}
+
+			foreach ($extra_joins as $extra_join) {
+				$fields = Util::mysql_get_table_fields($extra_join[0]);
+				foreach ($fields as $field) {
+					foreach ($ec_search as $element) {
+						$where .= 'OR ' . $extra_join[0] . '.' . $field . " LIKE '%"  . $element . "%' " . "\n\t";
+					}
 				}
 			}
 
 			if (isset(self::$object_text_fields) AND count(self::$object_text_fields) > 0) {
-				$where .= "OR object_text.content LIKE '%" . $extra_conditions['%search%'] . "%' " . "\n\t";
+				foreach ($ec_search as $element) {
+					$where .= "OR object_text.content LIKE '%" . $element . "%' " . "\n\t";
+				}
 			}
 
 			$where .= ') ' . "\n";
@@ -96,11 +114,12 @@ trait Page {
 	 * @param int $page
 	 * @param int $all
 	 * @param array $extra_conditions
+	 * @param array $extra_joins
 	 */
-	public static function get_paged($sort = 1, $direction = 'asc', $page = 1, $extra_conditions = array(), $all = false) {
+	public static function get_paged($sort = 1, $direction = 'asc', $page = 1, $limit, $extra_conditions = [], $all = false, $extra_joins = []) {
 		$db = self::trait_get_database();
 		$table = self::trait_get_database_table();
-		$where = self::get_search_where($extra_conditions);
+		$where = self::get_search_where($extra_conditions, $extra_joins);
 		$joins = self::trait_get_link_tables();
 
 		$object = new self();
@@ -114,9 +133,7 @@ trait Page {
 
 		$config = Config::Get();
 
-		if (!$all) {
-			$limit = $config->items_per_page;
-		} else {
+		if ($all) {
 			$limit = 1000;
 		}
 
@@ -134,8 +151,12 @@ trait Page {
 			$sql .= 'LEFT OUTER JOIN `' . $join . '` on `' . $table . '`.' . $join . '_id = ' . $join . '.id '  . "\n";
 		}
 
+		foreach ($extra_joins as $extra_join) {
+			$sql .= 'LEFT OUTER JOIN `' . $extra_join[0] . '` on `' . $extra_join[0] . '`.' . $extra_join[1] . ' = ' . $extra_join[2] . "\n";
+		}
+
 		if (isset(self::$object_text_fields) AND count(self::$object_text_fields) > 0) {
-			$sql .= 'LEFT OUTER JOIN object_text ON object_text.classname = "' . get_class() . '" AND object_text.object_id=' . $table . '.id ';
+			$sql .= 'LEFT OUTER JOIN object_text ON object_text.classname LIKE "' . get_class() . '%" AND object_text.object_id=' . $table . '.id ';
 			if ($sorter == 'db' AND in_array($sort, self::$object_text_fields)) {
 				$sql .= 'AND object_text.label = ' . $db->quote($sort) . ' AND object_text.language_id = ' . Application::Get()->language->id . ' ';
 
@@ -143,6 +164,7 @@ trait Page {
 			}
 			$sql .= "\n";
 		}
+
 		$sql .= 'WHERE 1 ' . $where . "\n";
 
 		if ($sorter == 'db') {
@@ -154,7 +176,7 @@ trait Page {
 		}
 
 		$ids = $db->getCol($sql);
-		$objects = array();
+		$objects = [];
 		foreach ($ids as $id) {
 			$objects[] = self::get_by_id($id);
 		}
@@ -178,12 +200,13 @@ trait Page {
 	 *
 	 * @access public
 	 * @param array $extra_conditions
+	 * @param array $extra_joins
 	 * @return int $count
 	 */
-	public static function count($extra_conditions = array()) {
+	public static function count($extra_conditions = [], $extra_joins = []) {
 		$db = self::trait_get_database();
 		$table = self::trait_get_database_table();
-		$where = self::get_search_where($extra_conditions);
+		$where = self::get_search_where($extra_conditions, $extra_joins);
 		$joins = self::trait_get_link_tables();
 
 		$sql  = 'SELECT COUNT(DISTINCT(' . $table . '.id)) ';
@@ -192,10 +215,14 @@ trait Page {
 		foreach ($joins as $join) {
 			$sql .= 'LEFT OUTER JOIN `' . $join . '` on `' . $table . '`.' . $join . '_id = ' . $join . '.id ';
 		}
-		if (isset(self::$object_text_fields) AND count(self::$object_text_fields) > 0) {
-			$sql .= 'LEFT OUTER JOIN object_text on object_text.classname = "' . get_class() . '" AND object_text.object_id=' . $table . '.id '  . "\n";
+
+		foreach ($extra_joins as $extra_join) {
+			$sql .= 'LEFT OUTER JOIN `' . $extra_join[0] . '` on `' . $extra_join[0] . '`.' . $extra_join[1] . ' = ' . $extra_join[2] . "\n";
 		}
 
+		if (isset(self::$object_text_fields) AND count(self::$object_text_fields) > 0) {
+			$sql .= 'LEFT OUTER JOIN object_text on object_text.classname LIKE "' . get_class() . '%" AND object_text.object_id=' . $table . '.id '  . "\n";
+		}
 
 		$sql .= 'WHERE 1 ' . $where;
 		$count = $db->getOne($sql);
