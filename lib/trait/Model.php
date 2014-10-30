@@ -31,6 +31,22 @@ trait Model {
 	private $dirty_fields = array();
 
 	/**
+	 * Object text cache
+	 *
+	 * @access private
+	 * @var array $object_text_cache
+	 */
+	private $object_text_cache = array();
+
+	/**
+	 * Object text update
+	 *
+	 * @access private
+	 * @var array $object_text_updated
+	 */
+	private $object_text_updated = array();
+
+	/**
 	 * Constructor
 	 *
 	 * @access public
@@ -64,7 +80,7 @@ trait Model {
 		}
 
 		$this->details = $details;
-		$this->dirty_fields = array();
+		$this->reset_dirty_fields();
 	}
 
 	/**
@@ -100,20 +116,7 @@ trait Model {
 
 		if (isset(self::$object_text_fields)) {
 			if (strpos($key, 'text_') === 0) {
-				if ($this->id === null) {
-					$this->save();
-				}
-				$key = str_replace('text_', '', $key);
-				list($language, $label) = explode('_', $key, 2);
-
-				if (!in_array($label, self::$object_text_fields)) {
-					throw new Exception('Incorrect text field');
-				}
-
-				$language = Language::get_by_name_short($language);
-				$object_text = Object_Text::get_by_object_label_language($this, $label, $language);
-				$object_text->content = $value;
-				$object_text->save();
+				$this->trait_set_object_text($key, $value);
 				return;
 			}
 		}
@@ -134,6 +137,56 @@ trait Model {
 	}
 
 	/**
+	 * set an object text
+	 *
+	 * @access private
+	 * @param string $key
+	 * @param string $value
+	 */
+	private function trait_set_object_text($key, $value) {
+		list($language, $label) = explode('_', str_replace('text_', '', $key), 2);
+
+		if (!in_array($label, self::$object_text_fields)) {
+			throw new Exception('Incorrect text field:' . $label);
+		}
+
+		if (!isset($this->object_text_cache[$key])) {
+			$this->trait_get_object_text($key);
+		}
+
+		if ($this->object_text_cache[$key] != $value) {
+			$this->object_text_cache[$key] = $value;
+			$this->object_text_updated[$key] = $value;
+		}
+	}
+
+	/**
+	 * set an object text
+	 *
+	 * @access private
+	 * @param string $key
+	 * @param string $value
+	 */
+	private function trait_get_object_text($key) {
+		list($language, $label) = explode('_', str_replace('text_', '', $key), 2);
+
+		if (!in_array($label, self::$object_text_fields)) {
+			throw new Exception('Incorrect text field:' . $label);
+		}
+
+		if ($this->id === null) {
+			$this->object_text_cache[$key] = '';
+		}
+
+		if (!isset($this->object_text_cache[$key])) {
+			$language = Language::get_by_name_short($language);
+			$this->object_text_cache[$key] = Object_Text::get_by_object_label_language($this, $label, $language)->content;
+		}
+
+		return $this->object_text_cache[$key];
+	}
+
+	/**
 	 * Get a detail
 	 *
 	 * @access public
@@ -144,26 +197,14 @@ trait Model {
 		if (isset($this->details[strtolower($key) . '_id']) AND class_exists($key)) {
 			return $key::get_by_id($this->details[strtolower($key) . '_id']);
 		}
-		
+
 		if (isset($this->details[$key])) {
 			return $this->details[$key];
 		}
 
 		if (isset(self::$object_text_fields)) {
 			if (strpos($key, 'text_') === 0) {
-				$key = str_replace('text_', '', $key);
-				list($language, $label) = explode('_', $key, 2);
-
-				if (!in_array($label, self::$object_text_fields)) {
-					throw new Exception('Incorrect text field');
-				}
-
-				$language = Language::get_by_name_short($language);
-				if ($this->id === null) {
-					return '';
-				} else {
-					return Object_Text::get_by_object_label_language($this, $label, $language)->content;
-				}
+				return $this->trait_get_object_text($key);
 			}
 		}
 
@@ -188,8 +229,7 @@ trait Model {
 
 		if (isset(self::$object_text_fields)) {
 			if (strpos($key, 'text_') === 0) {
-				$key = str_replace('text_', '', $key);
-				list($language, $label) = explode('_', $key);
+				list($language, $label) = explode('_',  str_replace('text_', '', $key), 2);
 
 				if (!in_array($label, self::$object_text_fields)) {
 					return false;
@@ -223,7 +263,18 @@ trait Model {
 	 * @return array $dirty_fields
 	 */
 	public function get_dirty_fields() {
-		return $this->dirty_fields;
+		return array_merge($this->dirty_fields, $this->object_text_updated);
+	}
+
+	/**
+	 * Reset dirty fields
+	 *
+	 * @access public
+	 */
+	public function reset_dirty_fields() {
+		$this->dirty_fields = array();
+		$this->object_text_updated = array();
+		$this->object_text_cache = array();
 	}
 
 	/**
