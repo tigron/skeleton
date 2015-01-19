@@ -153,7 +153,7 @@ class Translation {
 	 * @return Translation $translation
 	 */
 	public static function get(Language $language = null, $application_name = null) {
-		if (!isset(self::$translation[$language->name_short])) {
+		if (!isset(self::$translation[$language->name_short]) OR self::$translation[$language->name_short]->application_name != $application_name) {
 			self::$translation[$language->name_short] = new Translation($language, $application_name);
 		}
 
