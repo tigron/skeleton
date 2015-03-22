@@ -1,7 +1,4 @@
-
-
-DROP TABLE IF EXISTS `language`;
-CREATE TABLE `language` (
+CREATE TABLE IF NOT EXISTS `language` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(64) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
   `name_local` varchar(64) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
@@ -60,3 +57,5 @@ CREATE TABLE IF NOT EXISTS `user` (
 ALTER TABLE  `user` DROP  `date_of_birth`;
 ALTER TABLE  `file` ADD  `md5sum` VARCHAR( 32 ) NOT NULL AFTER  `name`;
 ALTER TABLE  `file` DROP  `unique_name`;
+ALTER TABLE  `file` ADD `expiration_date` datetime NULL AFTER `size`;
+ALTER TABLE  `user` DROP `country_id`;

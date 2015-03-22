@@ -42,7 +42,9 @@ trait Save {
 
 		if (!isset($this->id) OR $this->id === null) {
 			$mode = MDB2_AUTOQUERY_INSERT;
-			$this->details['created'] = date('Y-m-d H:i:s');
+			if (!isset($this->details['created'])) {
+				$this->details['created'] = date('Y-m-d H:i:s');
+			}
 			$where = false;
 		} else {
 			$mode = MDB2_AUTOQUERY_UPDATE;
@@ -64,9 +66,7 @@ trait Save {
 		$this->get_details();
 
 		foreach ($this->object_text_updated as $key => $value) {
-			$key = str_replace('text_', '', $key);
-			list($language, $label) = explode('_', $key, 2);
-
+			list($language, $label) = explode('_', str_replace('text_', '', $key), 2);
 			$language = Language::get_by_name_short($language);
 			$object_text = Object_Text::get_by_object_label_language($this, $label, $language);
 			$object_text->content = $this->object_text_cache[$key];

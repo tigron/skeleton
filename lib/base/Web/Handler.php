@@ -81,7 +81,7 @@ class Web_Handler {
 		try {
 			$module = $application->route($query_string[0]);
 		} catch (Exception $e) {
-			
+
 			// So there is no route defined.
 
 			/**
@@ -105,7 +105,7 @@ class Web_Handler {
 				require $application->module_path . '/' . $config->module_404 . '.php';
 				$classname = 'Web_Module_' . $config->module_404;
 			} else {
-				echo '404: No module found';
+				header('HTTP/1.0 404 Module not found');
 				exit;
 			}
 			$module = new $classname;
@@ -149,6 +149,7 @@ class Web_Handler {
 		$database = Database::get();
 		$queries = $database->queries;
 		$execution_time = microtime(true) - $start;
+
 		Util::log_request('Request: http://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'] . ' -- IP: ' . $_SERVER['REMOTE_ADDR'] . ' -- Queries: ' . $queries . ' -- Time: ' . $execution_time);
 
 	}

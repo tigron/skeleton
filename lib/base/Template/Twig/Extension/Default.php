@@ -7,6 +7,41 @@
  */
 
 class Template_Twig_Extension_Default extends Twig_Extension {
+
+	private $environment;
+
+	/**
+	 * Init runtime
+	 *
+	 * @access public
+	 */
+	public function initRuntime(Twig_Environment $environment) {
+        parent::initRuntime($environment);
+        $this->environment = $environment;
+    }
+
+	/**
+	 * Returns a list of globals
+	 *
+	 * @return array
+	 */
+	public function getGlobals() {
+		$templates = array(
+			'base' => '_default/macro.base.twig',
+			'form' => '_default/form.base.twig',
+		);
+
+		$globals = array();
+		foreach ($templates as $key => $template) {
+			try {
+				$loaded_template = $this->environment->loadTemplate('_default/macro.base.twig');
+				$globals[$key] = $loaded_template;
+			} catch (Twig_Error_Loader $e) { }
+		}
+
+		return $globals;
+	}
+
     /**
      * Returns a list of filters
      *
@@ -20,7 +55,7 @@ class Template_Twig_Extension_Default extends Twig_Extension {
 			new Twig_SimpleFilter('round', array($this, 'round_filter'), array('is_safe' => array('html'))),
 			new Twig_SimpleFilter('date', array($this, 'date_filter'), array('needs_environment' => true, 'is_safe' => array('html'))),
 			new Twig_SimpleFilter('datetime', array($this, 'datetime_filter'), array('needs_environment' => true, 'is_safe' => array('html'))),
-			new Twig_SimpleFilter('filesize', array($this, 'filesize_filter'), array('needs_environment' => true, 'is_safe' => array('html'))),			
+			new Twig_SimpleFilter('filesize', array($this, 'filesize_filter'), array('needs_environment' => true, 'is_safe' => array('html'))),
         );
 	}
 
@@ -112,7 +147,7 @@ class Template_Twig_Extension_Default extends Twig_Extension {
 	public function datetime_filter(Twig_Environment $env, $datetime, $format = 'd/m/Y H:i:s') {
 		return twig_date_format_filter($env, $datetime, $format);
 	}
-	
+
 	/**
 	 * Filesize filter
 	 *
@@ -125,7 +160,7 @@ class Template_Twig_Extension_Default extends Twig_Extension {
 			return number_format($filesize, 2, '.', ' ') . 'b';
 		}
 		$filesize = $new_filesize;
-		
+
 		$new_filesize = $filesize / 1024;
 		if ($new_filesize < 1) {
 			return number_format($filesize, 2, '.', ' ') . 'Kb';
@@ -136,7 +171,7 @@ class Template_Twig_Extension_Default extends Twig_Extension {
 		if ($new_filesize < 1) {
 			return number_format($filesize, 2, '.', ' ') . 'Mb';
 		}
-		$filesize = $new_filesize;		
+		$filesize = $new_filesize;
 
 		$new_filesize = $filesize / 1024;
 		if ($new_filesize < 1) {

@@ -60,5 +60,28 @@ class Util_File {
 
 		return trim($mime_type);
 	}
+
+	/**
+	 * Get a size in human readable format
+	 *
+	 * @access public
+	 * @return string $size
+	 */
+	public function humanize_size($size) {
+		if ($size < 1024) {
+			return $size . ' B';
+		}
+
+		$units = ['KiB', 'MiB', 'GiB', 'TiB', 'PiB', 'EiB', 'ZiB', 'YiB'];
+
+		foreach ($units as $i => $unit) {
+			$multiplier = pow(1024, $i + 1);
+			$threshold = $multiplier * 1000;
+
+			if ($size < $threshold) {
+				$size = Util::math_limit_digits($size / $multiplier, false);
+				return $size . ' ' . $unit;
+			}
+		}
+	}
 }
-?>

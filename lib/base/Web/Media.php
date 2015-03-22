@@ -4,6 +4,7 @@
  *
  * @author Christophe Gosiau <christophe@tigron.be>
  * @author Gerry Demaret <gerry@tigron.be>
+ * @author David Vandemaele <david@tigron.be>
  */
 
 class Web_Media {
@@ -20,6 +21,8 @@ class Web_Media {
 			'jpeg',
 			'png',
 			'ico',
+		),
+		'doc' => array(
 			'pdf',
 		),
 		'css' => array(

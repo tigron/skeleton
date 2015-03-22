@@ -4,6 +4,7 @@
  *
  * @author Christophe Gosiau <christophe.gosiau@tigron.be>
  * @author Gerry Demaret <gerry.demaret@tigron.be>
+ * @author David Vandemaele <david@tigron.be>
  */
 
 trait Model {
@@ -72,7 +73,6 @@ trait Model {
 		}
 
 		$db = self::trait_get_database();
-
 		$details = $db->getRow('SELECT * FROM ' . $db->quoteIdentifier($table) . ' WHERE id=?', array($this->id));
 
 		if ($details === null) {
@@ -198,7 +198,7 @@ trait Model {
 			return $key::get_by_id($this->details[strtolower($key) . '_id']);
 		}
 
-		if (isset($this->details[$key])) {
+		if (array_key_exists($key, $this->details)) {
 			return $this->details[$key];
 		}
 
@@ -223,7 +223,7 @@ trait Model {
 			return true;
 		}
 
-		if (isset($this->details[$key])) {
+		if (array_key_exists($key, $this->details)) {
 			return true;
 		}
 
