@@ -147,6 +147,7 @@ class Util_Rewrite {
 					}
 				}
 			}
+
 			if ($route_part_matches == count($route_parts)) {
 				$correct_route = $route_parts;
 			}

@@ -22,24 +22,6 @@ trait Page {
 		$joins = array_merge($joins, $extra_joins);
 
 		$extra_conditions_raw = $extra_conditions;
-		// Cleanup 'extra_conditions'
-		foreach ($extra_conditions as $key => $value) {
-			if ($key == '%search%') {
-				continue;
-			}
-
-			$exists = false;
-			foreach ($fields as $field) {
-				if ($field == $key) {
-					$exists = true;
-				}
-			}
-
-			if (!$exists) {
-				//unset($extra_conditions[$key]);
-			}
-		}
-
 		$where = "\n\t";
 
 		foreach ($extra_conditions as $key => $value) {

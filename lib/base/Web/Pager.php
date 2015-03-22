@@ -5,6 +5,7 @@
  * @package %%PACKAGE%%
  * @author Christophe Gosiau <christophe@tigron.be>
  * @author Gerry Demaret <gerry@tigron.be>
+ * @author David Vandemaele <david@tigron.be>
  * @version $Id$
  */
 
@@ -269,20 +270,31 @@ class Web_Pager {
 	 * @access private
 	 */
 	public function page($all = false) {
-		if (isset($_GET['q'])) {
-			$this->options = array_merge($this->options, $this->get_options_from_hash( $_GET['q'] ));
+		$qry_str = $_SERVER['QUERY_STRING'];
+		parse_str($qry_str, $qry_str_parts);
+		unset($qry_str_parts['p']);
+		unset($qry_str_parts['q']);
+		$request_uri = base64_encode($_SERVER['REDIRECT_URL'] . '?' . implode('&', $qry_str_parts));
+
+		if ($_SERVER['REQUEST_METHOD'] != 'POST') {
+			if (!isset($_GET['q']) AND isset($_SESSION[Application::get()->name]['pager'][$request_uri]) AND Application::Get()->config->sticky_pager) {
+				$this->options = array_merge($this->options, $this->get_options_from_hash($_SESSION[Application::get()->name]['pager'][$request_uri]));
+			} elseif (isset($_GET['q'])) {
+				$this->options = array_merge($this->options, $this->get_options_from_hash($_GET['q']));
+			}
 		}
 
-		if (!isset($this->options['sort'])) {
-			$this->options['sort'] = key($this->options['sort_permissions']);
+		if (!isset($this->options['sort']) ) {
+			if (isset($this->options['sort_permissions']) and count($this->options['sort_permissions']) > 0) {
+				reset($this->options['sort_permissions']);
+				$this->options['sort'] = current($this->options['sort_permissions']);
+			} else {
+				$this->options['sort'] = 1;
+			}
 		}
 
 		if (isset($_GET['p'])) {
 			$this->set_page($_GET['p']);
-		}
-
-		if (!isset($this->options['limit'])) {
-			$this->options['limit'] = Config::Get()->items_per_page;
 		}
 
 		/**
@@ -308,6 +320,9 @@ class Web_Pager {
 		$this->items = call_user_func_array(array($this->classname, 'get_paged'), $params);
 		$this->item_count = call_user_func_array(array($this->classname, 'count'), array($this->options['conditions'], $this->options['joins']));
 		$this->generate_links();
+
+		$hash = $this->create_options_hash($this->options['conditions'], $this->options['page'], $this->options['sort'], $this->options['direction'], $this->options['joins']);
+		$_SESSION[Application::Get()->name]['pager'][$request_uri] = $hash;
 	}
 
 	/**
@@ -328,17 +343,19 @@ class Web_Pager {
 	 * @param array $conditions
 	 * @param int $page
 	 * @param int $sort
+	 * @param array $joins
 	 * @param string $direction
 	 */
-	private function create_options_hash($conditions, $page, $sort, $direction) {
-		$options = array(
+	private function create_options_hash($conditions, $page, $sort, $direction, $joins) {
+		$options = [
 			'conditions' => $conditions,
 			'page' => $page,
 			'sort' => $sort,
-			'direction' => $direction
-		);
-		$hash = base64_encode( serialize($options) );
-		return $hash;
+			'direction' => $direction,
+			'joins' => $joins,
+		];
+
+		return urlencode(base64_encode(serialize($options)));
 	}
 
 	/**
@@ -373,7 +390,7 @@ class Web_Pager {
 	 */
 	private function generate_links() {
 		$config = Config::Get();
-		$items_per_page = $this->options['limit'];
+		$items_per_page = $config->items_per_page;
 		if ($items_per_page == 0) {
 			$pages = 0;
 		} else {
@@ -429,7 +446,7 @@ class Web_Pager {
 			$links[] = '+1';
 		}
 
-		foreach ($links as $link) {
+		foreach ($links as $key => $link) {
 			if ($link === '-1') {
 				$number = $this->options['page']-1;
 				$text = '&laquo;';
@@ -443,7 +460,6 @@ class Web_Pager {
 				$text = $link;
 				$active = true;
 			} elseif ($link == '...') {
-//				$str_links .= '<li>...</li>';
 				continue;
 			} elseif (is_numeric($link)) {
 				$number = $link;
@@ -456,8 +472,24 @@ class Web_Pager {
 			}
 
 			$hash = $this->create_options_hash($this->options['conditions'], $number, $this->options['sort'], $this->options['direction']);
-			$url = $_SERVER['REDIRECT_URL'] . '?q=' . $hash;
+
+			$qry_str = $url = '';
+			if (isset($_SERVER['QUERY_STRING'])) {
+				$qry_str = $_SERVER['QUERY_STRING'];
+			}
+			parse_str($qry_str, $qry_str_parts);
+			$qry_str_parts['q'] = $hash;
+			if (isset($qry_str_parts['p'])) {
+				unset($qry_str_parts['p']);
+			}
+			if (isset($_SERVER['REDIRECT_URL'])) {
+				$url = $_SERVER['REDIRECT_URL'];
+			}
+			$url .= '?' . http_build_query($qry_str_parts);
 			$str_links .= $this->create_page_link($text, $url, $active);
+			if ($key+1 == count($links) AND $text != '&raquo;' AND $this->options['jump_to']) {
+				$str_links .= '<li><span class="jump-to-page"><input type="text" size="4" placeholder="#" id="jump-to-page-' . str_replace('_', '-', strtolower($this->classname)) . '"></span></li>';
+			}
 		}
 
 		$content = '<ul class="pagination pagination-centered" id="pager-' . str_replace('_', '-', strtolower($this->classname)) . '">' . $str_links . '</ul>';
