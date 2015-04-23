@@ -2,95 +2,34 @@
 
 {% block content %}
 
-	<div class="content">
-		<h1>It works!</h1>
+    <!-- Main jumbotron for a primary marketing message or call to action -->
+    <div class="jumbotron">
+      <div class="container">
+        <h1>Hello, world!</h1>
+        <p>This is a template for a simple marketing or informational website. It includes a large callout called a jumbotron and three supporting pieces of content. Use it as a starting point to create something more unique.</p>
+        <p><a class="btn btn-primary btn-lg" href="#" role="button">Learn more &raquo;</a></p>
+      </div>
+    </div>
 
-		{{ "now"|date }}
+    <div class="container">
+      <!-- Example row of columns -->
+      <div class="row">
+        <div class="col-md-4">
+          <h2>Heading</h2>
+          <p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui. </p>
+          <p><a class="btn btn-default" href="#" role="button">View details &raquo;</a></p>
+        </div>
+        <div class="col-md-4">
+          <h2>Heading</h2>
+          <p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui. </p>
+          <p><a class="btn btn-default" href="#" role="button">View details &raquo;</a></p>
+       </div>
+        <div class="col-md-4">
+          <h2>Heading</h2>
+          <p>Donec sed odio dui. Cras justo odio, dapibus ac facilisis in, egestas eget quam. Vestibulum id ligula porta felis euismod semper. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus.</p>
+          <p><a class="btn btn-default" href="#" role="button">View details &raquo;</a></p>
+        </div>
+      </div>
+    </div>
 
-		<p>Welcome to your application :-)</p>		
-		
-		<h2>Env</h2>
-		<h3>env.post</h3>
-		{{ dump(env.post) }}
-		<h3>env.get</h3>
-		{{ dump(env.get) }}
-
-		<h2>Routing</h2>
-		<p>
-			<a href="/index?action=edit&id=5">Test match all variables</a><br />
-			<a href="/index?action=list">Test match one variable</a><br />
-			<a href="/index">Test match no variables</a><br />
-			<a href="/index?action=demo_redirect">Test redirect with rewrite</a>
-		</p>
-
-
-		<h2>Macros</h2>
-		{% set parameters = {
-			'parameter1': 'value 1',
-			'parameter2': 'value 2',
-		} %}
-
-		<ul>
-			<li>Link: {{ base.link('click me', 'button', '/icon/add.png', '/index?action=link&id=1', parameters) }}</li>
-			<li>Modal: {{ base.modal('click me', 'button', '/icon/add.png', 'demo', 'Show snippet!', parameters) }}</li>
-			<li>Confirm: {{ base.confirm('click me', 'button', '/icon/add.png', '/index?action=confirm&id=2', 'Are you sure you want to confirm?', parameters) }}</li>
-		</ul>
-
-		<dl>
-			<dt>text</dt>
-			<dd>{{ form.input('dummy[name]', 'name x') }}</dd>
-
-			<dt>textarea</dt>
-			<dd>{{ form.textarea('dummy[text]', 'textarea data') }}</dd>
-			
-			<dt>select</dt>
-			<dd>{{ form.select('dummy[select_id]', 2, dummy_options ) }}</dd>
-		</dl>
-
-		<h2>Javascript</h2>
-		<h3>WYSIWYG editor</h3>
-		<p>
-			<!--
-				See https://github.com/akzhan/jwysiwyg/wiki
-			-->
-			<textarea class="wysiwyg" rows="5" cols="80"></textarea>
-		</p>
-
-		<h3>Lightbox</h3>
-		<p>	
-			<!--
-				See: http://colorpowered.com/colorbox/
-			-->
-			<a href="/1.jpg" class="lightbox" rel="gallery_1" title="Test picture one"><img src="/1_thumb.jpg"></a>
-			<a href="/2.jpg" class="lightbox" rel="gallery_1" title="Demo of text"><img src="/2_thumb.jpg"></a>
-			<a href="/3.jpg" class="lightbox" rel="gallery_1" title="This is the content of the title attribute"><img src="/3_thumb.jpg"></a>
-			<a href="/4.jpg" class="lightbox" rel="gallery_1" title="Demo title attribute"><img src="/4_thumb.jpg"></a>
-
-			<br />
-
-			<a href="/1.jpg" class="lightbox" rel="myothergallery" title="Test picture one REL 2"><img src="/1_thumb.jpg"></a>
-			<a href="/2.jpg" class="lightbox" rel="myothergallery" title="Demo of text REL 2"><img src="/2_thumb.jpg"></a>
-			<a href="/3.jpg" class="lightbox" title="This is the content of the title attribute REL 2"><img src="/3_thumb.jpg"></a>
-			<a href="/4.jpg" class="lightbox" title="Demo title attribute REL 2"><img src="/4_thumb.jpg"></a>
-		</p>
-
-		<h3>Images</h3>
-		<p>
-			<img src="/picture?id=1&size=format_name" />
-			<img src="/picture?id=2&size=crop" />
-			<img src="/picture?id=3&size=format_name" />
-		</p>	
-
-		<h2>CSS</h2>
-		<h3>Buttons</h3>
-		<p>
-			<button class="positive">
-				<img src="/icon/tick.png"> Positive
-			</button>
-
-			<button class="negative">
-				<img src="/icon/delete.png"> Negative
-			</button>
-		</p>
-	</div>
 {% endblock content %}
