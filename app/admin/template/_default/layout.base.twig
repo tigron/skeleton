@@ -1,22 +1,56 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="{{ env.session.language.name_short }}" lang="{{ env.session.language.name_short }}">
-<head>
-	<title>Application</title>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="../../favicon.ico">
 
-	<meta name="description" content="Application" />
-	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-	<link rel="shortcut icon" href="http://10.2.0.22/favicon.ico">
-	<link rel="stylesheet" href="/reset.css&/style.css&/jquery.ui.css&/jquery.ui.timepicker.css&/jquery.wysiwyg.css&/jquery.colorbox.css" type="text/css" media="handheld, all" />	
-	{% block css %}{% endblock css %}
-</head>
-<body>
+    <title>Jumbotron Template for Bootstrap</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="/bootstrap.min.css" rel="stylesheet">
+
+    <script src="/jquery-1.11.2.min.js"></script>
+    <script src="/bootstrap.min.js"></script>
+
+  </head>
+  <body>
+
+	<!-- Navbar -->
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="#">Project name</a>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+          <form class="navbar-form navbar-right">
+            <div class="form-group">
+              <input type="text" placeholder="Email" class="form-control">
+            </div>
+            <div class="form-group">
+              <input type="password" placeholder="Password" class="form-control">
+            </div>
+            <button type="submit" class="btn btn-success">Sign in</button>
+          </form>
+        </div><!--/.navbar-collapse -->
+      </div>
+    </nav>
+
 	{% block content %}{% endblock content %}
-	<script type="text/javascript" src="/jquery.js"></script>
-	<script type="text/javascript" src="/jquery.ui.js"></script>
-	<script type="text/javascript" src="/jquery.ui.timepicker.js"></script>
-	<script type="text/javascript" src="/jquery.wysiwyg.js"></script>
-	<script type="text/javascript" src="/jquery.colorbox.js"></script>
-	<script type="text/javascript" src="/base.js"></script>
-	{% block javascript %}{% endblock %}
-</body>
+
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+
+  </body>
 </html>
