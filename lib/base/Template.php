@@ -83,9 +83,6 @@ class Template {
 		list($filename, $extension) = explode('.', basename($template));
 
 		switch ($extension) {
-			case 'tpl':
-				$renderer = new Template_Smarty();
-				break;
 			case 'twig':
 				$renderer = new Template_Twig();
 				break;
