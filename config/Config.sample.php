@@ -44,12 +44,12 @@ class Config {
 	 * @access public
 	 */
 	public function __get($name) {
-		if (!isset($this->config_data[$name])) {
+		if (!array_key_exists($name, $this->config_data)) {
 			throw new Exception('Attempting to read unkown config key: '.$name);
 		}
+
 		return $this->config_data[$name];
 	}
-
 	/**
 	 * Get function, returns a Config object
 	 *
