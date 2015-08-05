@@ -11,7 +11,7 @@ $config = Config::Get();
 // Fetch paths for Applications
 $applications = Application::get_all();
 
-$paths = array();
+$paths = [];
 foreach ($applications as $application) {
 	$paths[$application->name] = $application->path;
 }
@@ -38,7 +38,7 @@ function translate_application($application, $directory) {
 
 	// Fetch the templates in this directory
 	$templates = get_templates($directory);
-	$strings = array();
+	$strings = [];
 
 	// Parse all the files we found
 	foreach ($templates as $template) {
@@ -61,17 +61,22 @@ function translate_application($application, $directory) {
 			$old_translated = Util::po_load(PO_PATH . '/' . $language->name_short . '.po');
 			$translated = array_merge($translated, $old_translated);
 		} else {
-			$translated = array();
+			$translated = [];
 		}
 
 		// Create a new array with the merged translations
-		$new_po = array();
+		$new_po = [];
 		foreach ($strings as $string) {
 			if (isset($translated[$string]) and $translated[$string] != '') {
 				$new_po[$string] = $translated[$string];
 			} else {
 				$new_po[$string] = '';
 			}
+		}
+
+		// Stop doing what we are doing if there are no strings anyway
+		if (count($new_po) == 0) {
+			continue;
 		}
 
 		// And save!
@@ -90,34 +95,28 @@ function get_strings($file) {
 	$content = file_get_contents($file);
 
 	/**
-	 * {t}string{/t}
-	 */
-	preg_match_all("/\{t\}(.*?)\{\/t\}/", $content, $matches);
-	$smarty_strings = $matches[1];
-
-	/**
 	 * {% trans "string" %}
 	 */
-	preg_match_all("/\{%(.*?)trans \"(.*?)\"(.*?)%\}/", $content, $matches);
-	$twig_strings = $matches[2];
+	preg_match_all("/\{%\s*trans \"(.*?)\"\s*%\}/", $content, $matches);
+	$twig_strings = unescape_strings($matches[1], '"');
 
 	/**
 	 * {% trans 'string' %}
 	 */
-	preg_match_all("/\{%(.*?)trans '(.*?)'(.*?)%\}/", $content, $matches);
-	$twig_strings2 = $matches[2];
+	preg_match_all("/\{%\s*trans '(.*?)'\s*%\}/", $content, $matches);
+	$twig_strings2 = unescape_strings($matches[1], '\'');
 
 	/**
 	 * 'string'|trans
 	 */
-	preg_match_all("/'(.*?)'\|trans/", $content, $matches);
-	$twig_strings3 = $matches[1];
+	preg_match_all('/\'((?:[^\'\\\\]|\\\\.)*)\'\|trans/', $content, $matches);
+	$twig_strings3 = unescape_strings($matches[1], '\'');
 
 	/**
 	 * "string"|trans
 	 */
-	preg_match_all("/\"(.*?)\"\|trans/", $content, $matches);
-	$twig_strings4 = $matches[1];
+	preg_match_all('/"((?:[^"\\\\]|\\\\.)*)"\|trans/', $content, $matches);
+	$twig_strings4 = unescape_strings($matches[1], '"');
 
 	/**
 	 * {% trans %}string{% endtrans %}
@@ -129,9 +128,28 @@ function get_strings($file) {
 	 * Translation::translate('string')
 	 */
 	preg_match_all("/Translation\:\:translate\(\"(.*?)\"\)/", $content, $matches);
-	$module_strings = $matches[1];
+	$module_strings = unescape_strings($matches[1], '\'');
 
-	return array_merge($twig_strings, $twig_strings2, $twig_strings3, $twig_strings4, $twig_strings5, $smarty_strings, $module_strings);
+	return array_merge($twig_strings, $twig_strings2, $twig_strings3, $twig_strings4, $twig_strings5, $module_strings);
+}
+
+/**
+ * Unescape strings in an array
+ *
+ * @param array $strings
+ * @param string $escape
+ */
+function unescape_strings($strings, $escape) {
+	if (strlen($escape) <> 1) {
+		throw new Exception('Escape parameter can only be one character');
+	}
+
+	$escaped_strings = [];
+	foreach ($strings as $string) {
+		$escaped_strings[] = (string) str_replace('\\' . $escape, $escape, $string);
+	}
+
+	return $escaped_strings;
 }
 
 /**
@@ -144,7 +162,7 @@ function get_templates($directory) {
 	$files = scandir($directory);
 
 	// Loop over all the files, recurse if it is a directory
-	$templates = array();
+	$templates = [];
 	foreach ($files as $file) {
 		if ($file[0] == '.') {
 			continue;
