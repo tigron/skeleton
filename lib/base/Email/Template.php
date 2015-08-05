@@ -26,7 +26,7 @@ class Email_Template {
 	 *
 	 * @var array $parameters
 	 */
-	private $variables = array();
+	private $variables = [];
 
 	/**
 	 * Template

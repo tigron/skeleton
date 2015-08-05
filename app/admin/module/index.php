@@ -31,11 +31,11 @@ class Web_Module_Index extends Web_Module {
 	 */
 	public function display() {
 		$template = Web_Template::Get();
-		$options = array (
-						array('id' => 1, 'name' => 'option 1'),
-						array('id' => 2, 'name' => 'option 2'),
-						array('id' => 3, 'name' => 'option 3')
-		);
+		$options = [
+						['id' => 1, 'name' => 'option 1'],
+						['id' => 2, 'name' => 'option 2'],
+						['id' => 3, 'name' => 'option 3']
+		];
 		$template->assign('dummy_options', $options);
 	}
 

@@ -18,7 +18,7 @@ class Util_File {
 	 * @return string $name
 	 */
 	public static function sanitize_name($name) {
-		$special_chars = array ('#','$','%','^','&','*','!','~','‘','"','’','\'','=','?','/','[',']','(',')','|','<','>',';','\\',',','+');
+		$special_chars = ['#','$','%','^','&','*','!','~','‘','"','’','\'','=','?','/','[',']','(',')','|','<','>',';','\\',',','+'];
 		$name = preg_replace('/^[.]*/','',$name); // remove leading dots
 		$name = preg_replace('/[.]*$/','',$name); // remove trailing dots
 		$name = str_replace($special_chars, '', $name);// remove special characters

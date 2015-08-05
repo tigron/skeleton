@@ -48,7 +48,7 @@ class Util_Mysql {
 	 */
 	public static function filter_table_data($table, $data) {
 		$table_fields = Util::mysql_get_table_fields($table);
-		$result = array();
+		$result = [];
 		foreach ($table_fields as $field) {
 			if (array_key_exists($field, $data)) {
 				$result[$field] = $data[$field];
@@ -56,7 +56,7 @@ class Util_Mysql {
 		}
 
 		if (count($data) == 0) {
-			return array();
+			return [];
 		}
 		return $result;
 	}

@@ -19,7 +19,7 @@ class Util_CSV {
 	 */
 	public static function fetch($csv, $delimiter = ',') {
 		$lines = str_getcsv($csv, "\n");
-		$data = array();
+		$data = [];
 		foreach ($lines as $line) {
 			$row = str_getcsv($line, $delimiter);
 			$data[] = $row;
@@ -44,7 +44,7 @@ class Util_CSV {
 			$header[$key] = trim($title);
 		}
 
-		$data = array();
+		$data = [];
 		foreach ($lines as $linenumber => $line) {
 			$parts = str_getcsv($line, $delimiter);
 
@@ -52,7 +52,7 @@ class Util_CSV {
 				throw new Exception('Error in CSV on line ' . ($linenumber+2) . ': Incorrect number of fields, line: ' . $line);
 			}
 
-			$row = array();
+			$row = [];
 			foreach ($parts as $key => $part) {
 				$row[$header[$key]] = $part;
 			}
@@ -101,7 +101,7 @@ class Util_CSV {
 	 * @return string $csv
 	 */
 	public static function detect_delimiter($csv) {
-		$possible_delimiters = array(',', ';',"\t", '|');
+		$possible_delimiters = [',', ';',"\t", '|'];
 
 		$occurences = 0;
 		$delimiter = '';

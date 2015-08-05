@@ -21,7 +21,7 @@ class Twig_Extensions_Extension_I18n_Tigron extends Twig_Extensions_Extension_I1
      */
     public function getTokenParsers()
     {
-        return array(new Twig_Extensions_TokenParser_Trans_Tigron());
+        return [new Twig_Extensions_TokenParser_Trans_Tigron()];
     }
 
     /**
@@ -35,10 +35,10 @@ class Twig_Extensions_Extension_I18n_Tigron extends Twig_Extensions_Extension_I1
 			$globals = $env->getGlobals();
 			$translation = $globals['env']['translation'];
 			return Translation::translate($string, $translation);
-    	}, array('needs_environment' => true));
-        return array(
+    	}, ['needs_environment' => true]);
+        return [
 			$translation_filter
-        );
+        ];
     }
 
     /**

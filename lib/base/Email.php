@@ -32,7 +32,7 @@ class Email {
 	 * @access private
 	 * @var array $recipients
 	 */
-	private $recipients = array();
+	private $recipients = [];
 
 	/**
 	 * Assigned variables
@@ -40,7 +40,7 @@ class Email {
 	 * @access private
 	 * @var array $assigns
 	 */
-	private $assigns = array();
+	private $assigns = [];
 
 	/**
 	 * Files
@@ -48,7 +48,7 @@ class Email {
 	 * @access private
 	 * @var array $files
 	 */
-	private $files = array();
+	private $files = [];
 
 	/**
 	 * Manual files
@@ -56,7 +56,7 @@ class Email {
 	 * @access private
 	 * @var array $manual_files
 	 */
-	private $manual_files = array();
+	private $manual_files = [];
 
 	/**
 	 * Constructor
@@ -111,11 +111,11 @@ class Email {
 			$language = Language::get_by_id(1);
 		}
 
-		$this->recipients[$type][] = array(
+		$this->recipients[$type][] = [
 			'name' => $name,
 			'email' => $email,
 			'language' => $language
-		);
+		];
 	}
 
 	/**
@@ -139,10 +139,10 @@ class Email {
 	 * @param string $address
 	 */
 	public function set_sender($email, $name = null) {
-		$this->sender = array(
+		$this->sender = [
 			'name' => $name,
 			'email' => $email,
-		);
+		];
 	}
 
 	/**
@@ -183,7 +183,7 @@ class Email {
 		;
 
 		if (isset($this->sender['name'])) {
-			$message->setFrom(array($this->sender['email'] => $this->sender['name']));
+			$message->setFrom([$this->sender['email'] => $this->sender['name']]);
 		} else {
 			$message->setFrom($this->sender['email']);
 		}
@@ -205,7 +205,7 @@ class Email {
 			}
 
 			$set_to = 'set' . ucfirst($type);
-			call_user_func(array($message, $set_to), $addresses);
+			call_user_func([$message, $set_to], $addresses);
 		}
 
 		$mailer->send($message);
@@ -219,7 +219,7 @@ class Email {
 	 * @return bool $validated
 	 * @param array $errors
 	 */
-	public function validate(&$errors = array()) {
+	public function validate(&$errors = []) {
 		if (!isset($this->type)) {
 			$errors[] = 'type';
 		}

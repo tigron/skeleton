@@ -19,7 +19,7 @@ class Twig_Extensions_Node_Trans_Tigron extends Twig_Node
 {
     public function __construct(Twig_NodeInterface $body, Twig_NodeInterface $plural = null, Twig_Node_Expression $count = null, $lineno, $tag = null)
     {
-        parent::__construct(array('count' => $count, 'body' => $body, 'plural' => $plural), array(), $lineno, $tag);
+        parent::__construct(['count' => $count, 'body' => $body, 'plural' => $plural], [], $lineno, $tag);
     }
 
     /**
@@ -101,10 +101,10 @@ class Twig_Extensions_Node_Trans_Tigron extends Twig_Node
     protected function compileString(Twig_NodeInterface $body)
     {
         if ($body instanceof Twig_Node_Expression_Name || $body instanceof Twig_Node_Expression_Constant || $body instanceof Twig_Node_Expression_TempName) {
-            return array($body, array());
+            return [$body, []];
         }
 
-        $vars = array();
+        $vars = [];
         if (count($body)) {
             $msg = '';
 
@@ -128,6 +128,6 @@ class Twig_Extensions_Node_Trans_Tigron extends Twig_Node
             $msg = $body->getAttribute('data');
         }
 
-        return array(new Twig_Node(array(new Twig_Node_Expression_Constant(trim($msg), $body->getLine()))), $vars);
+        return [new Twig_Node([new Twig_Node_Expression_Constant(trim($msg), $body->getLine())]), $vars];
     }
 }

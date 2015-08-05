@@ -17,16 +17,16 @@ class Util_Po {
 	 * @return array $strings
 	 */
 	public static function load($filename) {
-		$strings = array();
+		$strings = [];
 		if (!file_exists($filename)) {
-			return array();
+			return [];
 		}
 		$content = file_get_contents($filename);
 
 		$matched = preg_match_all('/(msgid\s+("([^"]|\\\\")*?"\s*)+)\s+(msgstr\s+("([^"]|\\\\")*?"\s*)+)/',	$content, $matches);
 
 		if (!$matched) {
-			return array();
+			return [];
 		}
 
 		// get all msgids and msgtrs
@@ -50,8 +50,8 @@ class Util_Po {
 	 * @return string $fixed_string
 	 */
 	public static function prepare_load_string($string) {
-		$smap = array('/"\s+"/', '/\\\\n/', '/\\\\r/', '/\\\\t/', '/\\\\"/');
-		$rmap = array('', "\n", "\r", "\t", '"');
+		$smap = ['/"\s+"/', '/\\\\n/', '/\\\\r/', '/\\\\t/', '/\\\\"/'];
+		$rmap = ['', "\n", "\r", "\t", '"'];
 		return (string) preg_replace($smap, $rmap, $string);
 	}
 
@@ -63,8 +63,8 @@ class Util_Po {
 	 * @return string $fixed_string
 	 */
 	public static function prepare_save_string($string) {
-		$smap = array('"', "\n", "\t", "\r");
-		$rmap = array('\\"', '\\n"' . "\n" . '"', '\\t', '\\r');
+		$smap = ['"', "\n", "\t", "\r"];
+		$rmap = ['\\"', '\\n"' . "\n" . '"', '\\t', '\\r'];
 		return (string) str_replace($smap, $rmap, $string);
 	}
 
@@ -156,7 +156,7 @@ class Util_Po {
 	 */
 	public static function get_strings_from_template($template) {
 		if (preg_match_all("/\{t\}(.*?)\{\/t\}/", $template, $strings) == false) {
-			return array();
+			return [];
 		} else {
 			return $strings[1];
 		}

@@ -107,7 +107,7 @@ trait Page {
 		$object = new self();
 		if (is_callable($sort)) {
 			$sorter = 'object';
-		} elseif (method_exists($object, $sort) AND is_callable(array($object, $sort))) {
+		} elseif (method_exists($object, $sort) AND is_callable([$object, $sort])) {
 			$sorter = 'object';
 		} else {
 			$sorter = 'db';

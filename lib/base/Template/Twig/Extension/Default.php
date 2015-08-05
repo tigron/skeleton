@@ -26,12 +26,12 @@ class Template_Twig_Extension_Default extends Twig_Extension {
 	 * @return array
 	 */
 	public function getGlobals() {
-		$templates = array(
+		$templates = [
 			'base' => '_default/macro.base.twig',
 			'form' => '_default/form.base.twig',
-		);
+		];
 
-		$globals = array();
+		$globals = [];
 		foreach ($templates as $key => $template) {
 			try {
 				$loaded_template = $this->environment->loadTemplate('_default/macro.base.twig');
@@ -48,15 +48,15 @@ class Template_Twig_Extension_Default extends Twig_Extension {
      * @return array
      */
     public function getFilters() {
-        return array(
-			new Twig_SimpleFilter('print_r', array($this, 'print_r_filter'), array('is_safe' => array('html'))),
-			new Twig_SimpleFilter('json_decode', array($this, 'json_decode_filter'), array('is_safe' => array('html'))),
-			new Twig_SimpleFilter('serialize', array($this, 'serialize_filter'), array('is_safe' => array('html'))),
-			new Twig_SimpleFilter('round', array($this, 'round_filter'), array('is_safe' => array('html'))),
-			new Twig_SimpleFilter('date', array($this, 'date_filter'), array('needs_environment' => true, 'is_safe' => array('html'))),
-			new Twig_SimpleFilter('datetime', array($this, 'datetime_filter'), array('needs_environment' => true, 'is_safe' => array('html'))),
-			new Twig_SimpleFilter('filesize', array($this, 'filesize_filter'), array('needs_environment' => true, 'is_safe' => array('html'))),
-        );
+        return [
+			new Twig_SimpleFilter('print_r', [$this, 'print_r_filter'], ['is_safe' => ['html']]),
+			new Twig_SimpleFilter('json_decode', [$this, 'json_decode_filter'], ['is_safe' => ['html']]),
+			new Twig_SimpleFilter('serialize', [$this, 'serialize_filter'], ['is_safe' => ['html']]),
+			new Twig_SimpleFilter('round', [$this, 'round_filter'], ['is_safe' => ['html']]),
+			new Twig_SimpleFilter('date', [$this, 'date_filter'], ['needs_environment' => true, 'is_safe' => ['html']]),
+			new Twig_SimpleFilter('datetime', [$this, 'datetime_filter'], ['needs_environment' => true, 'is_safe' => ['html']]),
+			new Twig_SimpleFilter('filesize', [$this, 'filesize_filter'], ['needs_environment' => true, 'is_safe' => ['html']]),
+        ];
 	}
 
 	/**
@@ -65,12 +65,12 @@ class Template_Twig_Extension_Default extends Twig_Extension {
      * @return array
      */
 	public function getFunctions() {
-		return array(
-			new Twig_SimpleFunction('strpos', array($this, 'strpos_function'), array('is_safe' => array('html'))),
-			new Twig_SimpleFunction('math_add', array($this, 'math_add_function'), array('is_safe' => array('html'))),
-			new Twig_SimpleFunction('math_sub', array($this, 'math_sub_function'), array('is_safe' => array('html'))),
-			new Twig_SimpleFunction('math_mul', array($this, 'math_mul_function'), array('is_safe' => array('html'))),
-		);
+		return [
+			new Twig_SimpleFunction('strpos', [$this, 'strpos_function'], ['is_safe' => ['html']]),
+			new Twig_SimpleFunction('math_add', [$this, 'math_add_function'], ['is_safe' => ['html']]),
+			new Twig_SimpleFunction('math_sub', [$this, 'math_sub_function'], ['is_safe' => ['html']]),
+			new Twig_SimpleFunction('math_mul', [$this, 'math_mul_function'], ['is_safe' => ['html']]),
+		];
 	}
 
 	/**

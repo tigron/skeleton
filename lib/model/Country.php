@@ -18,7 +18,7 @@ class Country {
 	 */
 	public static function get_by_iso2($iso2) {
 		$db = Database::Get();
-		$id = $db->getOne('SELECT id FROM country WHERE ISO2=?', array($iso2));
+		$id = $db->getOne('SELECT id FROM country WHERE ISO2=?', [$iso2]);
 
 		if ($id == null) {
 			throw new Exception('No such country');
@@ -35,9 +35,9 @@ class Country {
 	 */
 	public static function get_grouped() {
 		$db = Database::Get();
-		$db_countries = $db->getAll('SELECT * FROM country WHERE european=1 ORDER BY name ASC', array());
+		$db_countries = $db->getAll('SELECT * FROM country WHERE european=1 ORDER BY name ASC', []);
 
-		$countries = array(	'european' => array(), 'rest' => array() );
+		$countries = [	'european' => [], 'rest' => [] ];
 		foreach ($db_countries as $db_country) {
 			$country = new Country();
 			$country->id = $db_country['id'];
@@ -45,7 +45,7 @@ class Country {
 			$countries['european'][] = $country;
 		}
 
-		$db_countries = $db->getAll('SELECT * FROM country WHERE european=0 ORDER BY name ASC', array());
+		$db_countries = $db->getAll('SELECT * FROM country WHERE european=0 ORDER BY name ASC', []);
 		foreach ($db_countries as $db_country) {
 			$country = new Country();
 			$country->id = $db_country['id'];

@@ -20,7 +20,7 @@ trait Model {
 	 * @var array $details
 	 * @access private
 	 */
-	protected $details = array();
+	protected $details = [];
 
 	/**
 	 * Dirty fields
@@ -29,7 +29,7 @@ trait Model {
 	 * @var array $dirty_fields
 	 * @access private
 	 */
-	private $dirty_fields = array();
+	private $dirty_fields = [];
 
 	/**
 	 * Object text cache
@@ -37,7 +37,7 @@ trait Model {
 	 * @access private
 	 * @var array $object_text_cache
 	 */
-	private $object_text_cache = array();
+	private $object_text_cache = [];
 
 	/**
 	 * Object text update
@@ -45,7 +45,7 @@ trait Model {
 	 * @access private
 	 * @var array $object_text_updated
 	 */
-	private $object_text_updated = array();
+	private $object_text_updated = [];
 
 	/**
 	 * Constructor
@@ -73,7 +73,7 @@ trait Model {
 		}
 
 		$db = self::trait_get_database();
-		$details = $db->getRow('SELECT * FROM ' . $db->quoteIdentifier($table) . ' WHERE id=?', array($this->id));
+		$details = $db->getRow('SELECT * FROM ' . $db->quoteIdentifier($table) . ' WHERE id=?', [$this->id]);
 
 		if ($details === null) {
 			throw new Exception('Could not fetch ' . $table . ' data: none found with id ' . $this->id);
@@ -102,7 +102,7 @@ trait Model {
 			}
 		}
 
-		if (is_callable(array($this, 'set_' . $key))) {
+		if (is_callable([$this, 'set_' . $key])) {
 			$method = 'set_' . $key;
 			$this->$method($value);
 			return;
@@ -272,9 +272,9 @@ trait Model {
 	 * @access public
 	 */
 	public function reset_dirty_fields() {
-		$this->dirty_fields = array();
-		$this->object_text_updated = array();
-		$this->object_text_cache = array();
+		$this->dirty_fields = [];
+		$this->object_text_updated = [];
+		$this->object_text_cache = [];
 	}
 
 	/**
@@ -330,7 +330,7 @@ trait Model {
 		$fields = Util::mysql_get_table_fields($table);
 		$tables = $db->getCol('SHOW tables');
 
-		$joins = array();
+		$joins = [];
 		foreach ($fields as $field) {
 			if (substr($field, -3) != '_id') {
 				continue;

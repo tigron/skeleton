@@ -24,7 +24,7 @@ class Database_Proxy {
 	 * @var array $query_log Array containing all executed queries
 	 * @access public
 	 */
-	public $query_log = array();
+	public $query_log = [];
 
 	/**
 	 * Database_Proxy constructor
@@ -115,7 +115,7 @@ class Database_Proxy {
 	public function get_columns($table) {
 		$result = $this->get_table_definition($table);
 
-		$columns = array();
+		$columns = [];
 		foreach ($result as $row) {
 			$columns[] = &$row['field'];
 		}
@@ -131,7 +131,7 @@ class Database_Proxy {
 	 * @return array $result An array containing the table definition
 	 */
 	public function get_table_definition($table) {
-		$statement = $this->get_statement('DESC ' . $this->quote_identifier($table), array());
+		$statement = $this->get_statement('DESC ' . $this->quote_identifier($table), []);
 		$statement->execute();
 		$result = $statement->fetch_assoc();
 		return $result;
@@ -208,8 +208,8 @@ class Database_Proxy {
 	 * @return Database_Statement $statement
 	 * @throws Exception Throws an Exception when an unknown type is provided
 	 */
-	private function get_statement($query, $params = array()) {
-		$query_log = array($query, $params);
+	private function get_statement($query, $params = []) {
+		$query_log = [$query, $params];
 		$this->query_log[] = $query_log;
 		$this->queries++;
 
@@ -219,7 +219,7 @@ class Database_Proxy {
 			return $statement;
 		}
 
-		$refs = array();
+		$refs = [];
 		$types = '';
 		foreach ($params as $key => $param) {
 			if (is_bool($param)) {
@@ -256,7 +256,7 @@ class Database_Proxy {
 		}
 
 		array_unshift($refs, $types);
-		call_user_func_array(array($statement, 'bind_param'), $refs);
+		call_user_func_array([$statement, 'bind_param'], $refs);
 		return $statement;
 	}
 
@@ -292,12 +292,12 @@ class Database_Proxy {
 	 * @param array $params Optional parameters to replace in the query
 	 * @return array $result The resulting associative array
 	 */
-	public function get_column($query, $params = array()) {
+	public function get_column($query, $params = []) {
 		$statement = $this->get_statement($query, $params);
 		$statement->execute();
 		$result = $statement->fetch_assoc();
 
-		$col = array();
+		$col = [];
 		foreach ($result as $row) {
 			$col[] = array_shift($row);
 		}
@@ -375,7 +375,7 @@ class Database_Proxy {
 	 * @param array $params Optional parameters to replace in the query
 	 * @throws Exception Throws an Exception when the resultset contains more than one row or column
 	 */
-	public function get_one($query, $params = array()) {
+	public function get_one($query, $params = []) {
 		$statement = $this->get_statement($query, $params);
 		$statement->execute();
 		$result = $statement->fetch_assoc();
@@ -404,7 +404,7 @@ class Database_Proxy {
 	 * @param string $query The query to execute
 	 * @param array $params Optional parameters to replace in the query
 	 */
-	public function get_all($query, $params = array()) {
+	public function get_all($query, $params = []) {
 		$statement = $this->get_statement($query, $params);
 		$statement->execute();
 		return $this->stripslashes_result($statement->fetch_assoc());
@@ -417,7 +417,7 @@ class Database_Proxy {
 	 * @param string $query The query to execute
 	 * @param array $params Optional parameters to replace in the query
 	 */
-	public function query($query, $params = array()) {
+	public function query($query, $params = []) {
 		$statement = $this->get_statement($query, $params);
 		$statement->execute();
 	}

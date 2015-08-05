@@ -53,7 +53,7 @@ class Web_Handler {
 		}
 
 		// reorganize request_parts array
-		$request_parts = array_merge($request_parts, array());
+		$request_parts = array_merge($request_parts, []);
 
 		/**
 		 * Define the application

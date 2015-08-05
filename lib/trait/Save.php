@@ -30,7 +30,7 @@ trait Save {
 	 */
 	public function save($validate = true) {
 		// If we have a validate() method, execute it
-		if (is_callable(array($this, 'validate')) and $validate) {
+		if (is_callable([$this, 'validate']) and $validate) {
 			if ($this->validate($errors) === false) {
 				throw new Exception_Validation($errors);
 			}
@@ -52,7 +52,7 @@ trait Save {
 			$where = 'id=' . $db->quote($this->id);
 		}
 
-		if (is_callable(array($this, 'generate_slug'))) {
+		if (is_callable([$this, 'generate_slug'])) {
 			$slug = $this->generate_slug();
 			$this->details['slug'] = $slug;
 		}

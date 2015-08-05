@@ -32,9 +32,9 @@ class Log {
 	public static function get_by_object($object) {
 		$db = Database::Get();
 		$classname = get_class($object);
-		$ids = $db->getCol('SELECT id FROM log WHERE classname=? AND object_id=? ORDER BY id DESC LIMIT 50', array($classname, $object->id));
+		$ids = $db->getCol('SELECT id FROM log WHERE classname=? AND object_id=? ORDER BY id DESC LIMIT 50', [$classname, $object->id]);
 
-		$logs = array();
+		$logs = [];
 		foreach ($ids as $id) {
 			$logs[] = Log::get_by_id($id);
 		}
