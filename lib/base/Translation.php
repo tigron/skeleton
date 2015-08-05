@@ -39,7 +39,7 @@ class Translation {
 	 * @access private
 	 * @var array $strings
 	 */
-	private $strings = array();
+	private $strings = [];
 
 	/**
 	 * Constructor
@@ -101,7 +101,7 @@ class Translation {
 		$this->strings[$string] = '';
 
 		$current_strings = Util::po_load(PO_PATH . '/' . $this->language->name_short . '/' . $this->application_name . '.po');
-		$untranslated = array($string => '');
+		$untranslated = [$string => ''];
 		$strings = array_merge($untranslated, $current_strings);
 		ksort($strings);
 
@@ -131,7 +131,7 @@ class Translation {
 			mkdir(TMP_PATH . '/languages/' . $this->language->name_short, 0755, true);
 		}
 
-		file_put_contents(TMP_PATH . '/languages/' . $this->language->name_short . '/' . $this->application_name . '.php', '<?php $strings = ' . var_export($po_strings, true));
+		file_put_contents(TMP_PATH . '/languages/' . $this->language->name_short . '/' . $this->application_name . '.php', '<?php $strings = ' . var_export($po_strings, true) . ';');
 	}
 
 	/**

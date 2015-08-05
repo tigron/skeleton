@@ -39,7 +39,7 @@ class Database_Statement extends Mysqli_Stmt {
 			$database_in_key = false;
 		}
 
-		$columns = array();
+		$columns = [];
 		while ($column = $meta->fetch_field()) {
 			if ($database_in_key === true) {
 				$columns[] = $column->db . '.' . $column->table . '.' . strtolower($column->name);
@@ -63,18 +63,18 @@ class Database_Statement extends Mysqli_Stmt {
 		// See https://bugs.php.net/bug.php?id=47928
 		$this->store_result();
 
-		$data = array();
-		$params = array();
+		$data = [];
+		$params = [];
 
 		foreach ($this->get_columns() as $column) {
 			$params[$column] = &$data[$column];
 		}
 
-		$result = call_user_func_array(array($this, 'bind_result'), $params);
+		$result = call_user_func_array([$this, 'bind_result'], $params);
 
-		$data = array();
+		$data = [];
 		while ($this->fetch()) {
-			$row = array();
+			$row = [];
 			foreach ($params as $key => $value) {
 				$key = 	substr($key, strrpos($key, '.') + 1);
 				$row[$key] = $value;

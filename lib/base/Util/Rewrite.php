@@ -47,7 +47,7 @@ class Util_Rewrite {
 	public static function reverse_link($url_raw) {
 		$url = parse_url($url_raw);
 
-		$params = array();
+		$params = [];
 		if (isset($url['query'])) {
 			// Allow &amp; instead of &
 			$url['query'] = str_replace('&amp;', '&', $url['query']);
@@ -111,7 +111,7 @@ class Util_Rewrite {
 				/**
 				 * Fetch required values
 				 */
-				$required_values = array();
+				$required_values = [];
 				preg_match_all('/(\[(.*?)\])/', $route_part, $matches);
 				if (count($matches[2]) > 0) {
 					/**

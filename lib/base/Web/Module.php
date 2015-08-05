@@ -63,7 +63,7 @@ abstract class Web_Module {
 
 		if (isset($_REQUEST['action']) AND method_exists($this, 'display_' . $_REQUEST['action'])) {
 			$template->assign('action', $_REQUEST['action']);
-			call_user_func(array($this, 'display_'.$_REQUEST['action']));
+			call_user_func([$this, 'display_'.$_REQUEST['action']]);
 		} else {
 			$this->display();
 		}

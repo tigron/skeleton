@@ -15,7 +15,7 @@ class Database {
 	 * @var DatabaseProxy
 	 * @access private
 	 */
-	private static $proxy = array();
+	private static $proxy = [];
 
 	/**
 	 * Private (disabled) constructor

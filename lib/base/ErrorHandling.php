@@ -8,7 +8,7 @@
  * @author Gerry Demaret <gerry@tigron.be>
  */
 
-function error_handler ($errno, $errstr, $errfile = '', $errline = '', $errcontext = array()) {
+function error_handler ($errno, $errstr, $errfile = '', $errline = '', $errcontext = []) {
 	// Suppress warnings already supressed by @<function>();
 	if (error_reporting() == 0) {
 		return;
@@ -24,7 +24,7 @@ function error_handler ($errno, $errstr, $errfile = '', $errline = '', $errconte
 	$die = false;
 
 	$date = date('Y-m-d H:i:s (T)');
-	$errortype = array (E_ERROR             => 'Error',
+	$errortype = [E_ERROR             => 'Error',
 	                    E_WARNING           => 'Warning',
 	                    E_PARSE             => 'Parsing Error',
 	                    E_NOTICE            => 'Notice',
@@ -37,7 +37,7 @@ function error_handler ($errno, $errstr, $errfile = '', $errline = '', $errconte
 	                    E_USER_NOTICE       => 'User Notice',
 	                    E_STRICT            => 'Runtime Notice',
 	                    E_DEPRECATED        => 'Deprecated'
-	             );
+	             ];
 
 	switch ($errno) {
 		case E_ERROR:
@@ -189,12 +189,13 @@ function report($subject, $message, $fatal = false, $backtrace = true) {
 		$html .= '<h2>Backtrace</h2> <pre>' . $backtrace . '</pre>';
 	}
 
-	$vartrace = array('_GET'      => isset($_GET) ? $_GET : null,
-	                  '_POST'     => isset($_POST) ? $_POST : null,
-	                  '_COOKIE'   => isset($_COOKIE) ? $_COOKIE : null,
-	                  '_SESSION'  => isset($_SESSION) ? $_SESSION : null,
-	                  '_SERVER'   => isset($_SERVER) ? $_SERVER : null
-	            );
+	$vartrace = [
+		'_GET'      => isset($_GET) ? $_GET : null,
+		'_POST'     => isset($_POST) ? $_POST : null,
+		'_COOKIE'   => isset($_COOKIE) ? $_COOKIE : null,
+		'_SESSION'  => isset($_SESSION) ? $_SESSION : null,
+		'_SERVER'   => isset($_SERVER) ? $_SERVER : null
+	];
 
 	$html .= '<h2>Vartrace</h2> <pre> ' . print_r($vartrace, true) . '</pre>';
 

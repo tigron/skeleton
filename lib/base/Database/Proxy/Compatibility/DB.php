@@ -25,7 +25,7 @@ class Database_Proxy_Compatibility_DB extends Database_Proxy {
 	 */
 	public function __call($method, $arguments) {
 		if (!isset($arguments[1])) {
-			$arguments[1] = array();
+			$arguments[1] = [];
 		}
 
 		switch (strtolower($method)) {
@@ -40,7 +40,7 @@ class Database_Proxy_Compatibility_DB extends Database_Proxy {
 			case 'listtablefields':     return $this->get_columns($arguments[0], $arguments[1]); break;
 			case 'escape':              return $this->escape($arguments[0]);
 			case 'getdebugoutput':      return ''; break;
-			default:                    return call_user_func_array(array($this->database, $method), $arguments);
+			default:                    return call_user_func_array([$this->database, $method], $arguments);
 		}
 	}
 

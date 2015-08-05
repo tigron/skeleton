@@ -28,7 +28,7 @@ trait Delete {
 			$this->deleted = date('YmdHis');
 			$this->save();
 		} else {
-			$db->query('DELETE FROM ' . $table . ' WHERE id=?', array($this->id));
+			$db->query('DELETE FROM ' . $table . ' WHERE id=?', [$this->id]);
 		}
 	}
 

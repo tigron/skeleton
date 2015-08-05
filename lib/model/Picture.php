@@ -17,7 +17,7 @@ class Picture extends File {
 	 * @var array $details
 	 * @access private
 	 */
-	private $local_details = array();
+	private $local_details = [];
 
 	/**
 	 * Local fields
@@ -25,7 +25,7 @@ class Picture extends File {
 	 * @access private
 	 * @var array $fields
 	 */
-	private $local_fields = array('file_id', 'width', 'height');
+	private $local_fields = ['file_id', 'width', 'height'];
 
 	/**
 	 * Get the details of this file
@@ -39,7 +39,7 @@ class Picture extends File {
 		}
 
 		$db = Database::Get();
-		$details = $db->getRow('SELECT * FROM picture WHERE file_id=?', array($this->id));
+		$details = $db->getRow('SELECT * FROM picture WHERE file_id=?', [$this->id]);
 
 		if ($details === null) {
 			$this->save();
@@ -150,7 +150,7 @@ class Picture extends File {
 		}
 
 		if ($size == 'original') {
-			$resize_info = array('width' => $this->width, 'height' => $this->height, 'mode' => 'exact');
+			$resize_info = ['width' => $this->width, 'height' => $this->height, 'mode' => 'exact'];
 		} else {
 			$config = Config::Get();
 			$resize_info = $config->picture_formats[$size];
@@ -235,7 +235,7 @@ class Picture extends File {
 			}
 		}
 		$db = Database::Get();
-		$db->query('DELETE FROM picture WHERE file_id=?', array($this->id));
+		$db->query('DELETE FROM picture WHERE file_id=?', [$this->id]);
 
 		parent::delete();
 	}

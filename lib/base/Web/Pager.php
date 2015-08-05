@@ -143,9 +143,9 @@ class Web_Pager {
 		$field = array_shift($params);
 
 		if (count($params) == 1) {
-			$conditions[$field] = array('=', array_shift($params));
+			$conditions[$field] = ['=', array_shift($params)];
 		} else {
-			$conditions[$field] = array( array_shift($params), array_shift($params));
+			$conditions[$field] = [array_shift($params), array_shift($params)];
 		}
 
 		$this->options['conditions'] = $conditions;
@@ -204,7 +204,7 @@ class Web_Pager {
 	 */
 	public function clear_conditions() {
 		unset($this->options['conditions']);
-		$this->options['conditions'] = array();
+		$this->options['conditions'] = [];
 	}
 
 	/**
@@ -305,7 +305,7 @@ class Web_Pager {
 
 		$this->options['all'] = $all;
 
-		$params = array(
+		$params = [
 			$sort,
 			$this->options['direction'],
 			$this->options['page'],
@@ -313,10 +313,10 @@ class Web_Pager {
 			$this->options['conditions'],
 			$this->options['all'],
 			$this->options['joins']
-		);
+		];
 
-		$this->items = call_user_func_array(array($this->classname, 'get_paged'), $params);
-		$this->item_count = call_user_func_array(array($this->classname, 'count'), array($this->options['conditions'], $this->options['joins']));
+		$this->items = call_user_func_array([$this->classname, 'get_paged'], $params);
+		$this->item_count = call_user_func_array([$this->classname, 'count'], [$this->options['conditions'], $this->options['joins']]);
 		$this->generate_links();
 
 		$hash = $this->create_options_hash($this->options['conditions'], $this->options['page'], $this->options['sort'], $this->options['direction'], $this->options['joins']);

@@ -149,7 +149,7 @@ class Picture_Manipulation {
 				break;
 		}
 
-		return array($output_width, $output_height);
+		return [$output_width, $output_height];
 	}
 
 	/**
@@ -185,7 +185,7 @@ class Picture_Manipulation {
 			$output_height = $new_height;
 		}
 
-		return array($output_width, $output_height);
+		return [$output_width, $output_height];
 	}
 
 	/**
@@ -209,7 +209,7 @@ class Picture_Manipulation {
 		$output_height = $this->height / $output_ratio;
 		$output_width = $this->width / $output_ratio;
 
-		return array($output_width, $output_height);
+		return [$output_width, $output_height];
 	}
 
 	/**

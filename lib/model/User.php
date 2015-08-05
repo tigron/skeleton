@@ -27,8 +27,8 @@ class User {
 	 * @param array $errors
 	 * @return bool $validated
 	 */
-	public function validate(&$errors = array()) {
-		$required_fields = array('username', 'password', 'firstname', 'lastname', 'email');
+	public function validate(&$errors = []) {
+		$required_fields = ['username', 'password', 'firstname', 'lastname', 'email'];
 		foreach ($required_fields as $required_field) {
 			if (!isset($this->details[$required_field]) OR $this->details[$required_field] == '') {
 				$errors[$required_field] = 'required';
@@ -105,7 +105,7 @@ class User {
 	 */
 	public static function get_by_username($username) {
 		$db = Database::Get();
-		$id = $db->getOne('SELECT id FROM user WHERE username = ?', array($username));
+		$id = $db->getOne('SELECT id FROM user WHERE username = ?', [$username]);
 
 		if ($id === null) {
 			throw new Exception('User not found');
@@ -123,7 +123,7 @@ class User {
 	 */
 	public static function get_by_email($email) {
 		$db = Database::Get();
-		$id = $db->getOne('SELECT id FROM user WHERE email = ?', array($email));
+		$id = $db->getOne('SELECT id FROM user WHERE email = ?', [$email]);
 
 		if ($id === null) {
 			throw new Exception('User not found');
@@ -185,7 +185,7 @@ class User {
 	 * @param int $all
 	 * @param array $extra_conditions
 	 */
-	public static function get_paged($sort, $direction, $page, $extra_conditions = array(), $all = false) {
+	public static function get_paged($sort, $direction, $page, $extra_conditions = [], $all = false) {
 		$db = Database::Get();
 
 		$where = '';
@@ -227,7 +227,7 @@ class User {
 		        LIMIT ' . ($page-1)*$limit . ', ' . $limit;
 
 		$ids = $db->getCol($sql);
-		$users = array();
+		$users = [];
 		foreach ($ids as $id) {
 			$users[] = User::get_by_id($id);
 		}
@@ -242,7 +242,7 @@ class User {
 	 * @param array $extra_conditions
 	 * @return int $count
 	 */
-	public static function count($extra_conditions = array()) {
+	public static function count($extra_conditions = []) {
 		$db = Database::Get();
 
 		$where = '';

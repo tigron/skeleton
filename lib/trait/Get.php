@@ -56,7 +56,7 @@ trait Get {
 			$ids = $db->getCol('SELECT id FROM ' . $table . ' WHERE 1' . $where . ' ORDER BY ' . $sort . ' ' . $direction);
 		}
 
-		$objects = array();
+		$objects = [];
 		foreach ($ids as $id) {
 			$objects[] = self::get_by_id($id);
 		}

@@ -28,11 +28,11 @@ class Twig_Extensions_TokenParser_Trans_Tigron extends Twig_TokenParser
             $body = $this->parser->getExpressionParser()->parseExpression();
         } else {
             $stream->expect(Twig_Token::BLOCK_END_TYPE);
-            $body = $this->parser->subparse(array($this, 'decideForFork'));
+            $body = $this->parser->subparse([$this, 'decideForFork']);
             if ('plural' === $stream->next()->getValue()) {
                 $count = $this->parser->getExpressionParser()->parseExpression();
                 $stream->expect(Twig_Token::BLOCK_END_TYPE);
-                $plural = $this->parser->subparse(array($this, 'decideForEnd'), true);
+                $plural = $this->parser->subparse([$this, 'decideForEnd'], true);
             }
         }
 
@@ -45,7 +45,7 @@ class Twig_Extensions_TokenParser_Trans_Tigron extends Twig_TokenParser
 
     public function decideForFork($token)
     {
-        return $token->test(array('plural', 'endtrans'));
+        return $token->test(['plural', 'endtrans']);
     }
 
     public function decideForEnd($token)

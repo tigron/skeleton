@@ -31,7 +31,7 @@ class Template {
 	 * @access private
 	 * @var array $variables
 	 */
-	protected $variables = array();
+	protected $variables = [];
 
 	/**
 	 * Constructor

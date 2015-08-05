@@ -100,7 +100,7 @@ class Util {
 			throw new Exception('Method ' . $method . ' does not exists, in autoloaded class ' . $classname);
 		}
 
-		$result = forward_static_call_array(array($classname, $method), $arguments);
+		$result = forward_static_call_array([$classname, $method], $arguments);
 		return $result;
 	}
 }

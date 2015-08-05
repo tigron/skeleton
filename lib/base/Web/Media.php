@@ -14,34 +14,34 @@ class Web_Media {
 	 * @var array $filetypes
 	 * @access private
 	 */
-	private static $filetypes = array(
-		'image' => array(
+	private static $filetypes = [
+		'image' => [
 			'gif',
 			'jpg',
 			'jpeg',
 			'png',
 			'ico',
-		),
-		'doc' => array(
+		],
+		'doc' => [
 			'pdf',
-		),
-		'css' => array(
+		],
+		'css' => [
 			'css',
-		),
-		'font' => array(
+		],
+		'font' => [
 			'woff',
 			'ttf',
 			'otf',
 			'eot'
-		),
-		'javascript' => array(
+		],
+		'javascript' => [
 			'js',
-		),
-		'tools' => array(
+		],
+		'tools' => [
 			'html',
 			'htm'
-		),
-	);
+		],
+	];
 
 	/**
 	 * Detect if the request is a request for media

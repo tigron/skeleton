@@ -26,7 +26,7 @@ class Language {
 	 */
 	public static function get_by_name_short($name) {
 		$db = Database::Get();
-		$id = $db->getOne('SELECT id FROM language WHERE name_short=?', array($name));
+		$id = $db->getOne('SELECT id FROM language WHERE name_short=?', [$name]);
 
 		if ($id === null) {
 			throw new Exception('No such language');

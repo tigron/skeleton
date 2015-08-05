@@ -71,7 +71,7 @@ trait Slug {
 		$fields = Util::mysql_get_table_fields($table);
 		$db = Database::Get();
 
-		$id = $db->getOne('SELECT id FROM ' . $db->quoteIdentifier($table) . ' WHERE slug=?', array($slug));
+		$id = $db->getOne('SELECT id FROM ' . $db->quoteIdentifier($table) . ' WHERE slug=?', [$slug]);
 		if ($id === null) {
 			throw new Exception('Object not found');
 		}

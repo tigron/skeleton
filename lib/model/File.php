@@ -42,14 +42,14 @@ class File {
 	 * @return bool $is_picture
 	 */
 	public function is_picture() {
-		$mime_types = array(
+		$mime_types = [
 			'image/jpeg',
 			'image/jpg',
 			'image/png',
 			'image/gif',
 			'image/tiff',
 			'image/svg+xml',
-		);
+		];
 
 		if (in_array($this->mime_type, $mime_types)) {
 			return true;
@@ -77,7 +77,7 @@ class File {
 	public function delete() {
 		File_Store::delete_file($this);
 		$db = Database::Get();
-		$db->query('DELETE FROM file WHERE id=?', array($this->id));
+		$db->query('DELETE FROM file WHERE id=?', [$this->id]);
 	}
 
 	/**
