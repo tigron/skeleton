@@ -1,21 +1,14 @@
 <?php
 /**
- * Template class
+ * Singleton, you can get an instance with Web_Template::Get()
  *
  * Embeds the Template object
  *
- * @package %%PACKAGE%%
  * @author Christophe Gosiau <christophe@tigron.be>
  * @author Gerry Demaret <gerry@tigron.be>
  * @author David Vandemaele <david@tigron.be>
- * @version $Id$
  */
 
-/**
- * Template class
- *
- * Singleton, you can get an instance with Web_Template::Get()
- */
 class Web_Template {
 
 	/**
@@ -76,6 +69,7 @@ class Web_Template {
 		if (self::$web_template === null) {
 			self::$web_template = new Web_Template();
 		}
+
 		return self::$web_template;
 	}
 }
