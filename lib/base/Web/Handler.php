@@ -61,7 +61,8 @@ class Web_Handler {
 		try {
 			$application = Application::Detect();
 		} catch (Exception $e) {
-			echo '404';
+			header("HTTP/1.1 404 Not Found", true);
+			echo '404 File Not Found (application)';
 			return;
 		}
 
@@ -150,7 +151,6 @@ class Web_Handler {
 		$queries = $database->queries;
 		$execution_time = microtime(true) - $start;
 
-		Util::log_request('Request: http://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'] . ' -- IP: ' . $_SERVER['REMOTE_ADDR'] . ' -- Queries: ' . $queries . ' -- Time: ' . $execution_time);
-
+		Util::log_request('Request: http://' . $application->hostname . $_SERVER['REQUEST_URI'] . ' -- IP: ' . $_SERVER['REMOTE_ADDR'] . ' -- Queries: ' . $queries . ' -- Time: ' . $execution_time);
 	}
 }

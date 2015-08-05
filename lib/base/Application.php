@@ -59,6 +59,14 @@ class Application {
 	public $name = null;
 
 	/**
+	 * Hostname
+	 *
+	 * @var string $hostname
+	 * @access public
+	 */
+	public $hostname = null;
+
+	/**
 	 * Language
 	 *
 	 * @access public
@@ -115,13 +123,13 @@ class Application {
 
 				$matches_fixed_parts = 0;
 				$match = true;
-			
+
 				foreach ($parts as $key => $value) {
 					if (!isset($request_parts[$key])) {
 						$match = false;
 						continue;
 					}
-					
+
 					if ($value == $request_parts[$key]) {
 						$matches_fixed_parts++;
 						continue;
@@ -135,7 +143,7 @@ class Application {
 				}
 
 				if ($match and count($parts) == count($request_parts)) {
-					if ($matches_fixed_parts > $best_matches_fixed_parts) {
+					if ($matches_fixed_parts >= $best_matches_fixed_parts) {
 						$best_matches_fixed_parts = $matches_fixed_parts;
 						$route = $uri;
 						$matched_module = $module;
@@ -143,7 +151,7 @@ class Application {
 				}
 			}
 		}
-		
+
 		if ($matched_module === null) {
 			throw new Exception('No matching route found');
 		}
@@ -168,9 +176,54 @@ class Application {
 		$filename = str_replace('web_module_', '', $matched_module);
 		$filename = str_replace('_', '/', $filename);
 		$filename = strtolower($filename);
-		require_once $this->module_path . '/' . $filename . '.php';
+
+		$filepath = $this->module_path . '/' . $filename . '.php';
+
+		// Check if the file exists before actually requiring it
+		if (file_exists($filepath)) {
+			require_once $filepath;
+		} else {
+			throw new Exception('Could not find file: ' . $filepath);
+		}
+
 		$module = new $matched_module();
 		return $module;
+	}
+
+	/**
+	 * Bootstrap the application
+	 *
+	 * @access public
+	 */
+	public function bootstrap(Web_Module $module) {
+		// FIXME: requiring the file and determining the classname should be
+		// generalised
+		if (file_exists($this->path . '/config/Hook.php')) {
+			require_once $this->path . '/config/Hook.php';
+			$classname = 'Hook_' . ucfirst($this->name);
+
+			if (method_exists($classname, 'bootstrap')) {
+				$classname::bootstrap($module);
+			}
+		}
+	}
+
+	/**
+	 * Tear down the application
+	 *
+	 * @access public
+	 */
+	public function teardown(Web_Module $module) {
+		// FIXME: requiring the file and determining the classname should be
+		// generalised
+		if (file_exists($this->path . '/config/Hook.php')) {
+			require_once $this->path . '/config/Hook.php';
+			$classname = 'Hook_' . ucfirst($this->name);
+
+			if (method_exists($classname, 'teardown')) {
+				$classname::teardown($module);
+			}
+		}
 	}
 
 	/**
@@ -181,10 +234,11 @@ class Application {
 	 * @access public
 	 * @return Application $application
 	 */
-	public static function Get() {
-		if (!isset(self::$application)) {
+	public static function get() {
+		if (self::$application === null) {
 			throw new Exception('No application set');
 		}
+
 		return self::$application;
 	}
 
@@ -205,15 +259,26 @@ class Application {
 	 * @return Application $application
 	 */
 	public static function detect() {
-		if (!isset($_SERVER['SERVER_NAME'])) {
+		// Find out what the hostname is, if none was found, bail out
+		if (!empty($_SERVER['SERVER_NAME'])) {
+			$hostname = $_SERVER['SERVER_NAME'];
+		} elseif (!empty($_SERVER['HTTP_HOST'])) {
+			$hostname = $_SERVER['HTTP_HOST'];
+		} else {
 			throw new Exception('Not a web request. No application available');
+		}
+
+		// If multiple host headers have been set, use the last one
+		if (strpos($hostname, ', ') !== false) {
+			list($hostname, $discard) = array_reverse(explode(', ', $hostname));
 		}
 
 		if (self::$application === null) {
 			$applications = self::get_all();
 
 			foreach ($applications as $application) {
-				if (in_array($_SERVER['SERVER_NAME'], $application->config->hostnames)) {
+				if (in_array($hostname, $application->config->hostnames)) {
+					$application->hostname = $hostname;
 					Application::set($application);
 					return Application::get();
 				}
@@ -222,7 +287,7 @@ class Application {
 			return Application::get();
 		}
 
-		throw new Exception('No application found for ' . $_SERVER['SERVER_NAME']);
+		throw new Exception('No application found for ' . $hostname);
 	}
 
 	/**
@@ -233,7 +298,7 @@ class Application {
 	 */
 	public static function get_all() {
 		$application_directories = scandir(ROOT_PATH . '/app');
-		$application = array();
+		$application = [];
 		foreach ($application_directories as $application_directory) {
 			if ($application_directory[0] == '.') {
 				continue;
@@ -259,5 +324,23 @@ class Application {
 			$applications[] = $application;
 		}
 		return $applications;
+	}
+
+	/**
+	 * Get application by name
+	 *
+	 * @access public
+	 * @param string $name
+	 * @return Application $application
+	 */
+	public static function get_by_name($name) {
+		$applications = self::get_all();
+		foreach ($applications as $application) {
+			if ($application->name == $name) {
+				return $application;
+			}
+		}
+
+		throw new Exception('Application ' . $name . ' does not exists.');
 	}
 }
