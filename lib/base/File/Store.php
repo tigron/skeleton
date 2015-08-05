@@ -4,11 +4,9 @@
  *
  * Stores and retrieves files
  *
- * @package %%PACKAGE%%
  * @author Gerry Demaret <gerry@tigron.be>
  * @author Christophe Gosiau <christophe@tigron.be>
  * @author David Vandemaele <david@tigron.be>
- * @version $Id$
  */
 
 class File_Store {

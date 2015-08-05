@@ -4,10 +4,8 @@
  *
  * Contains general purpose utilities
  *
- * @package %%PACKAGE%%
  * @author Christophe Gosiau <christophe@tigron.be>
  * @author Gerry Demaret <gerry@tigron.be>
- * @version $Id$
  */
 
 class Util_Picture {
@@ -28,5 +26,4 @@ class Util_Picture {
 		unlink(TMP_PATH . '/' . $png_name);
 		return $picture;
 	}
-
 }

@@ -4,10 +4,8 @@
  *
  * Contains general purpose utilities
  *
- * @package %%PACKAGE%%
  * @author Christophe Gosiau <christophe@tigron.be>
  * @author Gerry Demaret <gerry@tigron.be>
- * @version $Id$
  */
 
 class Util_Po {
@@ -30,6 +28,7 @@ class Util_Po {
 		if (!$matched) {
 			return array();
 		}
+
 		// get all msgids and msgtrs
 		for ($i = 0; $i < $matched; $i++) {
 			$msgid = preg_replace('/\s*msgid\s*"(.*)"\s*/s', '\\1', $matches[1][$i]);

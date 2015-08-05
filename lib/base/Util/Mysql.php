@@ -6,7 +6,6 @@
  *
  * @author Christophe Gosiau <christophe@tigron.be>
  * @author Gerry Demaret <gerry@tigron.be>
- * @version $Id$
  */
 
 class Util_Mysql {
@@ -72,15 +71,18 @@ class Util_Mysql {
 	public static function parse_connection_string($connection_string) {
 		$connection_string = str_replace('mysql://', '', $connection_string);
 		$connection_string = str_replace('mysqli://', '', $connection_string);
+
 		list($first_part, $last_part) = explode('@', $connection_string);
 		list($username, $password) = explode(':', $first_part);
 		list($hostname, $database) = explode('/', $last_part);
-		$parameters = array (	'username'	=>	$username,
-								'password'	=>	$password,
-								'hostname'	=>	$hostname,
-								'database'	=>	$database);
+
+		$parameters = [
+			'username'	=>	$username,
+			'password'	=>	$password,
+			'hostname'	=>	$hostname,
+			'database'	=>	$database
+		];
+
 		return $parameters;
 	}
-
 }
-?>

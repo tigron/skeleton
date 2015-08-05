@@ -131,7 +131,7 @@ class Translation {
 			mkdir(TMP_PATH . '/languages/' . $this->language->name_short, 0755, true);
 		}
 
-		file_put_contents(TMP_PATH . '/languages/' . $this->language->name_short . '/' . $this->application_name . '.php', '<?php $strings = ' . var_export($po_strings, true) . '?>');
+		file_put_contents(TMP_PATH . '/languages/' . $this->language->name_short . '/' . $this->application_name . '.php', '<?php $strings = ' . var_export($po_strings, true));
 	}
 
 	/**

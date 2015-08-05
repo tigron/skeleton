@@ -31,7 +31,7 @@ class Email_Template {
 	/**
 	 * Template
 	 *
-	 * @var Template $template 
+	 * @var Template $template
 	 */
 	private $template = null;
 
@@ -66,7 +66,7 @@ class Email_Template {
 	 * @param string $type The type of output (html, txt, subject)
 	 * @return string
 	 */
-	public function render($type) {		
+	public function render($type) {
 		foreach ($this->variables as $key => $value) {
 			$this->template->assign($key, $value);
 		}

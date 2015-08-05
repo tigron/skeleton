@@ -2,11 +2,9 @@
 /**
  * Session class to control the session
  *
- * @package %%PACKAGE%%
  * @author Christophe Gosiau <christophe@tigron.be>
  * @author Gerry Demaret <gerry@tigron.be>
  * @author David Vandemaele <david@tigron.be>
- * @version $Id$
  */
 
 class Web_Session_Sticky {
