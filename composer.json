@@ -1,0 +1,21 @@
+{
+    "config": {
+        "vendor-dir": "lib/external/packages"
+    },
+    "name": "tigron/skeleton",
+    "description": "Tigron Skeleton",
+    "type": "project",
+    "require": {
+		"twig/twig": "1.*",
+		"twig/extensions": "1.0.*@dev",
+		"swiftmailer/swiftmailer": "v5.0.3",
+		"sami/sami": "3.0.*@dev"
+    },
+    "license": "GPL",
+    "authors": [
+        {
+            "name": "Tigron BVBA",
+            "email": "support@tigron.be"
+        }
+    ]
+}
