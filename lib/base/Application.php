@@ -280,6 +280,26 @@ class Application {
 					return Application::get();
 				}
 			}
+
+			// Now let's find applications with wildcard url's
+			foreach ($applications as $application) {
+				$hostnames = $application->config->hostnames;
+				foreach ($hostnames as $key => $hostname) {
+					if (strpos('*', $hostname) === false) {
+						unset($hostnames[$key]);
+					}
+				}
+				if (count($hostnames) == 0) {
+					continue;
+				}
+
+				foreach ($hostnames as $hostname) {
+					if (fnmatch($hostname, $_SERVER['SERVER_NAME'])) {
+						Application::set($application);
+						return Application::Get();
+					}
+				}
+			}
 		} else {
 			return Application::get();
 		}
