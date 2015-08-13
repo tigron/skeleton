@@ -19,7 +19,7 @@ class Config_Admin extends Config {
 		/**
 		 * Hostnames
 		 */
-		'hostnames' => [],
+		'hostnames' => ['*'],
 
 		/**
 		 * Default language. If no language is requested

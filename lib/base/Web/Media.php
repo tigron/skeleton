@@ -49,10 +49,13 @@ class Web_Media {
 	 * @param $request array
 	 * @access public
 	 */
-	public static function detect($request) {
-		if (count($request) == 0) {
+	public static function detect($request_uri) {
+		// Don't bother looking up /
+		if ($request_uri == '/') {
 			return;
 		}
+
+		$request = explode('/', trim($request_uri, '/'));
 
 		// Find the filename and extension
 		$filename = $request[count($request)-1];

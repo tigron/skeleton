@@ -19,7 +19,13 @@ class Config_Admin extends Config {
 		/**
 		 * Hostnames
 		 */
-		'hostnames'		=>	['application.example.tld'],
+		'hostnames'		=>	['*'],
+
+		/**
+		 * Base URI, including leading forward slash
+		 */
+		'base_uri' => '/manage/',
+
 
 		/**
 		 * Default language. If no language is requested
@@ -32,7 +38,6 @@ class Config_Admin extends Config {
 		'routes' => [
 
 			'web_module_index' => [
-				
 				'$language/default/route/to/index',
 				'$language/default/route/to/index/$action',
 				'$language/default/route/to/index/$action/$id',
@@ -40,21 +45,7 @@ class Config_Admin extends Config {
 				'$language[en]/test/routing/engine',
 				'$language[en]/test/routing/engine/$action',
 				'$language[en]/test/routing/engine/$action/$id'
-			
 			],
-
-			'web_module_demo' => [
-
-				'$language/default/route/to/demo',
-				'$language/default/route/to/demo/$action',
-				
-				'$language[nl]/standaard/route/naar/demo',
-				'$language[nl]/standaard/route/naar/demo/$action'
-			
-			]
-
 		]
-
 	];
-
 }

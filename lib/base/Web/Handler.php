@@ -33,33 +33,39 @@ class Web_Handler {
 		header('X-Powered-By: Me');
 
 		/**
-		 * Determine the request type
+		 * Parse the requested URL
 		 */
-		$query_string = explode('?', $_SERVER['REQUEST_URI']);
-		$request_parts = explode('/', $query_string[0]);
-		if (isset($query_string[1])) {
-			$request_parts[count($request_parts)-1] = $request_parts[count($request_parts)-1] . '?' . $query_string[1];
+		$components = parse_url($_SERVER['REQUEST_URI']);
+
+		if (isset($components['query'])) {
+			$query_string = $components['query'];
+		} else {
+			$query_string = '';
 		}
 
-		foreach ($request_parts as $key => $part) {
-			if (strpos($part, '?') !== false) {
-				$request_parts[$key] = substr($part, 0, strpos($part, '?'));
-				$part = substr($part, 0, strpos($part, '?'));
-			}
-
-			if ($part == '') {
-				unset($request_parts[$key]);
-			}
+		if (isset($components['path']) and $components['path'] !== '/') {
+			$request_uri_parts = explode('/', $components['path']);
+			array_shift($request_uri_parts);
+		} else {
+			$request_uri_parts = [];
 		}
 
-		// reorganize request_parts array
-		$request_parts = array_merge($request_parts, []);
+		$request_uri = '/' . implode('/', $request_uri_parts) . '/';
+
+		 // Find out what the hostname is, if none was found, bail out
+		if (!empty($_SERVER['SERVER_NAME'])) {
+			$hostname = $_SERVER['SERVER_NAME'];
+		} elseif (!empty($_SERVER['HTTP_HOST'])) {
+			$hostname = $_SERVER['HTTP_HOST'];
+		} else {
+			throw new Exception('Not a web request');
+		}
 
 		/**
 		 * Define the application
 		 */
 		try {
-			$application = Application::Detect();
+			$application = Application::detect($hostname, $request_uri);
 		} catch (Exception $e) {
 			header("HTTP/1.1 404 Not Found", true);
 			echo '404 File Not Found (application)';
@@ -69,20 +75,20 @@ class Web_Handler {
 		/**
 		* Get the config
 		*/
-		$config = Config::Get();
+		$config = Config::get();
 
 		/**
 		 * Handle the media
 		 */
-		Web_Media::Detect($request_parts);
+		Web_Media::detect($application->request_relative_uri);
 
 		/**
 		 * Find the module to load
 		 */
 		try {
-			$module = $application->route($query_string[0]);
+			// Attempt to find the module by matching defined routes
+			$module = $application->route($request_uri);
 		} catch (Exception $e) {
-
 			// So there is no route defined.
 
 			/**
@@ -90,17 +96,17 @@ class Web_Handler {
 			 * 2. Take the default module
 			 * 3. Load 404 module
 			 */
-			$filename = implode('/', $request_parts);
-
+			$filename = trim($application->request_relative_uri, '/');
 			if (file_exists($application->module_path . '/' . $filename . '.php')) {
 				require $application->module_path . '/' . $filename . '.php';
-				$classname = 'Web_Module_' . implode('_', $request_parts);
+				$classname = 'Web_Module_' . implode('_', $request_uri_parts);
 			} elseif (file_exists($application->module_path . '/' . $filename . '/' . $config->module_default . '.php')) {
 				require $application->module_path . '/' . $filename . '/' . $config->module_default . '.php';
+
 				if ($filename == '') {
 					$classname = 'Web_Module_' . $config->module_default;
 				} else {
-					$classname = 'Web_Module_' . implode('_', $request_parts) . '_' . $config->module_default;
+					$classname = 'Web_Module_' . implode('_', $request_uri_parts) . '_' . $config->module_default;
 				}
 			} elseif (file_exists($application->module_path . '/' . $config->module_404 . '.php')) {
 				require $application->module_path . '/' . $config->module_404 . '.php';
@@ -109,6 +115,7 @@ class Web_Handler {
 				header('HTTP/1.0 404 Module not found');
 				exit;
 			}
+
 			$module = new $classname;
 		}
 

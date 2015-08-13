@@ -33,7 +33,15 @@ class Util_Rewrite {
 		if (!isset($data[3])) {
 			return $data[0];
 		}
+
+		$config = Config::get();
+
 		$new_link = Util::rewrite_reverse_link($data[3]);
+
+		if (isset($config->base_uri) and $config->base_uri !== null) {
+			$new_link = trim($config->base_uri, '/') . '/' . $new_link;
+		}
+
 		return str_replace($data[3], $new_link, $data[0]);
 	}
 

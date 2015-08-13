@@ -64,6 +64,14 @@ class Application {
 	public $hostname = null;
 
 	/**
+	 * Relative URI to the application's base URI
+	 *
+	 * @var string $relative_uri
+	 * @access public
+	 */
+	public $relative_uri = null;
+
+	/**
 	 * Language
 	 *
 	 * @access public
@@ -252,17 +260,15 @@ class Application {
 	/**
 	 * Detect
 	 *
+	 * @param string $hostname
+	 * @param string $request_uri
 	 * @access public
 	 * @return Application $application
 	 */
-	public static function detect() {
-		// Find out what the hostname is, if none was found, bail out
-		if (!empty($_SERVER['SERVER_NAME'])) {
-			$hostname = $_SERVER['SERVER_NAME'];
-		} elseif (!empty($_SERVER['HTTP_HOST'])) {
-			$hostname = $_SERVER['HTTP_HOST'];
-		} else {
-			throw new Exception('Not a web request. No application available');
+	public static function detect($hostname, $request_uri) {
+		// If we already have a cached application, return that one
+		if (self::$application !== null) {
+			return Application::get();
 		}
 
 		// If multiple host headers have been set, use the last one
@@ -270,17 +276,72 @@ class Application {
 			list($hostname, $discard) = array_reverse(explode(', ', $hostname));
 		}
 
-		if (self::$application === null) {
-			$applications = self::get_all();
+		// Find matching applications
+		$applications = self::get_all();
+		$matched_applications = [];
 
+		// Regular matches
+		foreach ($applications as $application) {
+			if (in_array($hostname, $application->config->hostnames)) {
+				$matched_applications[] = $application;
+			}
+		}
+
+		// If we don't have any matched applications, try to match wildcards
+		if (count($matched_applications) === 0) {
 			foreach ($applications as $application) {
-				if (in_array($hostname, $application->config->hostnames)) {
-					$application->hostname = $hostname;
-					Application::set($application);
-					return Application::get();
+				$wildcard_hostnames = $application->config->hostnames;
+				foreach ($wildcard_hostnames as $key => $wildcard_hostname) {
+					if (strpos($wildcard_hostname, '*') === false) {
+						unset($wildcard_hostnames[$key]);
+					}
+				}
+
+				if (count($wildcard_hostnames) == 0) {
+					continue;
+				}
+
+				foreach ($wildcard_hostnames as $wildcard_hostname) {
+					if (fnmatch($wildcard_hostname, $hostname)) {
+						$matched_applications[] = $application;
+					}
 				}
 			}
-		} else {
+		}
+
+		// Set required variables in the matched Application objects
+		foreach ($matched_applications as $key => $application) {
+			 // Set the relative request URI according to the application
+			if (isset($application->config->base_uri)) {
+				$application->request_relative_uri = str_replace($application->config->base_uri, '', $request_uri);
+			} else {
+				$application->request_relative_uri = $request_uri;
+			}
+
+			$application->hostname = $hostname;
+			$matched_applications[$key] = $application;
+		}
+
+		// Now that we have matching applications, see if one matches the
+		// request specifically. Otherwise, simply return the first one.
+		$matched_applications_sorted = [];
+		foreach ($matched_applications as $application) {
+			if (isset($application->config->base_uri)) {
+				if (strpos($request_uri, $application->config->base_uri) === 0) {
+					$matched_applications_sorted[strlen($application->config->base_uri)] = $application;
+				}
+			} else {
+				$matched_applications_sorted[0] = $application;
+			}
+		}
+
+		// Sort the matched array by key, so the most specific one is at the end
+		ksort($matched_applications_sorted);
+
+		if (count($matched_applications_sorted) > 0) {
+			// Get the most specific one
+			$application = array_pop($matched_applications_sorted);
+			Application::set($application);
 			return Application::get();
 		}
 
