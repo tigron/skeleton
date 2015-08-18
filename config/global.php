@@ -8,23 +8,7 @@
  * @author David Vandemaele <david@tigron.be>
  */
 
-/**
- * Define the Root path
- */
-define('ROOT_PATH', realpath(dirname(__FILE__) . '/..'));
-
-/**
- * Define the path to the Library
- */
-define('LIB_PATH', realpath(ROOT_PATH . '/lib'));
-/**
- * TMP Path
- */
-define('TMP_PATH', realpath(ROOT_PATH . '/tmp'));
-
 require_once 'Config.php';
-require_once LIB_PATH . '/base/Util.php';
-
 
 require_once dirname(__FILE__) . '/../lib/base/Bootstrap.php';
 Bootstrap::boot();
