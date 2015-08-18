@@ -7,7 +7,9 @@
  * @author David Vandemaele <david@tigron.be>
  */
 
-class Web_Module_Index extends Web_Module {
+use Skeleton\Core\Web\Module;
+
+class Web_Module_Index extends Module {
 
 	/**
 	 * Login required
@@ -30,7 +32,8 @@ class Web_Module_Index extends Web_Module {
 	 * @access public
 	 */
 	public function display() {
-		$template = Web_Template::Get();
+		$template = \Skeleton\Core\Web\Template::Get();
+
 		$options = [
 						['id' => 1, 'name' => 'option 1'],
 						['id' => 2, 'name' => 'option 2'],

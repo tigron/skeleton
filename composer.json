@@ -2,14 +2,72 @@
     "config": {
         "vendor-dir": "lib/external/packages"
     },
+
+    "repositories": [
+    	{
+			"type": "vcs",
+			"url": "https://github.com/tigron/skeleton-database.git"
+		},
+    	{
+			"type": "vcs",
+			"url": "https://github.com/tigron/skeleton-object.git"
+		},
+    	{
+			"type": "vcs",
+			"url": "https://github.com/tigron/skeleton-file.git"
+		},
+    	{
+			"type": "vcs",
+			"url": "https://github.com/tigron/skeleton-file-picture.git"
+		},
+    	{
+			"type": "vcs",
+			"url": "https://github.com/tigron/skeleton-i18n.git"
+		},
+    	{
+			"type": "vcs",
+			"url": "https://github.com/tigron/skeleton-pager.git"
+		},
+    	{
+			"type": "vcs",
+			"url": "https://github.com/tigron/skeleton-template-twig.git"
+		},
+    	{
+			"type": "vcs",
+			"url": "https://github.com/tigron/skeleton-core.git"
+		},
+    	{
+			"type": "vcs",
+			"url": "https://github.com/tigron/skeleton-error.git"
+		},
+    	{
+			"type": "vcs",
+			"url": "https://github.com/tigron/skeleton-template.git"
+		},
+    	{
+			"type": "vcs",
+			"url": "https://github.com/tigron/skeleton-email.git"
+		}
+
+    ],
     "name": "tigron/skeleton",
     "description": "Tigron Skeleton",
     "type": "project",
     "require": {
-		"twig/twig": "1.*",
-		"twig/extensions": "1.0.*@dev",
-		"swiftmailer/swiftmailer": "v5.0.3",
 		"sami/sami": "3.0.*@dev"
+    },
+    "require-dev": {
+		"tigron/skeleton-database": "dev-master",
+		"tigron/skeleton-object": "dev-master",
+		"tigron/skeleton-file": "dev-master",
+		"tigron/skeleton-file-picture": "dev-master",
+		"tigron/skeleton-i18n": "dev-master",
+		"tigron/skeleton-pager": "dev-master",
+		"tigron/skeleton-template-twig": "dev-master",
+		"tigron/skeleton-core": "dev-master",
+		"tigron/skeleton-error": "dev-master",
+		"tigron/skeleton-template": "dev-master",
+		"tigron/skeleton-email": "dev-master"
     },
     "license": "MIT",
     "authors": [
