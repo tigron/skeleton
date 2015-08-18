@@ -7,7 +7,7 @@
  */
 
 class Country {
-	use Get, Delete, Model, Save;
+	use Model, Save, Delete, Get;
 
 	/**
 	 * Get by ISO2
