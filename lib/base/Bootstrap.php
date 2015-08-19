@@ -25,6 +25,11 @@ class Bootstrap {
 		/**
 		 * Get the config
 		 */
+		if (!file_exists($root_path . '/config/Config.php')) {
+			echo 'Please create your Config.php file' . "\n";
+			exit(1);
+		}
+
 		require_once $root_path . '/config/Config.php';
 		$config = Config::Get();
 
