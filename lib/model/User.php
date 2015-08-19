@@ -7,10 +7,6 @@
  * @author David Vandemaele <david@tigron.be>
  */
 
-require_once LIB_PATH . '/model/Country.php';
-require_once LIB_PATH . '/model/Log.php';
-require_once LIB_PATH . '/model/Language.php';
-
 class User {
 	use Model, Get, Save, Delete;
 

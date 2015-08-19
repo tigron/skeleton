@@ -6,8 +6,6 @@
  * @author Gerry Demaret <gerry@tigron.be>
  */
 
-require_once LIB_PATH . '/model/Picture.php';
-
 class Web_Module_Picture extends Web_Module {
 	/**
 	 * Login required ?
