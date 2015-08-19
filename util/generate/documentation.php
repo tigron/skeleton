@@ -1,6 +1,6 @@
 <?php
 /**
- * Generate documentation - configuration
+ * Generate documentation
  *
  * To actually create the documentation itself, run this command:
  *
@@ -11,7 +11,9 @@
  */
 
 require_once dirname(__FILE__) . '/../../config/global.php';
-require_once LIB_PATH . '/external/packages/vendor/sami/sami/sami.php';
+
+echo '' . "\n";
+exit(1);
 
 use Symfony\Component\Finder\Finder;
 
