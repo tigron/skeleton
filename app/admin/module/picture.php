@@ -6,7 +6,9 @@
  * @author Gerry Demaret <gerry@tigron.be>
  */
 
-class Web_Module_Picture extends Web_Module {
+use Skeleton\Core\Web\Module;
+
+class Web_Module_Picture extends Module {
 	/**
 	 * Login required ?
 	 * Default = yes
