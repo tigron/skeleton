@@ -6,7 +6,9 @@
  * @author Gerry Demaret <gerry@tigron.be>
  */
 
-class Web_Module_404 extends Web_Module {
+use Skeleton\Core\Web\Module;
+
+class Web_Module_404 extends Module {
 	/**
 	 * Login required ?
 	 * Default = yes
