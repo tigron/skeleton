@@ -75,6 +75,11 @@ class Bootstrap {
 		\Skeleton\I18n\Config::$cache_directory = $root_path . '/tmp/languages/';
 
 		/**
+		 * Initialize the template caching path
+		 */
+		\Skeleton\Template\Twig\Config::$cache_directory = $root_path . '/tmp/twig/';
+
+		/**
 		 * Set the email path
 		 */
 		\Skeleton\Email\Config::$email_directory = $root_path . '/store/email/';
