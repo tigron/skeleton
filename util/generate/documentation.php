@@ -12,7 +12,7 @@
 
 require_once dirname(__FILE__) . '/../../config/global.php';
 
-echo '' . "\n";
+echo 'This script needs some attention before it can be used. Please fix it.' . "\n";
 exit(1);
 
 use Symfony\Component\Finder\Finder;
@@ -32,8 +32,8 @@ $iterator = Finder::create()
 ;
 
 $configuration = array (
-	'build_dir' => ROOT_PATH . '/store/documentation',
-	'cache_dir' => TMP_PATH . '/cache/documentation',
+	'build_dir' => '/path/to/store/documentation',
+	'cache_dir' => '/path/to/cache/documentation',
 );
 
 return new Sami\Sami($iterator, $configuration);
