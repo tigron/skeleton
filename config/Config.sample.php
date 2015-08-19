@@ -59,7 +59,7 @@ class Config {
 	public static function Get() {
 		if (!isset(self::$config)) {
 			try {
-				self::$config = Application::Get()->config;
+				self::$config = \Skeleton\Core\Application::Get()->config;
 			} catch (Exception $e) {
 				return new Config();
 			}
@@ -157,29 +157,6 @@ class Config {
 			 * The default language that will be shown to the user if it can not be guessed
 			 */
 			'default_language' => 'en',
-
-			/**
-			 * Items per page
-			 */
-			'items_per_page' => 20,
-
-			/**
-			 * Picture formats
-			 *
-			 * Array containing all possible picture formats
-			 */
-			'picture_formats' => [
-				'format_name'	=> [
-					'height' => 600,
-					'width' => 800
-				],
-			],
-
-			/**
-			 * Archive mailbox
-			 */
-			'archive_mailbox' => '',
-
 		];
 	}
 }
