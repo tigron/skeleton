@@ -142,6 +142,12 @@ class User {
 			return false;
 		}
 
+		// If we got here, we can assume the password is correct. If the password
+		// is still using a weak hash, we can rehash it.
+		if (password_needs_rehash($user->password, PASSWORD_DEFAULT)) {
+			$user->set_password($password);
+		}
+
 		return $user;
 	}
 
