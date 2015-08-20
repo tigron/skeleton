@@ -7,8 +7,24 @@
  * @author David Vandemaele <david@tigron.be>
  */
 
+use \Skeleton\Database\Database;
+
 class User {
-	use Model, Get, Save, Delete;
+	use \Skeleton\Object\Model;
+	use \Skeleton\Object\Get;
+	use \Skeleton\Object\Save;
+	use \Skeleton\Object\Delete;
+	use \Skeleton\Pager\Page;
+
+	/**
+	 * Class configuration
+	 *
+	 * @var array
+	 * @access private
+	 */
+	private static $class_configuration = [
+		'disallow_set' => ['password'],
+	];
 
 	/**
 	 * @var User $user
@@ -24,7 +40,7 @@ class User {
 	 * @return bool $validated
 	 */
 	public function validate(&$errors = []) {
-		$required_fields = ['username', 'password', 'firstname', 'lastname', 'email'];
+		$required_fields = ['username', 'firstname', 'lastname', 'email'];
 		foreach ($required_fields as $required_field) {
 			if (!isset($this->details[$required_field]) OR $this->details[$required_field] == '') {
 				$errors[$required_field] = 'required';
@@ -39,9 +55,7 @@ class User {
 			$errors['password'] = 'do not match';
 		}
 
-		if (!Util::validate_email($this->details['email'])) {
-			$errors['email'] = 'syntax error';
-		}
+		// TODO: validate the e-mail address properly
 
 		if ($this->id === null) {
 			try {
@@ -65,31 +79,14 @@ class User {
 	}
 
 	/**
-	 * Save the user
+	 * Set the user password
 	 *
 	 * @access public
+	 * @param string $password
 	 */
-	public function save() {
-		$db = Database::Get();
-		if (!isset($this->id) OR $this->id === null) {
-			$mode = MDB2_AUTOQUERY_INSERT;
-			$this->details['created'] = date('Y-m-d H:i:s');
-			$where = false;
-		} else {
-			$mode = MDB2_AUTOQUERY_UPDATE;
-			$where = 'id=' . $db->quote($this->id);
-		}
-
-		$db->autoExecute('user', $this->details, $mode, $where);
-
-		if ($mode === MDB2_AUTOQUERY_INSERT) {
-			$this->id = $db->getOne('SELECT LAST_INSERT_ID();');
-			Log::create('add', $this);
-		} else {
-			Log::create('edit', $this);
-		}
-
-		$this->get_details();
+	public function set_password($password) {
+		$this->details['password'] = password_hash($password, PASSWORD_DEFAULT);
+		$this->save();
 	}
 
 	/**
@@ -101,13 +98,13 @@ class User {
 	 */
 	public static function get_by_username($username) {
 		$db = Database::Get();
-		$id = $db->getOne('SELECT id FROM user WHERE username = ?', [$username]);
+		$id = $db->get_one('SELECT id FROM user WHERE username = ?', [$username]);
 
 		if ($id === null) {
-			throw new Exception('User not found');
+			throw new \Exception('User not found');
 		}
 
-		return User::get_by_id($id);
+		return self::get_by_id($id);
 	}
 
 	/**
@@ -119,14 +116,15 @@ class User {
 	 */
 	public static function get_by_email($email) {
 		$db = Database::Get();
-		$id = $db->getOne('SELECT id FROM user WHERE email = ?', [$email]);
+		$id = $db->get_one('SELECT id FROM user WHERE email = ?', [$email]);
 
 		if ($id === null) {
-			throw new Exception('User not found');
+			throw new \Exception('User not found');
 		}
 
-		return User::get_by_id($id);
+		return self::get_by_id($id);
 	}
+
 
 	/**
 	 * Authenticate a user
@@ -138,10 +136,10 @@ class User {
 	 * @return User $user
 	 */
 	public static function authenticate($username, $password) {
-		$user = User::get_by_username($username);
+		$user = self::get_by_username($username);
 
-		if ($user->password != sha1($password)) {
-			throw new Exception('Authentication failed');
+		if (password_verify($password, $user->password) === false) {
+			return false;
 		}
 
 		return $user;
@@ -158,7 +156,7 @@ class User {
 			return self::$user;
 		}
 
-		throw new Exception('No user set');
+		throw new \Exception('No user set');
 	}
 
 	/**
@@ -170,103 +168,5 @@ class User {
 	public static function set(User $user) {
 		self::$user = $user;
 	}
-
-	/**
-	 * Get paged
-	 *
-	 * @access public
-	 * @param string $sort
-	 * @param string $direction
-	 * @param int $page
-	 * @param int $all
-	 * @param array $extra_conditions
-	 */
-	public static function get_paged($sort, $direction, $page, $extra_conditions = [], $all = false) {
-		$db = Database::Get();
-
-		$where = '';
-
-		foreach ($extra_conditions as $key => $value) {
-			if ($key != '%search%') {
-				if (!is_array($extra_conditions[$key])) {
-					$where .= 'AND ' . $db->quoteidentifier($key) . ' = ' . $db->quote($value) . ' ';
-				} else {
-					$where .= 'AND ' . $db->quoteidentifier($key) . ' ' . $value[0] . ' ' . $db->quote($value[1]) . ' ';
-				}
-			}
-		}
-
-		$config = Config::Get();
-		if (!$all) {
-			$limit = 20;
-		} else {
-			$limit = 1000;
-		}
-
-		if ($page < 1) {
-			$page = 1;
-		}
-
-		if (isset($extra_conditions['%search%'])) {
-			$where .= "AND (";
-			$where .= "u.lastname LIKE '%" . $extra_conditions['%search%'] . "%' ";
-			$where .= "OR u.firstname LIKE '%" . $extra_conditions['%search%'] . "%' ";
-			$where .= "OR c.name LIKE '%" . $extra_conditions['%search%'] . "%' ";
-			$where .= ") ";
-		}
-
-		$sql = 'SELECT DISTINCT(u.id)
-		        FROM `user` u
-				INNER JOIN country c ON c.id = u.country_id
-		        WHERE 1 ' . $where . '
-		        ORDER BY ' . $sort . ' ' . $direction . '
-		        LIMIT ' . ($page-1)*$limit . ', ' . $limit;
-
-		$ids = $db->getCol($sql);
-		$users = [];
-		foreach ($ids as $id) {
-			$users[] = User::get_by_id($id);
-		}
-
-		return $users;
-	}
-
-	/**
-	 * Count the users
-	 *
-	 * @access public
-	 * @param array $extra_conditions
-	 * @return int $count
-	 */
-	public static function count($extra_conditions = []) {
-		$db = Database::Get();
-
-		$where = '';
-		foreach ($extra_conditions as $key => $value) {
-			if ($key != '%search%') {
-				if (!is_array($extra_conditions[$key])) {
-					$where .= 'AND ' . $db->quoteidentifier($key) . ' = ' . $db->quote($value) . ' ';
-				} else {
-					$where .= 'AND ' . $db->quoteidentifier($key) . ' ' . $value[0] . ' ' . $db->quote($value[1]) . ' ';
-				}
-			}
-		}
-
-		if (isset($extra_conditions['%search%'])) {
-			$where .= "AND (";
-			$where .= "u.lastname LIKE '%" . $extra_conditions['%search%'] . "%' ";
-			$where .= "OR u.firstname LIKE '%" . $extra_conditions['%search%'] . "%' ";
-			$where .= "OR c.name LIKE '%" . $extra_conditions['%search%'] . "%' ";
-			$where .= ") ";
-		}
-
-		$sql = 'SELECT COUNT(DISTINCT(u.id))
-		        FROM `user` u
-				INNER JOIN country c ON c.id = u.country_id
-		        WHERE 1 ' . $where;
-
-		$count = $db->getOne($sql);
-
-		return $count;
-	}
 }
+
