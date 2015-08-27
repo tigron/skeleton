@@ -5,4 +5,5 @@ tmp/languages/*
 store/file/*
 store/documentation/*
 lib/external/packages/*
+lib/external/assets/*
 composer.lock
