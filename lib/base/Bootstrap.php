@@ -65,6 +65,7 @@ class Bootstrap {
 		 * Initialize the application directory
 		 */
 		\Skeleton\Core\Config::$application_dir = $root_path . '/app/';
+		\Skeleton\Core\Config::$asset_dir = $root_path . '/lib/external/assets/';
 
 		/**
 		 * Initialize the error handler

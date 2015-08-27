@@ -2,72 +2,79 @@
     "config": {
         "vendor-dir": "lib/external/packages"
     },
-
     "repositories": [
-    	{
-			"type": "vcs",
-			"url": "https://github.com/tigron/skeleton-database.git"
-		},
-    	{
-			"type": "vcs",
-			"url": "https://github.com/tigron/skeleton-object.git"
-		},
-    	{
-			"type": "vcs",
-			"url": "https://github.com/tigron/skeleton-file.git"
-		},
-    	{
-			"type": "vcs",
-			"url": "https://github.com/tigron/skeleton-file-picture.git"
-		},
-    	{
-			"type": "vcs",
-			"url": "https://github.com/tigron/skeleton-i18n.git"
-		},
-    	{
-			"type": "vcs",
-			"url": "https://github.com/tigron/skeleton-pager.git"
-		},
-    	{
-			"type": "vcs",
-			"url": "https://github.com/tigron/skeleton-template-twig.git"
-		},
-    	{
-			"type": "vcs",
-			"url": "https://github.com/tigron/skeleton-core.git"
-		},
-    	{
-			"type": "vcs",
-			"url": "https://github.com/tigron/skeleton-error.git"
-		},
-    	{
-			"type": "vcs",
-			"url": "https://github.com/tigron/skeleton-template.git"
-		},
-    	{
-			"type": "vcs",
-			"url": "https://github.com/tigron/skeleton-email.git"
-		}
-
+        {
+            "type": "vcs",
+            "url": "https://github.com/tigron/skeleton-database.git"
+        },
+        {
+            "type": "vcs",
+            "url": "https://github.com/tigron/skeleton-object.git"
+        },
+        {
+            "type": "vcs",
+            "url": "https://github.com/tigron/skeleton-file.git"
+        },
+        {
+            "type": "vcs",
+            "url": "https://github.com/tigron/skeleton-file-picture.git"
+        },
+        {
+            "type": "vcs",
+            "url": "https://github.com/tigron/skeleton-i18n.git"
+        },
+        {
+            "type": "vcs",
+            "url": "https://github.com/tigron/skeleton-pager.git"
+        },
+        {
+            "type": "vcs",
+            "url": "https://github.com/tigron/skeleton-template-twig.git"
+        },
+        {
+            "type": "vcs",
+            "url": "https://github.com/tigron/skeleton-core.git"
+        },
+        {
+            "type": "vcs",
+            "url": "https://github.com/tigron/skeleton-error.git"
+        },
+        {
+            "type": "vcs",
+            "url": "https://github.com/tigron/skeleton-template.git"
+        },
+        {
+            "type": "vcs",
+            "url": "https://github.com/tigron/skeleton-email.git"
+        }
     ],
     "name": "tigron/skeleton",
     "description": "Tigron Skeleton",
     "type": "project",
     "require": {
-		"sami/sami": "3.0.*@dev"
+        "sami/sami": "3.0.*@dev",
+        "fxp/composer-asset-plugin": "~1.0",
+        "bower-asset/bootstrap": "dev-master",
+	"bower-asset/font-awesome": "*"
     },
     "require-dev": {
-		"tigron/skeleton-database": "dev-master",
-		"tigron/skeleton-object": "dev-master",
-		"tigron/skeleton-file": "dev-master",
-		"tigron/skeleton-file-picture": "dev-master",
-		"tigron/skeleton-i18n": "dev-master",
-		"tigron/skeleton-pager": "dev-master",
-		"tigron/skeleton-template-twig": "dev-master",
-		"tigron/skeleton-core": "dev-master",
-		"tigron/skeleton-error": "dev-master",
-		"tigron/skeleton-template": "dev-master",
-		"tigron/skeleton-email": "dev-master"
+        "tigron/skeleton-database": "dev-master",
+        "tigron/skeleton-object": "dev-master",
+        "tigron/skeleton-file": "dev-master",
+        "tigron/skeleton-file-picture": "dev-master",
+        "tigron/skeleton-i18n": "dev-master",
+        "tigron/skeleton-pager": "dev-master",
+        "tigron/skeleton-template-twig": "dev-master",
+        "tigron/skeleton-core": "dev-master",
+        "tigron/skeleton-error": "dev-master",
+        "tigron/skeleton-template": "dev-master",
+        "tigron/skeleton-email": "dev-master"
+    },
+    "extra": {
+        "asset-installer-paths": {
+            "npm-asset-library": "lib/external/assets",
+            "bower-asset-library": "lib/external/assets"
+        }
     },
     "license": "MIT",
     "authors": [
