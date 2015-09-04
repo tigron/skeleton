@@ -8,7 +8,5 @@
  * @author David Vandemaele <david@tigron.be>
  */
 
-require_once 'Config.php';
-
 require_once dirname(__FILE__) . '/../lib/base/Bootstrap.php';
 Bootstrap::boot();

@@ -23,6 +23,11 @@ class Bootstrap {
 		$root_path = realpath(dirname(__FILE__) . '/../..');
 
 		/**
+		 * Register the autoloader from Composer
+		 */
+		require_once $root_path . '/lib/external/packages/autoload.php';		
+
+		/**
 		 * Get the config
 		 */
 		if (!file_exists($root_path . '/config/Config.php')) {
@@ -32,11 +37,6 @@ class Bootstrap {
 
 		require_once $root_path . '/config/Config.php';
 		$config = Config::Get();
-
-		/**
-		 * Register the autoloader from Composer
-		 */
-		require_once $root_path . '/lib/external/packages/autoload.php';
 
 		/**
 		 * Register the autoloader
