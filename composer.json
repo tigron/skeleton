@@ -2,52 +2,6 @@
     "config": {
         "vendor-dir": "lib/external/packages"
     },
-    "repositories": [
-        {
-            "type": "vcs",
-            "url": "https://github.com/tigron/skeleton-database.git"
-        },
-        {
-            "type": "vcs",
-            "url": "https://github.com/tigron/skeleton-object.git"
-        },
-        {
-            "type": "vcs",
-            "url": "https://github.com/tigron/skeleton-file.git"
-        },
-        {
-            "type": "vcs",
-            "url": "https://github.com/tigron/skeleton-file-picture.git"
-        },
-        {
-            "type": "vcs",
-            "url": "https://github.com/tigron/skeleton-i18n.git"
-        },
-        {
-            "type": "vcs",
-            "url": "https://github.com/tigron/skeleton-pager.git"
-        },
-        {
-            "type": "vcs",
-            "url": "https://github.com/tigron/skeleton-template-twig.git"
-        },
-        {
-            "type": "vcs",
-            "url": "https://github.com/tigron/skeleton-core.git"
-        },
-        {
-            "type": "vcs",
-            "url": "https://github.com/tigron/skeleton-error.git"
-        },
-        {
-            "type": "vcs",
-            "url": "https://github.com/tigron/skeleton-template.git"
-        },
-        {
-            "type": "vcs",
-            "url": "https://github.com/tigron/skeleton-email.git"
-        }
-    ],
     "name": "tigron/skeleton",
     "description": "Tigron Skeleton",
     "type": "project",
@@ -55,7 +9,7 @@
         "sami/sami": "3.0.*@dev",
         "fxp/composer-asset-plugin": "~1.0",
         "bower-asset/bootstrap": "dev-master",
-	"bower-asset/font-awesome": "*"
+		"bower-asset/font-awesome": "*"
     },
     "require-dev": {
         "tigron/skeleton-database": "dev-master",
@@ -68,7 +22,9 @@
         "tigron/skeleton-core": "dev-master",
         "tigron/skeleton-error": "dev-master",
         "tigron/skeleton-template": "dev-master",
-        "tigron/skeleton-email": "dev-master"
+        "tigron/skeleton-email": "dev-master",
+        "tigron/skeleton-console": "dev-master",
+        "tigron/skeleton-migrate": "dev-master"
     },
     "extra": {
         "asset-installer-paths": {
