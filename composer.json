@@ -6,10 +6,7 @@
     "description": "Tigron Skeleton",
     "type": "project",
     "require": {
-        "sami/sami": "3.0.*@dev",
-        "fxp/composer-asset-plugin": "~1.0",
-        "bower-asset/bootstrap": "dev-master",
-		"bower-asset/font-awesome": "*"
+        "sami/sami": "3.0.*@dev"
     },
     "require-dev": {
         "tigron/skeleton-database": "dev-master",
