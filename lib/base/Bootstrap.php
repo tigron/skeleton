@@ -71,8 +71,7 @@ class Bootstrap {
 		 * Initialize the error handler
 		 */
 		\Skeleton\Error\Config::$debug = true;
-		set_error_handler(['\Skeleton\Error\Handler', 'error']);
-		set_exception_handler(['\Skeleton\Error\Handler', 'exception']);
+		\Skeleton\Error\Handler::enable();
 
 		/**
 		 * Initialize the translations
