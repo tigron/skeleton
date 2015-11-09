@@ -157,6 +157,13 @@ class Config {
 			 * The default language that will be shown to the user if it can not be guessed
 			 */
 			'default_language' => 'en',
+
+			/**
+			 * Additional translatable template path
+			 */
+			'additional_translatable_template_paths' => [
+				'key' => 'path',
+			],
 		];
 	}
 }
