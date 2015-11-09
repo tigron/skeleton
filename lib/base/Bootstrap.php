@@ -36,7 +36,7 @@ class Bootstrap {
 		}
 
 		require_once $root_path . '/config/Config.php';
-		$config = Config::Get();
+		$config = Config::get();
 
 		/**
 		 * Register the autoloader
@@ -49,12 +49,12 @@ class Bootstrap {
 		/**
 		 * Initialize the database
 		 */
-		$database = \Skeleton\Database\Database::Get($config->database, true);
+		$database = \Skeleton\Database\Database::get($config->database, true);
 
 		/**
 		 * Initialize the file store
 		 */
-		\Skeleton\File\Config::$store_dir = $root_path . '/store/file/';
+		\Skeleton\File\Config::$file_dir = $root_path . '/store/file/';
 
 		/**
 		 * Initialize the thumbnail cache
