@@ -52,20 +52,9 @@ class Bootstrap {
 		$database = \Skeleton\Database\Database::Get($config->database, true);
 
 		/**
-		 * Initialize the file store
-		 */
-		\Skeleton\File\Config::$store_dir = $root_path . '/store/file/';
-
-		/**
-		 * Initialize the thumbnail cache
-		 */
-		\Skeleton\File\Picture\Config::$tmp_dir = $root_path . '/tmp/';
-
-		/**
 		 * Initialize the application directory
 		 */
 		\Skeleton\Core\Config::$application_dir = $root_path . '/app/';
-		\Skeleton\Core\Config::$asset_dir = $root_path . '/lib/external/assets/';
 
 		/**
 		 * Initialize the error handler
@@ -83,11 +72,6 @@ class Bootstrap {
 		 * Initialize the template caching path
 		 */
 		\Skeleton\Template\Twig\Config::$cache_directory = $root_path . '/tmp/twig/';
-
-		/**
-		 * Set the email path
-		 */
-		\Skeleton\Email\Config::$email_directory = $root_path . '/store/email/';
 
 		/**
 		 * Set the migration path
