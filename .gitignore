@@ -1,4 +1,4 @@
-config/Config.php
+.environment.php
 tmp/twig/*
 tmp/log/*
 tmp/languages/*

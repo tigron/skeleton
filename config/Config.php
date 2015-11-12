@@ -33,6 +33,14 @@ class Config {
 	 */
 	public function __construct() {
 		$this->config_data = array_merge($this->read(), $this->config_data);
+
+		// See if we have an environment file, if that is the case, its contents
+		// should override any configuration defined in our current config_data
+		$environment_file = dirname(__FILE__) . '/../.environment.php';
+		if (file_exists($environment_file)) {
+			require($environment_file);
+			$this->config_data = array_merge($this->config_data, $environment);
+		}
 	}
 
 	/**
@@ -139,13 +147,8 @@ class Config {
 			 * Error email is not affected.
 			 */
 			'debug' => true,
-			'errors_from' => 'errors@example.com',
-			'errors_to' => 'errors@example.com',
-
-			/**
-			 * Database
-			 */
-			'database' => 'mysqli://username:password@localhost/database',
+			'debug_errors_from' => 'errors@example.com',
+			'debug_errors_to' => null,
 
 			/**
 			 * Translation base language that the templates will be made up in
