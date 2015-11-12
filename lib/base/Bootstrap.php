@@ -36,7 +36,7 @@ class Bootstrap {
 		}
 
 		require_once $root_path . '/config/Config.php';
-		$config = Config::Get();
+		$config = Config::get();
 
 		/**
 		 * Register the autoloader
@@ -49,7 +49,7 @@ class Bootstrap {
 		/**
 		 * Initialize the database
 		 */
-		$database = \Skeleton\Database\Database::Get($config->database, true);
+		$database = \Skeleton\Database\Database::get($config->database, true);
 
 		/**
 		 * Initialize the application directory
