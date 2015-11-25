@@ -63,15 +63,20 @@ class Bootstrap {
 		\Skeleton\Error\Handler::enable();
 
 		/**
+		 * Initialize tmp directory
+		 */
+		\Skeleton\Core\Config::$tmp_dir = $root_path . '/tmp/';
+
+		/**
 		 * Initialize the translations
 		 */
 		\Skeleton\I18n\Config::$po_directory = $root_path . '/po/';
-		\Skeleton\I18n\Config::$cache_directory = $root_path . '/tmp/languages/';
+		\Skeleton\I18n\Config::$cache_directory = \Skeleton\Core\Config::$tmp_dir . 'languages/';
 
 		/**
 		 * Initialize the template caching path
 		 */
-		\Skeleton\Template\Twig\Config::$cache_directory = $root_path . '/tmp/twig/';
+		\Skeleton\Template\Twig\Config::$cache_directory = \Skeleton\Core\Config::$tmp_dir . 'twig/';
 
 		/**
 		 * Set the migration path
