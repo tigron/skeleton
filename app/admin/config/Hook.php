@@ -30,13 +30,6 @@ class Hook_Admin {
 		$sticky_session = new \Skeleton\Core\Web\Session\Sticky();
 
 		$template->add_environment('sticky_session', $sticky_session);
-
-		// This is entirely optional, the use cases for having access to the
-		// sticky session object in the module is are rather limited.
-		$module->sticky_session = $sticky_session;
-
-		// Clear the new session so we can start using it again
-		\Skeleton\Core\Web\Session::clear_sticky();
 		*/
 	}
 
