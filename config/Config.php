@@ -151,6 +151,11 @@ class Config {
 			'debug_errors_to' => null,
 
 			/**
+			 * Database
+			 */
+			'database' => 'mysqli://user:pass@localhost/database',			
+
+			/**
 			 * Translation base language that the templates will be made up in
 			 * Do not change after creation of your project!
 			 */
