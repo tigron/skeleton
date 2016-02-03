@@ -26,7 +26,6 @@ class Config_Admin extends Config {
 		 */
 		'base_uri' => '/manage/',
 
-
 		/**
 		 * Default language. If no language is requested
 		 */
