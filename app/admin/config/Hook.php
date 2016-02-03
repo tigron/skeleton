@@ -4,6 +4,7 @@
  *
  * @author Gerry Demaret <gerry@tigron.be>
  * @author Christophe Gosiau <christophe@tigron.be>
+ * @author David Vandemaele <david@tigron.be>
  */
 
 class Hook_Admin {
@@ -13,7 +14,7 @@ class Hook_Admin {
 	 * @access private
 	 */
 	public static function bootstrap(\Skeleton\Core\Web\Module $module) {
-		// Bootsprap the application
+		// Bootstrap the application
 		// Example: check if we need to log in, if we do and we aren't, redirect
 		/*
 		if ($module->is_login_required()) {
@@ -28,7 +29,6 @@ class Hook_Admin {
 		// Assign the sticky session object to our template
 		$template = \Skeleton\Core\Web\Template::get();
 		$sticky_session = new \Skeleton\Core\Web\Session\Sticky();
-
 		$template->add_environment('sticky_session', $sticky_session);
 		*/
 	}

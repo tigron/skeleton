@@ -86,7 +86,6 @@ class User {
 	 */
 	public function set_password($password) {
 		$this->details['password'] = password_hash($password, PASSWORD_DEFAULT);
-		$this->save();
 	}
 
 	/**
@@ -139,7 +138,7 @@ class User {
 		$user = self::get_by_username($username);
 
 		if (password_verify($password, $user->password) === false) {
-			return false;
+			throw new Exception('Invalid');
 		}
 
 		// If we got here, we can assume the password is correct. If the password
@@ -175,4 +174,3 @@ class User {
 		self::$user = $user;
 	}
 }
-
