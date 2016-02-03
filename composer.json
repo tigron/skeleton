@@ -15,18 +15,10 @@
         "tigron/skeleton-template": "0.*",
         "tigron/skeleton-template-twig": "0.*",
         "tigron/skeleton-migrate": "0.*",
-        "tigron/skeleton-console": "0.*",
-        "tigron/skeleton-file": "0.*",
-        "tigron/skeleton-file-picture": "0.*",
-        "tigron/skeleton-pager": "0.*",
-        "filp/whoops": "1.*",
-        "fxp/composer-asset-plugin": "~1.0",
-        "bower-asset/bootstrap": "dev-master"
+        "tigron/skeleton-console": "0.*"
     },
-    "extra": {
-        "asset-installer-paths": {
-    		"bower-asset-library": "lib/external/assets"
-        }
+    "suggest": {
+        "tigron/skeleton-pager": "0.*"
     },
     "license": "MIT",
     "authors": [
