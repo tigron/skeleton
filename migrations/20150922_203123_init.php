@@ -27,7 +27,7 @@ class Migration_20150922_203123_Init extends \Skeleton\Database\Migration {
 			  `name_ogone` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
 			  PRIMARY KEY (`id`),
 			  FULLTEXT KEY `name_short` (`name_short`)
-			) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+			) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 		", []);
 
 		$db->query("
@@ -44,7 +44,7 @@ class Migration_20150922_203123_Init extends \Skeleton\Database\Migration {
 			  `created` datetime NOT NULL,
 			  PRIMARY KEY (`id`),
 			  KEY `classname` (`classname`)
-			) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;
+			) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;
 		", []);
 
 		$db->query("
@@ -56,7 +56,7 @@ class Migration_20150922_203123_Init extends \Skeleton\Database\Migration {
 			  `size` int(11) NOT NULL,
 			  `created` datetime NOT NULL,
 			  PRIMARY KEY (`id`)
-			) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;
+			) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;
 		", []);
 
 		$db->query("
@@ -67,7 +67,7 @@ class Migration_20150922_203123_Init extends \Skeleton\Database\Migration {
 			  `height` int(11) NOT NULL,
 			  PRIMARY KEY (`id`),
 			  KEY `file_id` (`file_id`)
-			) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;
+			) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;
 		", []);
 
 		$db->query("
@@ -81,7 +81,7 @@ class Migration_20150922_203123_Init extends \Skeleton\Database\Migration {
 			  `admin` tinyint(1) NOT NULL,
 			  `created` datetime NOT NULL,
 			  PRIMARY KEY (`id`)
-			) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;
+			) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;
 		", []);
 
 		$db->query("
