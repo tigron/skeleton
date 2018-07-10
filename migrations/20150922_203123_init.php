@@ -43,7 +43,8 @@ class Migration_20150922_203123_Init extends \Skeleton\Database\Migration {
 			  `content` text COLLATE utf8_unicode_ci NOT NULL,
 			  `created` datetime NOT NULL,
 			  PRIMARY KEY (`id`),
-			  KEY `classname` (`classname`)
+			  KEY `classname` (`classname`),
+			  KEY `classname_object_id` (`classname`,`object_id`)
 			) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;
 		", []);
 
