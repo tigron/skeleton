@@ -153,7 +153,7 @@ class Config {
 			/**
 			 * Database
 			 */
-			'database' => 'mysqli://user:pass@localhost/database',			
+			'database' => 'mysqli://user:pass@localhost/database',
 
 			/**
 			 * Translation base language that the templates will be made up in
