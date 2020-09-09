@@ -6,19 +6,18 @@
     "description": "Tigron Skeleton",
     "type": "project",
     "require": {
-        "sami/sami": "3.0.*@dev",
-        "tigron/skeleton-i18n": "0.*",
-        "tigron/skeleton-core": "0.*",
-        "tigron/skeleton-error": "0.*",
-        "tigron/skeleton-object": "0.*",
-        "tigron/skeleton-database": "0.*",
-        "tigron/skeleton-template": "0.*",
-        "tigron/skeleton-template-twig": "0.*",
-        "tigron/skeleton-migrate": "0.*",
-        "tigron/skeleton-console": "0.*"
+        "tigron/skeleton-i18n": "*",
+        "tigron/skeleton-core": "*",
+        "tigron/skeleton-error": "*",
+        "tigron/skeleton-object": "*",
+        "tigron/skeleton-database": "*",
+        "tigron/skeleton-template": "*",
+        "tigron/skeleton-template-twig": "*",
+        "tigron/skeleton-migrate": "*",
+        "tigron/skeleton-console": "*"
     },
     "suggest": {
-        "tigron/skeleton-pager": "0.*"
+        "tigron/skeleton-pager": "*"
     },
     "license": "MIT",
     "authors": [
