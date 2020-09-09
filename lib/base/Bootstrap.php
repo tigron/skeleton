@@ -59,7 +59,7 @@ class Bootstrap {
 		/**
 		 * Initialize the error handler
 		 */
-		\Skeleton\Error\Config::$debug = true;
+		\Skeleton\Error\Config::$debug = $config->debug;
 		\Skeleton\Error\Handler::enable();
 
 		/**
