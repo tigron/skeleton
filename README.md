@@ -27,7 +27,7 @@ any project you may have.
 
   * Install the code with composer: `composer create-project tigron/skeleton`
   * Drop the code somewhere on a webserver
-  * Point your the document root (or equivalent) to `webroot/`
+  * Point the document root (or equivalent) to `webroot/`
   * Make sure your server sends all requests to `webroot/handler.php`, if your
     server supports `.htaccess` files, that should happen automatically
   * Create a database
@@ -50,8 +50,8 @@ required in `composer.json`. Feel free to add or remove any package you don't
 need.
 
 To get started, have a look at the `app/admin` folder. You will find an example
-module in `modules/`, an example event handler in `events/` and some basic
-templates in `templates/`.
+module in `module/`, an example event handler in `event/` and some basic
+templates in `template/`.
 
 ### Packages
 
