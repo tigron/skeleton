@@ -7,16 +7,15 @@
  * @author David Vandemaele <david@tigron.be>
  */
 
-use Skeleton\Core\Web\Module;
+namespace App\Example\Module;
 
-class Web_Module_Index extends Module {
+use \Skeleton\Core\Application\Web\Module;
+use \Skeleton\Core\Web\Session;
+use \Skeleton\Core\Web\Template;
 
-	/**
-	 * Login required
-	 *
-	 * @var $login_required
-	 */
-	protected $login_required = false;
+class Index extends Module {
+
+	public $login_required = true;
 
 	/**
 	 * Template
@@ -27,10 +26,10 @@ class Web_Module_Index extends Module {
 	protected $template = 'index.twig';
 
 	/**
-	 * Display method
+	 * Display method.
 	 *
 	 * @access public
 	 */
-	public function display() {
+	public function display(): void {
 	}
 }

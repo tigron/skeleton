@@ -7,6 +7,7 @@
  * @author David Vandemaele <david@tigron.be>
  */
 
-require_once dirname(__FILE__) . '/../config/global.php';
+require_once '../lib/base/Bootstrap.php';
+Bootstrap::boot();
 
-\Skeleton\Core\Web\Handler::Run();
+\Skeleton\Core\Web\Handler::run();

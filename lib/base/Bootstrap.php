@@ -30,13 +30,8 @@ class Bootstrap {
 		/**
 		 * Get the config
 		 */
-		if (!file_exists($root_path . '/config/Config.php')) {
-			echo 'Please create your Config.php file' . "\n";
-			exit(1);
-		}
-
-		require_once $root_path . '/config/Config.php';
-		$config = Config::get();
+		\Skeleton\Core\Config::include_directory($root_path . '/config');
+		$config = \Skeleton\Core\Config::get();
 
 		/**
 		 * Register the autoloader
@@ -44,17 +39,23 @@ class Bootstrap {
 		$autoloader = new \Skeleton\Core\Autoloader();
 		$autoloader->add_include_path($root_path . '/lib/model/');
 		$autoloader->add_include_path($root_path . '/lib/base/');
+		$autoloader->add_include_path($root_path . '/lib/component/');
 		$autoloader->register();
 
 		/**
 		 * Initialize the database
 		 */
+		\Skeleton\Database\Config::$auto_null = false;
+		\Skeleton\Database\Config::$auto_trim = false;
+		\Skeleton\Database\Config::$auto_discard = false;
 		$database = \Skeleton\Database\Database::get($config->database, true);
 
 		/**
-		 * Initialize the application directory
+		 * Initialize migration
 		 */
-		\Skeleton\Core\Config::$application_dir = $root_path . '/app/';
+		\Skeleton\Database\Migration\Config::$migration_directory = $root_path . '/migration/';
+		\Skeleton\Database\Migration\Config::$version_storage  = 'database';
+		\Skeleton\Database\Migration\Config::$database_table  = 'db_version';
 
 		/**
 		 * Initialize the error handler
@@ -63,24 +64,9 @@ class Bootstrap {
 		\Skeleton\Error\Handler::enable();
 
 		/**
-		 * Initialize tmp directory
+		 * Initialize the template
 		 */
-		\Skeleton\Core\Config::$tmp_dir = $root_path . '/tmp/';
-
-		/**
-		 * Initialize the translations
-		 */
-		\Skeleton\I18n\Config::$po_directory = $root_path . '/po/';
-		\Skeleton\I18n\Config::$cache_directory = \Skeleton\Core\Config::$tmp_dir . 'languages/';
-
-		/**
-		 * Initialize the template caching path
-		 */
-		\Skeleton\Template\Twig\Config::$cache_directory = \Skeleton\Core\Config::$tmp_dir . 'twig/';
-
-		/**
-		 * Set the migration path
-		 */
-		\Skeleton\Database\Migration\Config::$migration_directory = $root_path . '/migrations/';
+		\Skeleton\Template\Twig\Config::$cache_directory = $config->tmp_dir . 'twig/';
+		\Skeleton\Template\Twig\Config::$debug = $config->debug;
 	}
 }

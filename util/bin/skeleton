@@ -1,7 +1,8 @@
 #!/usr/bin/env php
 <?php
 
-include __DIR__ . '/../../config/global.php';
+include __DIR__ . '/../../lib/base/Bootstrap.php';
+Bootstrap::boot();
 
 /**
  * This is the Skeleton Console Application
@@ -15,4 +16,4 @@ use \Skeleton\Console\Application;
 
 $application = new Application();
 $application->add_commands();
-$application->run(); 
+$application->run();
