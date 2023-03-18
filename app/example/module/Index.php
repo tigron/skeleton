@@ -9,13 +9,11 @@
 
 namespace App\Example\Module;
 
-use \Skeleton\Core\Application\Web\Module;
-use \Skeleton\Core\Web\Session;
-use \Skeleton\Core\Web\Template;
+use Skeleton\Application\Web\Module;
+use Skeleton\Application\Web\Template;
+use Skeleton\Core\Http\Session;
 
 class Index extends Module {
-
-	public $login_required = true;
 
 	/**
 	 * Template

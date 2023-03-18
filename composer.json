@@ -6,6 +6,7 @@
     "description": "Tigron Skeleton",
     "type": "project",
     "require": {
+        "tigron/skeleton-application-web": "*",
         "tigron/skeleton-console": "*",
         "tigron/skeleton-core": "*",
         "tigron/skeleton-database": "*",

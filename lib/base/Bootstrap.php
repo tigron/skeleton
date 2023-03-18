@@ -66,7 +66,7 @@ class Bootstrap {
 		/**
 		 * Initialize the template
 		 */
-		\Skeleton\Template\Twig\Config::$cache_directory = $config->tmp_dir . 'twig/';
+		\Skeleton\Template\Twig\Config::$cache_directory = $config->tmp_path . 'twig/';
 		\Skeleton\Template\Twig\Config::$debug = $config->debug;
 	}
 }

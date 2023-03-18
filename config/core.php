@@ -5,10 +5,11 @@
 
 return [
 	// Where skeleton can find various parts of your application
-	'application_dir' => dirname(__FILE__) . '/../app/',
-	'asset_dir' => dirname(__FILE__) . '/../lib/external/assets/',
-	'tmp_dir' => dirname(__FILE__) . '/../tmp/',
-	'lib_dir' => dirname(__FILE__) . '/../lib/',
+	'application_path' => dirname(__FILE__) . '/../app/',
+	'asset_paths' => [
+		dirname(__FILE__) . '/../lib/external/assets/',
+	],
+	'tmp_path' => dirname(__FILE__) . '/../tmp/',
 
 	// Display or hide errors
 	'debug' => true,

@@ -10,4 +10,4 @@
 require_once '../lib/base/Bootstrap.php';
 Bootstrap::boot();
 
-\Skeleton\Core\Web\Handler::run();
+\Skeleton\Core\Http\Handler::Run();
