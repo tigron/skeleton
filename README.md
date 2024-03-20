@@ -31,7 +31,7 @@ any project you may have.
   * Make sure your server sends all requests to `webroot/handler.php`, if your
     server supports `.htaccess` files, that should happen automatically
   * Create a database
-  * Create a `confog/environment.php` file, containing at least the DSN for your
+  * Create a `config/environment.php` file, containing at least the DSN for your
     database
   * Run `composer update`
   * Run `util/bin/skeleton migrate:up`
