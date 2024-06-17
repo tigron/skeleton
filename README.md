@@ -32,7 +32,7 @@ any project you may have.
     server supports `.htaccess` files, that should happen automatically
   * Create a database
   * Create a `config/environment.php` file, containing at least the DSN for your
-    database
+    database (see below)
   * Run `composer update`
   * Run `util/bin/skeleton migrate:up`
 
@@ -81,17 +81,20 @@ Some packages allow you to specify a table name, but most do not. If your
 application is already using a table with the same name as a package you want to
 use, you will probably need to modify your application.
 
-### Environment
+### Configuration and environment
 
-The `.environment.php` file in the root of your project is mostly an extension
-of your `config/Config.php` file. The former is meant for variables which will
-differ per environment, while the latter should be committed to your VCS and
-will be rather static in nature.
+Configuration is done by means of files in the `config/` directory. Files are
+loaded in alphabetical order, with the exception of `config/environment.php`,
+which is always loaded last.
+
+It is suggested you keep `/config/environment.php` out of your VCS, for example
+by adding it to your `.gitignore` file. This way, you can use it to store
+sensitive configuration items.
 
 A minimal example can be seen below.
 
     <?php
-    $environment = [
+    return [
         'database' => 'mysqli://username:password@localhost/database',
     ];
 
